@@ -1,0 +1,9 @@
+{
+  "/api": {
+    "target": "https://api-staging.eteeloconnect.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api": "" },
+    "logLevel": "debug"
+  }
+}
