@@ -6,11 +6,17 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
+import {
+  TitleStrategy,
+  provideRouter,
+  withComponentInputBinding,
+  withInMemoryScrolling,
+} from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
 import { apiInterceptor } from './core/api/api.interceptor';
 import { DEV_BACKEND_INTERCEPTORS } from './core/api/dev-backend';
+import { PageTitleStrategy } from './core/navigation/page-title.strategy';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,6 +32,7 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([apiInterceptor, ...DEV_BACKEND_INTERCEPTORS]),
       withXsrfConfiguration({ cookieName: '__Host-XSRF-TOKEN', headerName: 'X-XSRF-TOKEN' }),
     ),
+    { provide: TitleStrategy, useExisting: PageTitleStrategy },
     { provide: LOCALE_ID, useValue: 'fr' },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
