@@ -1,0 +1,33 @@
+<dialog #dialog aria-labelledby="child-picker-title" (click)="closeOnBackdrop($event)">
+  <div class="sheet">
+    <span class="handle" aria-hidden="true"></span>
+    <h2 id="child-picker-title">Mes enfants</h2>
+    <div class="options" role="radiogroup" aria-labelledby="child-picker-title">
+      @for (child of children(); track child.childId; let index = $index) {
+        <button
+          #option
+          type="button"
+          role="radio"
+          class="option"
+          [attr.aria-checked]="child.childId === activeChildId()"
+          [attr.tabindex]="child.childId === activeChildId() ? 0 : -1"
+          (click)="choose(child.childId)"
+          (keydown)="moveFocus($event, index)"
+        >
+          <ui-avatar
+            size="lg"
+            [firstName]="child.firstName"
+            [lastName]="child.lastName"
+            [photoUrl]="photo(child)"
+          />
+          <span class="text">
+            <span class="name">{{ name(child) }}</span>
+            @if (className(child); as className) {
+              <span class="class">{{ className }}</span>
+            }
+          </span>
+        </button>
+      }
+    </div>
+  </div>
+</dialog>

@@ -1,0 +1,33 @@
+<ng-template #content>
+  <ui-avatar
+    [firstName]="child().firstName"
+    [lastName]="child().lastName"
+    [photoUrl]="photo()"
+    aria-hidden="true"
+  />
+  <span class="text" aria-hidden="true">
+    <span class="eyebrow">Enfant affiché</span>
+    <span class="label">{{ label() }}</span>
+  </span>
+  @if (interactive()) {
+    <span class="swap" aria-hidden="true"
+      ><ui-icon name="swap" [size]="16" [strokeWidth]="2.2"
+    /></span>
+  }
+</ng-template>
+
+@if (interactive()) {
+  <button
+    type="button"
+    class="pill"
+    [attr.aria-label]="accessibleLabel() + ' Changer d’enfant.'"
+    aria-haspopup="dialog"
+    (click)="activate.emit()"
+  >
+    <ng-container [ngTemplateOutlet]="content" />
+  </button>
+} @else {
+  <div class="pill" role="img" [attr.aria-label]="accessibleLabel()">
+    <ng-container [ngTemplateOutlet]="content" />
+  </div>
+}

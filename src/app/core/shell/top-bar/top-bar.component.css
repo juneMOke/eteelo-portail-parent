@@ -1,0 +1,175 @@
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--color-bar-bg-deep);
+  box-shadow: var(--shadow-bar);
+  color: var(--color-bar-text);
+}
+
+.primary {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bar-bg);
+}
+
+/* Disque or décoratif de la maquette. */
+.primary::before {
+  position: absolute;
+  top: -30px;
+  left: -40px;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  background: var(--color-highlight);
+  content: '';
+  opacity: 0.11;
+}
+
+.row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding-inline: var(--space-4);
+}
+
+.identity {
+  padding-block: 14px;
+}
+
+.back,
+.action {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-bar-control-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-bar-control-bg);
+  color: var(--color-bar-text);
+  transition: background-color var(--duration-hover);
+}
+
+.back {
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: 0 15px 0 11px;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.back span {
+  display: none;
+}
+
+.school {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.crest {
+  display: grid;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-surface-soft);
+  color: var(--color-accent);
+  font-family: var(--font-title);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  object-fit: cover;
+}
+
+.school-name {
+  overflow: hidden;
+  font-family: var(--font-title);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.help {
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding-bottom: 9px;
+  color: var(--color-bar-text-muted);
+  font-size: var(--text-xs);
+}
+
+.help ui-icon {
+  margin-top: 1px;
+  color: var(--color-highlight);
+}
+
+.heading {
+  padding-block: 11px 12px;
+}
+
+h1 {
+  flex: 1;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-caps);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Équilibre le titre centré face aux deux boutons ronds. */
+.heading::before {
+  width: 88px;
+  content: '';
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.action {
+  width: var(--tap-target);
+  height: var(--tap-target);
+}
+
+.back:hover,
+.action:hover,
+.action.active {
+  background: var(--color-bar-control-active-bg);
+}
+
+@media (min-width: 600px) {
+  .back span {
+    display: inline;
+  }
+}
+
+@media (min-width: 905px) {
+  .row {
+    padding-inline: var(--space-8);
+  }
+
+  .identity {
+    padding-block: var(--space-5) 18px;
+  }
+
+  .school-name {
+    font-size: var(--text-lg);
+  }
+
+  .help {
+    padding-bottom: 10px;
+  }
+
+  .heading {
+    padding-block: 13px 14px;
+  }
+}

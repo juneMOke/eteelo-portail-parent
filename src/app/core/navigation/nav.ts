@@ -88,3 +88,8 @@ export function navEntry(id: NavEntryId): NavEntry {
   if (!entry) throw new Error(`Entrée de navigation inconnue : ${id}`);
   return entry;
 }
+
+/** Commandes de routeur vers une page d'un enfant (absolues, sans segment vide pour l'Accueil). */
+export function childLink(childId: string, path = ''): string[] {
+  return path ? ['/c', childId, ...path.split('/')] : ['/c', childId];
+}

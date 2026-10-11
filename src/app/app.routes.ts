@@ -31,7 +31,12 @@ export const routes: Routes = [
     canActivate: [sessionGuard],
     children: [
       { path: '', pathMatch: 'full', canActivate: [firstChildGuard], children: [] },
-      { path: 'c/:childId', canActivate: [childGuard], children: childRoutes },
+      {
+        path: 'c/:childId',
+        canActivate: [childGuard],
+        loadComponent: () => import('./core/shell/shell.component'),
+        children: childRoutes,
+      },
     ],
   },
   { path: '**', redirectTo: '' },

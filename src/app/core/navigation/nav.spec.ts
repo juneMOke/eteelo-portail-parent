@@ -1,4 +1,4 @@
-import { NAV_ENTRIES, NAV_GROUPS, navEntry } from './nav';
+import { NAV_ENTRIES, NAV_GROUPS, childLink, navEntry } from './nav';
 
 describe('catalogue de navigation', () => {
   it('range treize pages en cinq groupes de deux ou trois tuiles', () => {
@@ -21,5 +21,12 @@ describe('catalogue de navigation', () => {
 
   it('retrouve une entrée par son identifiant', () => {
     expect(navEntry('fees').path).toBe('finance/fees');
+  });
+});
+
+describe('childLink', () => {
+  it("mène à l'Accueil sans segment vide, et découpe les chemins imbriqués", () => {
+    expect(childLink('abc')).toEqual(['/c', 'abc']);
+    expect(childLink('abc', 'grades/week')).toEqual(['/c', 'abc', 'grades', 'week']);
   });
 });

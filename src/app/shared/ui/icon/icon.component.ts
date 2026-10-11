@@ -9,7 +9,6 @@ import { ICONS, IconName } from './icons';
       viewBox="0 0 24 24"
       [attr.width]="size()"
       [attr.height]="size()"
-      [attr.stroke-width]="strokeWidth()"
       aria-hidden="true"
       focusable="false"
     >
@@ -28,8 +27,11 @@ import { ICONS, IconName } from './icons';
       stroke: currentColor;
       stroke-linecap: round;
       stroke-linejoin: round;
+      /* --icon-stroke permet à un parent d'épaissir le trait (page active du menu). */
+      stroke-width: var(--icon-stroke, var(--icon-stroke-default));
     }
   `,
+  host: { '[style.--icon-stroke-default]': 'strokeWidth()' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconComponent {
