@@ -103,3 +103,40 @@
     font-size: var(--text-sm);
   }
 }
+
+@layer base {
+  /* Bouton d'action principal, partagé par les écrans hors shell (connexion, aucun enfant). */
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--tap-target);
+    padding: 0 var(--space-5);
+    border: none;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: var(--color-surface-soft);
+    cursor: pointer;
+    font-size: var(--text-md);
+    font-weight: var(--weight-semibold);
+  }
+
+  .button:disabled {
+    cursor: progress;
+    opacity: 0.7;
+  }
+
+  .button-link {
+    min-height: var(--tap-target);
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--color-accent);
+    cursor: pointer;
+    font-size: var(--text-md);
+    font-weight: var(--weight-semibold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}

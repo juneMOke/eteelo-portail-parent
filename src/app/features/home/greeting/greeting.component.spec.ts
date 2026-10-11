@@ -16,7 +16,9 @@ describe('GreetingComponent', () => {
     const el: HTMLElement = fixture.nativeElement;
 
     expect(el.querySelector('.hello')?.textContent).toBe('Mbote, Mme Kabila');
-    expect(el.querySelector('.meta')?.textContent).toBe('mercredi 23 septembre 2026 · Grâce · 5e B');
+    expect(el.querySelector('.meta')?.textContent).toBe(
+      'mercredi 23 septembre 2026 · Grâce · 5e B',
+    );
     expect(el.querySelector('h1, h2')).toBeNull();
   });
 });

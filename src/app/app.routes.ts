@@ -33,6 +33,22 @@ const childRoutes: Routes = [
 
 export const routes: Routes = [
   {
+    path: 'login',
+    title: 'Connexion',
+    loadComponent: () => import('./features/auth/login/login.page'),
+  },
+  {
+    path: 'login/:token',
+    title: 'Connexion',
+    loadComponent: () => import('./features/auth/magic-link/magic-link.page'),
+  },
+  {
+    path: 'no-children',
+    title: 'Aucun élève rattaché',
+    canActivate: [sessionGuard],
+    loadComponent: () => import('./core/session/no-children.page'),
+  },
+  {
     path: '',
     canActivate: [sessionGuard],
     children: [

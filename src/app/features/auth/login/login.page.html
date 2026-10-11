@@ -1,0 +1,39 @@
+<app-auth-layout>
+  <h1>Portail parent</h1>
+
+  @if (status() === 'sent') {
+    <p role="status">Lien envoyé. Ouvrez WhatsApp et touchez le lien reçu pour vous connecter.</p>
+    <button type="button" class="button-link" (click)="changeNumber()">Changer de numéro</button>
+  } @else {
+    <p>Recevez votre lien de connexion sur WhatsApp.</p>
+
+    @if (error() === 'network') {
+      <p class="alert" role="alert">
+        Connexion au serveur impossible. Vérifiez votre réseau puis réessayez.
+      </p>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label for="phone">Numéro de téléphone</label>
+      <input
+        id="phone"
+        type="tel"
+        inputmode="tel"
+        autocomplete="tel"
+        formControlName="phone"
+        [attr.aria-invalid]="submitted() && phone.invalid"
+        aria-describedby="phone-hint"
+      />
+      <p id="phone-hint" class="hint">Le numéro enregistré à l’école, par exemple 081 563 2080.</p>
+      @if (submitted() && phone.invalid) {
+        <p class="field-error" role="alert">Saisissez un numéro de mobile valide.</p>
+      }
+      @if (status() === 'error') {
+        <p class="alert" role="alert">L’envoi a échoué. Réessayez dans un instant.</p>
+      }
+      <button type="submit" class="button" [disabled]="status() === 'sending'">
+        {{ status() === 'sending' ? 'Envoi…' : 'Recevoir le lien' }}
+      </button>
+    </form>
+  }
+</app-auth-layout>
