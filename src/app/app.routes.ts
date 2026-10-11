@@ -1,11 +1,17 @@
 import { Routes } from '@angular/router';
-import { comingSoonRoute } from './core/navigation/coming-soon.route';
+import { HOME_ENTRY } from './core/navigation/nav';
 import { childGuard, firstChildGuard } from './core/session/child.guard';
 import { sessionGuard } from './core/session/session.guard';
 
 /** Pages d'un enfant, sous /c/:childId. Chaque feature apporte ses routes, chargées à la demande. */
 const childRoutes: Routes = [
-  { ...comingSoonRoute('home'), pathMatch: 'full', data: { home: true } },
+  {
+    path: '',
+    pathMatch: 'full',
+    title: HOME_ENTRY.title,
+    data: { home: true },
+    loadComponent: () => import('./features/home/home.page'),
+  },
   { path: 'homework', loadChildren: () => import('./features/agenda/homework/homework.routes') },
   {
     path: 'assessments',

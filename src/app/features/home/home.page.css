@@ -1,0 +1,24 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.footer {
+  color: var(--color-text-secondary);
+  font-family: var(--font-title);
+  font-size: var(--text-md);
+  font-style: italic;
+  text-align: center;
+}
+
+.footer a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

@@ -1,0 +1,11 @@
+<app-greeting [greeting]="greeting()" [childLabel]="childLabel()" [today]="today" />
+
+<div class="groups">
+  @for (group of groups; track group.title) {
+    <app-tile-group [group]="group" [childId]="childId()" />
+  }
+</div>
+
+<p class="footer">
+  Une question ? Écrivez au titulaire depuis <a [routerLink]="messagesLink()">Messages</a>.
+</p>
