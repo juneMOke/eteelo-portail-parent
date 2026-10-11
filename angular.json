@@ -51,6 +51,17 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "mock": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/app/core/api/dev-backend.ts",
+                  "with": "src/app/core/api/dev-backend.mock.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -66,6 +77,9 @@
             },
             "development": {
               "buildTarget": "eteelo-portail-parent:build:development"
+            },
+            "mock": {
+              "buildTarget": "eteelo-portail-parent:build:mock"
             }
           },
           "defaultConfiguration": "development"
