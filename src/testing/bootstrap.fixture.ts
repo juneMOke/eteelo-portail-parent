@@ -1,4 +1,4 @@
-import { Bootstrap, Child } from '../app/core/session/bootstrap.schema';
+import type { Bootstrap, Child } from '../app/core/session/bootstrap.schema';
 
 /**
  * Données factices du bootstrap, partagées par les tests unitaires, le serveur factice
