@@ -1,0 +1,10 @@
+<section [attr.aria-labelledby]="headingId">
+  <ui-card>
+    <h2 [id]="headingId">{{ group().title }}</h2>
+    <ul>
+      @for (entry of group().entries; track entry.id) {
+        <li><app-tile [entry]="entry" [childId]="childId()" /></li>
+      }
+    </ul>
+  </ui-card>
+</section>

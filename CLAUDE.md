@@ -82,6 +82,8 @@ Chaque feature contient `data-access/` (façade, store si le domaine écrit) et 
 - `input()`, `output()`, `model()` ; jamais `@Input()` / `@Output()`.
 - Contrôle de flux `@if`, `@for` (avec `track`), `@switch` ; jamais `*ngIf` / `*ngFor`.
 - `ChangeDetectionStrategy.OnPush` sur tous les composants.
+- Template et styles en ligne seulement si le template tient en ~15 lignes et les styles en ~20 ;
+  au-delà, ou dès qu'un des deux grossit, fichiers séparés (`.html`, `.css`, défaut de la CLI).
 - `computed()` pour l'état dérivé ; pas d'`effect()` pour propager de l'état (réservé aux effets de bord).
 - Pages chargées en lazy (`loadComponent` / `loadChildren`), exportées par défaut.
 - `childId` arrive en `input()` via `withComponentInputBinding()`.
