@@ -65,7 +65,7 @@ test.describe('Accueil', () => {
 
     await pill.focus();
     await page.keyboard.press('Enter');
-    await expect(page.getByRole('radio', { name: /Grâce/ })).toBeFocused();
+    await expect(page.getByRole('dialog').getByRole('radio', { name: /Grâce/ })).toBeFocused();
     await page.keyboard.press('Escape');
 
     await expect(page.getByRole('dialog')).toBeHidden();
