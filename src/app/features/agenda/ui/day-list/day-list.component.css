@@ -1,0 +1,86 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.day {
+  overflow: hidden;
+}
+
+/*
+ * Changement de jour : la liste glisse de 24 px dans le sens du changement et se fond.
+ * Le nom alterne entre deux copies pour rejouer l'animation.
+ */
+.day-content {
+  animation-duration: var(--duration-day-change);
+  animation-timing-function: var(--ease-out);
+}
+
+@keyframes day-in-forward-0 {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes day-in-forward-1 {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes day-in-backward-0 {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+@keyframes day-in-backward-1 {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+
+/* ④ Jour vide : une surface Papier et une phrase de fait, sans illustration. */
+.empty-day {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-4);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-card);
+  background: var(--color-page);
+}
+
+.empty-day h2 {
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+
+.empty-day p {
+  color: var(--color-text-secondary);
+  font-size: var(--text-md);
+}
+
+.next {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.next::first-letter {
+  text-transform: uppercase;
+}
+

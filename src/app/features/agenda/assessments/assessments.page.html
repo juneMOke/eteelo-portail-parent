@@ -1,57 +1,30 @@
 @if (data(); as list) {
   @if (day(); as day) {
-    <app-day-navigator
+    <app-day-list
       [day]="day"
       [window]="list"
-      [summary]="summary()"
+      [count]="items().length"
+      [busyDays]="busyDays()"
+      [labels]="labels"
       (dayChange)="selectDay($event)"
-    />
-
-    <section
-      class="day"
-      aria-label="Épreuves du jour"
-      (touchstart)="onTouchStart($event)"
-      (touchend)="onTouchEnd($event)"
     >
-      <!-- À chaque jour, la liste glisse dans le sens du changement. -->
-      <div class="day-content" [style.animation-name]="dayAnimation()">
-        @if (items().length) {
-          <ul class="cards">
-            @for (item of items(); track item.evaluationId) {
-              <li>
-                <app-assignment-card
-                  [link]="cardLink(item.evaluationId)"
-                  [queryParams]="{ date: item.date }"
-                  [heading]="item.title"
-                  [when]="cardWhen(item)"
-                  [teacher]="item.teacherLabel"
-                  [status]="statusView(item.status)"
-                  [points]="item.status === 'GRADED' ? item.points : null"
-                  [maxPoints]="item.maxPoints"
-                />
-              </li>
-            }
-          </ul>
-        } @else {
-          <div class="empty-day">
-            <h2>{{ schoolDay() ? 'Aucune épreuve ce jour' : 'Pas d’école ce jour' }}</h2>
-            @if (nextDay(); as next) {
-              <a
-                class="next"
-                [routerLink]="[]"
-                [queryParams]="{ date: next }"
-                replaceUrl
-                (click)="focusNavigator()"
-              >
-                Prochaine épreuve : {{ nextDayDate(next) | date: 'EEEE dd/MM' : 'UTC' }}
-              </a>
-            } @else {
-              <p>Rien n’est prévu pour les quatre prochaines semaines.</p>
-            }
-          </div>
+      <ul class="cards">
+        @for (item of items(); track item.evaluationId) {
+          <li>
+            <app-assignment-card
+              [link]="cardLink(item.evaluationId)"
+              [queryParams]="{ date: item.date }"
+              [heading]="item.title"
+              [when]="cardWhen(item)"
+              [teacher]="item.teacherLabel"
+              [status]="statusView(item.status)"
+              [points]="item.status === 'GRADED' ? item.points : null"
+              [maxPoints]="item.maxPoints"
+            />
+          </li>
         }
-      </div>
-    </section>
+      </ul>
+    </app-day-list>
   }
 } @else if (list.error()) {
   <ui-empty-state
