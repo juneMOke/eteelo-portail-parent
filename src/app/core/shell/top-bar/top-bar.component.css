@@ -77,8 +77,8 @@
 .crest {
   display: grid;
   flex: none;
-  width: 34px;
-  height: 34px;
+  width: 52px;
+  height: 52px;
   place-items: center;
   border-radius: 50%;
   background: var(--color-surface-soft);
@@ -159,6 +159,12 @@ h1 {
 
   .identity {
     padding-block: var(--space-5) 18px;
+  }
+
+  .crest {
+    width: 64px;
+    height: 64px;
+    font-size: var(--text-base);
   }
 
   .school-name {
