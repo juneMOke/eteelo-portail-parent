@@ -1,0 +1,22 @@
+<a class="card" [routerLink]="link()" [queryParams]="queryParams()">
+  <span class="icon" [style.background]="'var(--color-tone-' + status().tone + '-soft)'">
+    <ui-icon [name]="status().icon" [size]="18" />
+  </span>
+
+  <span class="body">
+    <span class="heading">{{ heading() }}<span class="visually-hidden">.</span></span>
+    <span class="when">{{ when() }}<span class="visually-hidden">.</span></span>
+    @if (teacher(); as teacher) {
+      <span class="teacher">{{ teacher }}<span class="visually-hidden">.</span></span>
+    }
+  </span>
+
+  <span class="aside">
+    <ui-badge [tone]="status().tone">{{ status().label }}</ui-badge>
+    @if (grade(); as grade) {
+      <ui-grade [points]="grade.points" [maxPoints]="grade.maxPoints" />
+    } @else {
+      <ui-icon class="chevron" name="chevron-right" [size]="18" [strokeWidth]="2" />
+    }
+  </span>
+</a>

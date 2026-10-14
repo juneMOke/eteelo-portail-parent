@@ -1,0 +1,42 @@
+@if (grade(); as grade) {
+  <h3 class="head">Résultat et appréciation</h3>
+  <div class="body">
+    <p class="score">
+      <span class="visually-hidden">Note :</span>
+      <ui-grade [points]="grade.points" [maxPoints]="grade.maxPoints" size="large" />
+      <span class="context">
+        Corrigé le {{ result().gradedAt | date: 'dd/MM/yyyy' }}
+        @if (classAverage(); as average) {
+          · <span aria-hidden="true">moyenne de la classe {{ average }}</span>
+          <span class="visually-hidden">Moyenne de la classe : {{ classAverageSpoken() }}</span>
+        }
+      </span>
+    </p>
+
+    @if (result().teacherComment; as comment) {
+      <figure class="comment">
+        <figcaption>Commentaire de l’enseignant</figcaption>
+        <blockquote>{{ comment }}</blockquote>
+      </figure>
+    }
+  </div>
+} @else {
+  <h3 class="head">Ce qu’il reste à faire</h3>
+  <div class="body">
+    <p class="fact">Épreuve à rattraper.</p>
+    <!-- La phrase de l'enseignant tient lieu de résultat ; à défaut, la marche à suivre. -->
+    @if (result().teacherComment; as comment) {
+      <figure class="comment">
+        <figcaption>Commentaire de l’enseignant</figcaption>
+        <blockquote>{{ comment }}</blockquote>
+      </figure>
+    } @else {
+      <p class="fact">Le rattrapage se demande au titulaire de la classe.</p>
+    }
+    @if (result().absenceJustified === false && attendanceLink(); as link) {
+      <a class="secondary" [routerLink]="link" [queryParams]="attendanceQueryParams()">
+        Voir la présence
+      </a>
+    }
+  </div>
+}

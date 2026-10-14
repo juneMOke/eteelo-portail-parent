@@ -1,0 +1,20 @@
+<h3 class="heading">{{ heading() }}</h3>
+
+<div class="row">
+  <span class="icon"><ui-icon name="file-text" [size]="20" /></span>
+  <span class="file">
+    <span class="name" [title]="document().fileName">{{ name() }}</span>
+    <span class="meta">
+      {{ meta() }} · publié le {{ document().publishedAt | date: 'dd/MM/yyyy' }}
+    </span>
+  </span>
+  <a
+    class="open"
+    [href]="document().href"
+    target="_blank"
+    rel="noopener"
+    [attr.aria-label]="'Consulter ' + document().fileName"
+  >
+    Consulter
+  </a>
+</div>

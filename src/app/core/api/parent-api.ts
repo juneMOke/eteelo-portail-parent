@@ -4,6 +4,7 @@ import { Observable, map } from 'rxjs';
 import * as v from 'valibot';
 import { Bootstrap, BootstrapSchema } from '../session/bootstrap.schema';
 import { components } from './api-types';
+import { EvaluationDetail, EvaluationList } from './assignments.contract';
 
 type Schemas = components['schemas'];
 export type ParentIdentity = Schemas['ParentPortalIdentityResponse'];
@@ -43,6 +44,17 @@ export class ParentApi {
 
   closeSession(): Observable<void> {
     return this.http.delete<void>(`${PARENT_AUTH_API}/session`);
+  }
+
+  /** Épreuves de la fenêtre par défaut : début de période à aujourd'hui + 28 jours. */
+  evaluations(childId: string): Observable<EvaluationList> {
+    return this.http.get<EvaluationList>(`${PARENT_CHILDREN_API}/${childId}/evaluations`);
+  }
+
+  evaluation(childId: string, evaluationId: string): Observable<EvaluationDetail> {
+    return this.http.get<EvaluationDetail>(
+      `${PARENT_CHILDREN_API}/${childId}/evaluations/${evaluationId}`,
+    );
   }
 }
 
