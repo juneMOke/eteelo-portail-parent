@@ -17,7 +17,7 @@ describe('mise en forme d’un enfant', () => {
   it("ne donne une photo que si l'enfant en a une", () => {
     expect(childPhoto(GRACE)).toBeNull();
     expect(childPhoto({ ...GRACE, photoFingerprint: 'abc' })).toBe(
-      `/api/v1/parent/children/${GRACE.childId}/photo`,
+      `/api/v1/parent/children/${GRACE.childId}/photo?v=abc`,
     );
   });
 });

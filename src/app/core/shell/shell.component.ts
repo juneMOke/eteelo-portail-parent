@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { SCHOOL_LOGO_URL } from '../api/parent-api';
+import { schoolLogoUrl } from '../api/parent-api';
 import { NAV_ENTRIES } from '../navigation/nav';
 import { PageTitleStrategy } from '../navigation/page-title.strategy';
 import { SessionStore } from '../session/session.store';
@@ -31,9 +31,10 @@ export default class ShellComponent {
   protected readonly school = this.session.school;
   protected readonly child = computed(() => this.session.childById(this.childId()));
   protected readonly hasSeveralChildren = computed(() => this.children().length > 1);
-  protected readonly logoUrl = computed(() =>
-    this.school()?.logoFingerprint ? SCHOOL_LOGO_URL : null,
-  );
+  protected readonly logoUrl = computed(() => {
+    const fingerprint = this.school()?.logoFingerprint;
+    return fingerprint ? schoolLogoUrl(fingerprint) : null;
+  });
   protected readonly title = this.page.title;
   protected readonly isHome = this.page.isHome;
 

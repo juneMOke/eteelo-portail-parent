@@ -46,10 +46,16 @@ export class ParentApi {
   }
 }
 
-/** Photo de l'enfant (JPEG 512 px, ETag). À n'appeler que si photoFingerprint est renseigné. */
-export function childPhotoUrl(childId: string): string {
-  return `${PARENT_CHILDREN_API}/${childId}/photo`;
+/**
+ * Photo de l'enfant (JPEG 512 px, ETag). À n'appeler que si photoFingerprint est renseigné.
+ * L'empreinte dans l'URL change avec la photo : le navigateur peut garder l'image en cache
+ * sans la revalider à chaque chargement.
+ */
+export function childPhotoUrl(childId: string, fingerprint: string): string {
+  return `${PARENT_CHILDREN_API}/${childId}/photo?v=${encodeURIComponent(fingerprint)}`;
 }
 
-/** Logo de l'école (PNG, ETag). À n'appeler que si logoFingerprint est renseigné. */
-export const SCHOOL_LOGO_URL = `${PARENT_API}/school/logo`;
+/** Logo de l'école (PNG, ETag), versionné par son empreinte comme la photo d'un enfant. */
+export function schoolLogoUrl(fingerprint: string): string {
+  return `${PARENT_API}/school/logo?v=${encodeURIComponent(fingerprint)}`;
+}

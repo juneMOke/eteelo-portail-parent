@@ -20,5 +20,5 @@ export function childLabel(child: Child, separator = ' · '): string {
 }
 
 export function childPhoto(child: Child): string | null {
-  return child.photoFingerprint ? childPhotoUrl(child.childId) : null;
+  return child.photoFingerprint ? childPhotoUrl(child.childId, child.photoFingerprint) : null;
 }
