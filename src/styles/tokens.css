@@ -31,6 +31,12 @@
     --palette-sable-clair: #eae6da;
     --palette-sable-fonce: #c9c3b0;
     --palette-bleu-brume: #eef2f5;
+    --palette-vert-savane: #3d6b4a;
+    --palette-vert-pale: #e8f0ea;
+    --palette-bronze: #7a5212;
+    --palette-or-pale: #f7ecd6;
+    --palette-terre-pale: #f6e6dc;
+    --palette-terre-cuite-fonce: #9c4a1f;
 
     /* 2. Sémantiques — couleurs */
     --color-page: var(--palette-papier);
@@ -38,6 +44,7 @@
     --color-surface-soft: var(--palette-blanc-casse);
     --color-border: var(--palette-sable);
     --color-border-soft: var(--palette-sable-clair);
+    --color-border-strong: var(--palette-sable-fonce);
     --color-text: var(--palette-noir-chaud);
     --color-text-secondary: var(--palette-gris-texte);
     --color-text-muted: var(--palette-gris-aa);
@@ -47,6 +54,28 @@
     --color-attention: var(--palette-terre-cuite);
     --color-highlight: var(--palette-or-doux);
     --color-focus-ring: var(--palette-or-doux);
+
+    /*
+     * Tons de statut (devoirs, évaluations) : un ton plein, assez foncé pour porter un texte
+     * crème à 4,5:1 sur un bandeau, et un ton doux pour les pastilles. L'or devient bronze
+     * (6,6:1), la terre cuite sa variante foncée (5,9:1 ; la teinte de marque n'en tient que 4,4).
+     */
+    --color-tone-pending: var(--palette-bronze);
+    --color-tone-pending-soft: var(--palette-or-pale);
+    --color-tone-info: var(--palette-bleu-ardoise);
+    --color-tone-info-soft: var(--palette-bleu-brume);
+    --color-tone-success: var(--palette-vert-savane);
+    --color-tone-success-soft: var(--palette-vert-pale);
+    --color-tone-alert: var(--palette-terre-cuite-fonce);
+    --color-tone-alert-soft: var(--palette-terre-pale);
+    --color-tone-neutral: var(--palette-gris-texte);
+    --color-tone-neutral-soft: var(--palette-sable-clair);
+    --color-on-tone: var(--palette-blanc-casse);
+
+    /* Code couleur des notes (seul calcul admis côté front) : ≥ 60 %, 50 à 60 %, < 50 %. */
+    --color-grade-good: var(--palette-vert-savane);
+    --color-grade-fair: var(--palette-bleu-ardoise);
+    --color-grade-low: var(--palette-terre-cuite);
 
     --color-nav-bg: var(--palette-bleu-profond);
     --color-nav-text: var(--palette-blanc-casse);
@@ -116,6 +145,8 @@
     --pill-height: 48px;
     --side-nav-width: 268px;
     --content-max-width: 1180px;
+    /* Pages de lecture (devoirs, évaluations) : une colonne, on lit une consigne. */
+    --reading-max-width: 760px;
     --focus-ring: 0 0 0 3px var(--color-focus-ring);
 
     /* Mouvement */
@@ -123,6 +154,8 @@
     --duration-sheet-in: 260ms;
     --duration-sheet-out: 180ms;
     --duration-content: 180ms;
+    --duration-day-change: 220ms;
+    --duration-page-in: 260ms;
     --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
@@ -132,6 +165,8 @@
       --duration-sheet-in: 0ms;
       --duration-sheet-out: 0ms;
       --duration-content: 0ms;
+      --duration-day-change: 0ms;
+      --duration-page-in: 0ms;
     }
   }
 }
