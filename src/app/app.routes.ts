@@ -42,6 +42,8 @@ export const routes: Routes = [
     title: 'Connexion',
     loadComponent: () => import('./features/auth/magic-link/magic-link.page'),
   },
+  // Forme courte du lien envoyé sur WhatsApp par le serveur (/m/<jeton>).
+  { path: 'm/:token', redirectTo: 'login/:token' },
   {
     path: 'no-children',
     title: 'Aucun élève rattaché',
