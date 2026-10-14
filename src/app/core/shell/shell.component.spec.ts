@@ -24,6 +24,13 @@ describe('ShellComponent', () => {
               children: [
                 { path: '', title: 'Accueil', data: { home: true }, component: PageStub },
                 { path: 'finance/fees', title: 'Mes frais', component: PageStub },
+                { path: 'assessments', title: 'Mes évaluations', component: PageStub },
+                {
+                  path: 'assessments/:evaluationId',
+                  title: 'Mes évaluations',
+                  data: { back: 'assessments' },
+                  component: PageStub,
+                },
               ],
             },
           ],
@@ -58,6 +65,17 @@ describe('ShellComponent', () => {
 
     expect(TestBed.inject(Router).url).toBe(`/c/${DAVID.childId}/finance/fees`);
     expect(el.querySelector('app-top-bar .back')).not.toBeNull();
+  });
+
+  it("mène à la liste de l'autre enfant depuis une fiche, qui n'est pas la sienne", async () => {
+    const harness = await setup();
+    await harness.navigateByUrl(`/c/${GRACE.childId}/assessments/41e0?date=2026-09-15`);
+    const el = harness.routeNativeElement as HTMLElement;
+
+    el.querySelectorAll<HTMLButtonElement>('app-side-nav [role="radio"]')[1].click();
+    await harness.fixture.whenStable();
+
+    expect(TestBed.inject(Router).url).toBe(`/c/${DAVID.childId}/assessments`);
   });
 
   it('rend la pilule inerte avec un seul enfant', async () => {

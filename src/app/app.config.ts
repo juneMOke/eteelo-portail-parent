@@ -11,6 +11,7 @@ import {
   provideRouter,
   withComponentInputBinding,
   withInMemoryScrolling,
+  withRouterConfig,
 } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
@@ -26,6 +27,8 @@ export const appConfig: ApplicationConfig = {
       routes,
       withComponentInputBinding(),
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
+      // childId (c/:childId) descend jusqu'aux pages imbriquées, comme assessments/:evaluationId.
+      withRouterConfig({ paramsInheritanceStrategy: 'always' }),
     ),
     // Pas de withFetch() : le backend fetch ne remonte pas la progression d'upload (dépôt de devoir).
     provideHttpClient(

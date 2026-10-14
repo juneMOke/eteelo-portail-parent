@@ -14,6 +14,12 @@ describe('PageTitleStrategy', () => {
         provideRouter([
           { path: '', title: 'Accueil', data: { home: true }, component: BlankComponent },
           { path: 'fees', title: 'Mes frais', component: BlankComponent },
+          {
+            path: 'assessments/:evaluationId',
+            title: 'Mes évaluations',
+            data: { back: 'assessments' },
+            component: BlankComponent,
+          },
         ]),
         { provide: TitleStrategy, useExisting: PageTitleStrategy },
       ],
@@ -32,5 +38,28 @@ describe('PageTitleStrategy', () => {
     expect(strategy.title()).toBe('Mes frais');
     expect(strategy.isHome()).toBe(false);
     expect(TestBed.inject(Title).getTitle()).toBe('Mes frais · Portail parent · ETEELO CONNECT');
+  });
+
+  it("ramène à l'Accueil par défaut", async () => {
+    await TestBed.inject(Router).navigateByUrl('/fees?date=2026-09-24');
+
+    expect(TestBed.inject(PageTitleStrategy).back()).toEqual({
+      entry: expect.objectContaining({ id: 'home' }),
+      queryParams: {},
+    });
+  });
+
+  it("ramène une fiche à sa liste, au jour d'où l'on vient", async () => {
+    const router = TestBed.inject(Router);
+    const strategy = TestBed.inject(PageTitleStrategy);
+
+    await router.navigateByUrl('/assessments/41e0?date=2026-09-24');
+    expect(strategy.back()).toEqual({
+      entry: expect.objectContaining({ id: 'assessments', title: 'Mes évaluations' }),
+      queryParams: { date: '2026-09-24' },
+    });
+
+    await router.navigateByUrl('/assessments/41e0');
+    expect(strategy.back().queryParams).toEqual({});
   });
 });

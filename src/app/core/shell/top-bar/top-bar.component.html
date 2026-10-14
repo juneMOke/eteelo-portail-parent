@@ -1,9 +1,14 @@
 <div class="primary">
   <div class="row identity">
     @if (showBack()) {
-      <a class="back" [routerLink]="link()" [attr.aria-label]="home.title">
+      <a
+        class="back"
+        [routerLink]="link(back().entry.path)"
+        [queryParams]="back().queryParams"
+        [attr.aria-label]="backLabel()"
+      >
         <ui-icon name="arrow-left" [strokeWidth]="2" />
-        <span>{{ home.title }}</span>
+        <span>{{ back().entry.title }}</span>
       </a>
     }
     <div class="school" [title]="school().name">

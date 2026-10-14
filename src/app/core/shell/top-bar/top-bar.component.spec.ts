@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { DAVID, GRACE, bootstrapFixture } from '../../../../testing/bootstrap.fixture';
+import { navEntry } from '../../navigation/nav';
 import { TopBarComponent } from './top-bar.component';
 
 describe('TopBarComponent', () => {
@@ -38,6 +39,18 @@ describe('TopBarComponent', () => {
 
     expect(back?.getAttribute('href')).toBe(`/c/${GRACE.childId}`);
     expect(back?.textContent).toContain('Accueil');
+  });
+
+  it('ramène une fiche à sa liste, nommée, au même jour', async () => {
+    const el = await render({
+      showBack: true,
+      title: 'Mes évaluations',
+      back: { entry: navEntry('assessments'), queryParams: { date: '2026-09-24' } },
+    });
+    const back = el.querySelector('.back');
+
+    expect(back?.getAttribute('href')).toBe(`/c/${GRACE.childId}/assessments?date=2026-09-24`);
+    expect(back?.getAttribute('aria-label')).toBe('Retour à Mes évaluations');
   });
 
   it('donne accès aux messages et notifications, libellés', async () => {
