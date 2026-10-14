@@ -1,0 +1,29 @@
+:host {
+  --avatar-size: 36px;
+  display: inline-grid;
+  flex: none;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--color-avatar-bg);
+  color: var(--color-avatar-text);
+  font-size: calc(var(--avatar-size) * 0.36);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+}
+
+:host([data-size='sm']) {
+  --avatar-size: 30px;
+}
+
+:host([data-size='lg']) {
+  --avatar-size: 40px;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

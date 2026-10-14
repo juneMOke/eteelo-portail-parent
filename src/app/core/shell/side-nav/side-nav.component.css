@@ -1,0 +1,129 @@
+:host {
+  display: none;
+  position: sticky;
+  top: 0;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: var(--side-nav-width);
+  height: 100dvh;
+  padding: var(--space-6) 18px var(--space-5);
+  overflow-y: auto;
+  background: var(--color-nav-bg);
+  color: var(--color-nav-text);
+}
+
+@media (min-width: 905px) {
+  :host {
+    display: flex;
+    flex: none;
+  }
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  padding-inline: 6px;
+}
+
+.brand-name {
+  font-size: 15px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+.brand-sub {
+  color: var(--color-nav-text-muted);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.28em;
+}
+
+.section,
+ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.section-title {
+  padding: 0 6px 6px;
+  color: var(--color-nav-text-muted);
+  font-size: 10px;
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+.child,
+.link {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-target);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: inherit;
+  transition: background-color var(--duration-hover);
+}
+
+.child {
+  gap: 10px;
+  padding: 7px 10px;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.child[aria-checked='true'] {
+  background: var(--color-surface-soft);
+  color: var(--color-heading);
+}
+
+.child[aria-checked='true'] ui-avatar {
+  --color-avatar-bg: var(--color-highlight);
+  --color-avatar-text: var(--color-heading);
+}
+
+.child-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.child-name {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.child-class {
+  font-size: 11px;
+  opacity: 0.65;
+}
+
+.link {
+  gap: 11px;
+  padding: 0 var(--space-3);
+  font-size: var(--text-md);
+}
+
+.child:hover,
+.link:hover {
+  background: var(--color-nav-hover-bg);
+}
+
+.link.active {
+  background: var(--color-nav-active-bg);
+  border-color: var(--color-nav-divider);
+  font-weight: var(--weight-semibold);
+  --icon-stroke: 2.3;
+}
+
+.signature {
+  margin-top: auto;
+  padding: var(--space-4) 6px 0;
+  border-top: 1px solid var(--color-nav-divider);
+  color: var(--color-nav-text-muted);
+  font-family: var(--font-title);
+  font-size: var(--text-xs);
+  font-style: italic;
+}

@@ -1,0 +1,32 @@
+<app-side-nav
+  [children]="children()"
+  [activeChildId]="childId()"
+  [entries]="entries"
+  (childSelected)="selectChild($event)"
+/>
+
+<div class="main">
+  @if (child(); as child) {
+    @if (school(); as school) {
+      <app-top-bar
+        [school]="school"
+        [logoUrl]="logoUrl()"
+        [child]="child"
+        [interactive]="hasSeveralChildren()"
+        [title]="title()"
+        [showBack]="!isHome()"
+        (changeChild)="picker.open()"
+      />
+    }
+  }
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>
+
+<app-child-picker-sheet
+  #picker
+  [children]="children()"
+  [activeChildId]="childId()"
+  (childSelected)="selectChild($event)"
+/>

@@ -1,3 +1,4 @@
+import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@angular/common/http';
 import {
   ApplicationConfig,
   isDevMode,
@@ -5,21 +6,38 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { routes } from './app.routes';
+import {
+  TitleStrategy,
+  provideRouter,
+  withComponentInputBinding,
+  withInMemoryScrolling,
+} from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
-import { provideHttpClient, withXsrfConfiguration } from '@angular/common/http';
+import { routes } from './app.routes';
+import { apiInterceptor } from './core/api/api.interceptor';
+import { DEV_BACKEND_INTERCEPTORS } from './core/api/dev-backend';
+import { PageTitleStrategy } from './core/navigation/page-title.strategy';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
-    provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(
-      // withInterceptors([apiInterceptor]),
-      withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'X-XSRF-TOKEN' }),
-    ),
-    { provide: LOCALE_ID, useValue: 'fr' },
     provideBrowserGlobalErrorListeners(),
+    provideRouter(
+      routes,
+      withComponentInputBinding(),
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
+    ),
+    // Pas de withFetch() : le backend fetch ne remonte pas la progression d'upload (dépôt de devoir).
+    provideHttpClient(
+      withInterceptors([apiInterceptor, ...DEV_BACKEND_INTERCEPTORS]),
+      // « __Host- » exige Secure : sur http://localhost, le backend (profil dev) nomme le cookie XSRF-TOKEN.
+      withXsrfConfiguration({
+        cookieName: isDevMode() ? 'XSRF-TOKEN' : '__Host-XSRF-TOKEN',
+        headerName: 'X-XSRF-TOKEN',
+      }),
+    ),
+    { provide: TitleStrategy, useExisting: PageTitleStrategy },
+    { provide: LOCALE_ID, useValue: 'fr' },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',

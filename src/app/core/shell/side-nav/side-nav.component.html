@@ -1,0 +1,54 @@
+<div class="brand">
+  <span class="brand-name">ETEELO</span>
+  <span class="brand-sub">CONNECT</span>
+</div>
+
+@if (children().length > 1) {
+  <div class="section" role="radiogroup" aria-labelledby="side-nav-children">
+    <span class="section-title" id="side-nav-children">Mes enfants</span>
+    @for (child of children(); track child.childId) {
+      <button
+        type="button"
+        role="radio"
+        class="child"
+        [attr.aria-checked]="child.childId === activeChildId()"
+        (click)="child.childId === activeChildId() || childSelected.emit(child.childId)"
+      >
+        <ui-avatar
+          size="sm"
+          [firstName]="child.firstName"
+          [lastName]="child.lastName"
+          [photoUrl]="photo(child)"
+        />
+        <span class="child-text">
+          <span class="child-name">{{ name(child) }}</span>
+          @if (className(child); as className) {
+            <span class="child-class">{{ className }}</span>
+          }
+        </span>
+      </button>
+    }
+  </div>
+}
+
+<nav class="section" aria-labelledby="side-nav-title">
+  <span class="section-title" id="side-nav-title">Navigation</span>
+  <ul>
+    @for (entry of entries(); track entry.id) {
+      <li>
+        <a
+          class="link"
+          [routerLink]="link(entry.path)"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: entry.id === 'home' }"
+          ariaCurrentWhenActive="page"
+        >
+          <ui-icon [name]="entry.icon" [size]="19" />
+          <span>{{ entry.title }}</span>
+        </a>
+      </li>
+    }
+  </ul>
+</nav>
+
+<p class="signature">eteyelo · l’école en lingala</p>

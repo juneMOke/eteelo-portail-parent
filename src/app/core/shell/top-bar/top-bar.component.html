@@ -1,0 +1,45 @@
+<div class="primary">
+  <div class="row identity">
+    @if (showBack()) {
+      <a class="back" [routerLink]="link()" [attr.aria-label]="home.title">
+        <ui-icon name="arrow-left" [strokeWidth]="2" />
+        <span>{{ home.title }}</span>
+      </a>
+    }
+    <div class="school" [title]="school().name">
+      @if (logoUrl(); as logoUrl) {
+        <img class="crest" [src]="logoUrl" alt="" />
+      } @else {
+        <span class="crest" aria-hidden="true">{{ crest() }}</span>
+      }
+      <span class="school-name">{{ school().name }}</span>
+    </div>
+    <app-child-pill
+      [child]="child()"
+      [interactive]="interactive()"
+      (activate)="changeChild.emit()"
+    />
+  </div>
+  <p class="row help">
+    <ui-icon name="info" [size]="15" [strokeWidth]="2" />
+    <span>{{ help() }}</span>
+  </p>
+</div>
+
+<div class="row heading">
+  <h1>{{ title() }}</h1>
+  <div class="actions">
+    @for (action of actions; track action.id) {
+      <a
+        class="action"
+        [routerLink]="link(action.path)"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        [attr.aria-label]="action.title"
+        [title]="action.title"
+      >
+        <ui-icon [name]="action.icon" [size]="19" [strokeWidth]="1.9" />
+      </a>
+    }
+  </div>
+</div>

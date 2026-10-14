@@ -1,9 +1,12 @@
 {
-  "name": "eteelo-portail-parent",
-  "short_name": "eteelo-portail-parent",
+  "name": "Portail parent · ETEELO CONNECT",
+  "short_name": "ETEELO Parent",
+  "lang": "fr",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
+  "theme_color": "#1b4d6b",
+  "background_color": "#f1ede2",
   "icons": [
     {
       "src": "icons/icon-72x72.png",
