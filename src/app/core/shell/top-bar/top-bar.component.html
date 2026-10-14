@@ -1,7 +1,7 @@
 <div class="primary">
   <div class="row identity">
     @if (showBack()) {
-      <a class="back" [routerLink]="link()">
+      <a class="back" [routerLink]="link()" [attr.aria-label]="home.title">
         <ui-icon name="arrow-left" [strokeWidth]="2" />
         <span>{{ home.title }}</span>
       </a>
