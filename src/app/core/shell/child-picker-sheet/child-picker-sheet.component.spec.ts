@@ -1,17 +1,10 @@
 import { TestBed } from '@angular/core/testing';
+import { stubDialog } from '../../../../testing/dialog';
 import { DAVID, GRACE } from '../../../../testing/bootstrap.fixture';
 import { ChildPickerSheetComponent } from './child-picker-sheet.component';
 
 describe('ChildPickerSheetComponent', () => {
-  beforeAll(() => {
-    // jsdom n'implémente pas showModal/close.
-    HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
-      this.setAttribute('open', '');
-    };
-    HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
-      this.removeAttribute('open');
-    };
-  });
+  beforeAll(stubDialog);
 
   async function render() {
     const fixture = TestBed.createComponent(ChildPickerSheetComponent);

@@ -2,14 +2,12 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { GRADE_PERIODS, TERM } from '../../../../testing/grades-terms.fixture';
 import {
-  dayLabel,
   evolutionLabel,
   percentLabel,
   pointsLabel,
   rankLabel,
   selectionAnnouncement,
   selectionPhrase,
-  spokenDay,
   weekLabel,
   weekSummary,
 } from './grade-formats';
@@ -42,11 +40,6 @@ describe('grade-formats', () => {
     );
     expect(weekSummary({ total: 1, graded: 1, pending: 0 })).toBe('1 évaluation · 1 notée');
     expect(weekSummary({ total: 0, graded: 0, pending: 0 })).toBe('Aucune évaluation');
-  });
-
-  it('écrit un jour pour l’œil et pour l’oreille', () => {
-    expect(dayLabel('2026-09-22', 'fr')).toBe('Mardi 22/09');
-    expect(spokenDay('2026-09-22', 'fr')).toBe('Mardi 22 septembre');
   });
 
   it('écrit un rang et une évolution', () => {

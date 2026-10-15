@@ -1,23 +1,15 @@
-import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
-import {
-  ApiErrorBody,
-  HomeworkDetail,
-  SubmissionRefusal,
-} from '../../../../core/api/assignments.contract';
+import { HomeworkDetail, SubmissionRefusal } from '../../../../core/api/assignments.contract';
 import { ParentApi } from '../../../../core/api/parent-api';
-
-/** Pourquoi l'envoi n'a pas abouti, et si le même envoi a une chance de passer plus tard. */
-export interface SubmissionFailure {
-  readonly message: string;
-  readonly retryable: boolean;
-}
+import { UploadMessages, trackUpload, uploadFailure } from '../../../../core/api/upload';
+import { UploadFailure } from '../../../../shared/ui/file-upload/file-upload.component';
 
 interface SubmissionState {
   /** Part envoyée, de 0 à 1 ; null hors envoi. */
   progress: number | null;
-  failure: SubmissionFailure | null;
+  /** Pourquoi l'envoi n'a pas abouti, et si le même envoi a une chance de passer plus tard. */
+  failure: UploadFailure | null;
 }
 
 const initialState: SubmissionState = { progress: null, failure: null };
@@ -32,23 +24,11 @@ const REFUSALS: Readonly<Record<SubmissionRefusal, string>> = {
   SUBMISSION_TOO_MANY_FILES: 'Trop de photos pour un seul dépôt : envoyez plutôt un PDF.',
 };
 
-const INTERRUPTED: SubmissionFailure = { message: 'L’envoi n’a pas abouti.', retryable: true };
-
-function failureOf(error: unknown): SubmissionFailure {
-  if (!(error instanceof HttpErrorResponse)) return INTERRUPTED;
-  if (error.status === 422) {
-    const body = error.error as ApiErrorBody | null;
-    const message = body?.detailCode ? REFUSALS[body.detailCode] : undefined;
-    return { message: message ?? 'L’école a refusé ce dépôt.', retryable: false };
-  }
-  if (error.status === 429) {
-    return {
-      message: 'Trop de dépôts en peu de temps. Réessayez dans un moment.',
-      retryable: true,
-    };
-  }
-  return INTERRUPTED;
-}
+const MESSAGES: UploadMessages = {
+  refusals: REFUSALS,
+  refused: 'L’école a refusé ce dépôt.',
+  tooMany: 'Trop de dépôts en peu de temps. Réessayez dans un moment.',
+};
 
 /**
  * Dépôt de la copie d'un devoir (lot P9), seule écriture de Mes devoirs. Un store par fiche
@@ -59,36 +39,24 @@ export const HomeworkSubmissionStore = signalStore(
   withState(initialState),
   withMethods((store, api = inject(ParentApi)) => ({
     /** La fiche relue si l'école a reçu la copie ; null sinon (l'échec est dans `failure`). */
-    submit(
+    async submit(
       childId: string,
       evaluationId: string,
       files: readonly File[],
     ): Promise<HomeworkDetail | null> {
-      if (store.progress() !== null) return Promise.resolve(null);
+      if (store.progress() !== null) return null;
       patchState(store, { progress: 0, failure: null });
-      return new Promise((resolve) => {
-        api.submitHomework(childId, evaluationId, files).subscribe({
-          next: (event) => {
-            if (event.type === HttpEventType.UploadProgress && event.total) {
-              patchState(store, { progress: event.loaded / event.total });
-            } else if (event.type === HttpEventType.Response && event.body) {
-              patchState(store, initialState);
-              resolve(event.body);
-            }
-          },
-          error: (error: unknown) => {
-            patchState(store, { progress: null, failure: failureOf(error) });
-            resolve(null);
-          },
-          complete: () => {
-            // Réponse sans corps : on ne sait pas si la copie est arrivée.
-            if (store.progress() !== null) {
-              patchState(store, { progress: null, failure: INTERRUPTED });
-              resolve(null);
-            }
-          },
-        });
-      });
+      try {
+        const detail = await trackUpload(
+          api.submitHomework(childId, evaluationId, files),
+          (progress) => patchState(store, { progress }),
+        );
+        patchState(store, initialState);
+        return detail;
+      } catch (error) {
+        patchState(store, { progress: null, failure: uploadFailure(error, MESSAGES) });
+        return null;
+      }
     },
 
     /** Oublie l'échec quand le parent change de fichier. */

@@ -133,12 +133,6 @@ export type SubmissionRefusal =
   | 'SUBMISSION_TOO_MANY_FILES'
   | (string & {});
 
-/** Corps d'erreur de l'API (`ApiError`), réduit à ce que le portail lit. */
-export interface ApiErrorBody {
-  readonly message?: string;
-  readonly detailCode?: SubmissionRefusal | null;
-}
-
 export interface HomeworkDetail extends HomeworkSummary, CourseReference {
   readonly assignedAt: Instant;
   readonly lateSubmissionAllowed: boolean;

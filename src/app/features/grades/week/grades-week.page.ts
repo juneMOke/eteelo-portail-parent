@@ -14,8 +14,8 @@ import { EmptyPeriodComponent } from '../../../shared/ui/empty-period/empty-peri
 import { LoadErrorComponent } from '../../../shared/ui/load-error/load-error.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { SwipePagerComponent } from '../../../shared/ui/swipe-pager/swipe-pager.component';
+import { dayLabel } from '../../../shared/format/day-labels';
 import { latestValue } from '../../../shared/resource/latest-value';
-import { dayLabel } from '../data-access/grade-formats';
 import { evaluationLink, evaluationQueryParams } from '../data-access/grade-links';
 import { GradesFacade } from '../data-access/grades.facade';
 import { ResultCardComponent } from '../ui/result-card/result-card.component';

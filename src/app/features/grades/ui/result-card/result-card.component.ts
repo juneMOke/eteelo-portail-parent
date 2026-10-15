@@ -9,9 +9,10 @@ import {
 } from '@angular/core';
 import { Params, RouterLink } from '@angular/router';
 import { GradeCard } from '../../../../core/api/grades.contract';
+import { spokenDay } from '../../../../shared/format/day-labels';
 import { GradeComponent } from '../../../../shared/ui/grade/grade.component';
 import { IconComponent } from '../../../../shared/ui/icon/icon.component';
-import { pointsLabel, spokenDay } from '../../data-access/grade-formats';
+import { pointsLabel } from '../../data-access/grade-formats';
 import { displayedScore, gradeStateView } from '../../data-access/grade-state';
 
 /**
