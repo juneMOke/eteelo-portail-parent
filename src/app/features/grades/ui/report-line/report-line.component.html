@@ -1,0 +1,10 @@
+<a class="line" [routerLink]="link()" [queryParams]="queryParams()" [attr.aria-label]="spoken()">
+  <span class="label">{{ line().subjectLabel }}</span>
+  <span class="track" aria-hidden="true">
+    @if (gauge(); as gauge) {
+      <span class="fill" [style.width]="gauge.width" [style.background]="gauge.color"></span>
+    }
+  </span>
+  <app-average [average]="average()" size="lg" />
+  <ui-icon class="chevron" name="chevron-right" [size]="18" [strokeWidth]="2" />
+</a>

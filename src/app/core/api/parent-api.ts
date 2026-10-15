@@ -10,6 +10,7 @@ import {
   HomeworkDetail,
   HomeworkList,
 } from './assignments.contract';
+import { GradeCourses, GradePeriod, GradeQuery, GradeWeek, ReportCard } from './grades.contract';
 
 type Schemas = components['schemas'];
 export type ParentIdentity = Schemas['ParentPortalIdentityResponse'];
@@ -73,6 +74,32 @@ export class ParentApi {
     );
   }
 
+  /** Évaluations d'une semaine (Ma semaine) ; sans jour, la semaine en cours. */
+  gradesWeek(childId: string, weekOf?: string): Observable<GradeWeek> {
+    return this.http.get<GradeWeek>(`${PARENT_CHILDREN_API}/${childId}/grades/week`, {
+      params: weekOf ? { weekOf } : {},
+    });
+  }
+
+  /** Périodes scolaires de l'année de l'enfant, pour le choix trimestre · période. */
+  gradePeriods(childId: string): Observable<GradePeriod[]> {
+    return this.http.get<GradePeriod[]>(`${PARENT_CHILDREN_API}/${childId}/grades/periods`);
+  }
+
+  /** Moyennes et évaluations par cours (Mes cours) ; sans sélection, la période en cours. */
+  gradeCourses(childId: string, query: GradeQuery = {}): Observable<GradeCourses> {
+    return this.http.get<GradeCourses>(`${PARENT_CHILDREN_API}/${childId}/grades/courses`, {
+      params: gradeParams(query),
+    });
+  }
+
+  /** Mon bulletin ; sans sélection, le dernier bulletin publié, sinon la période en cours. */
+  reportCard(childId: string, query: GradeQuery = {}): Observable<ReportCard> {
+    return this.http.get<ReportCard>(`${PARENT_CHILDREN_API}/${childId}/grades/report-card`, {
+      params: gradeParams(query),
+    });
+  }
+
   /**
    * Dépose (ou remplace) la copie d'un devoir : une partie `files` par page, dans l'ordre. Rend
    * les événements pour suivre la progression de l'envoi ; la réponse porte la fiche relue.
@@ -90,6 +117,11 @@ export class ParentApi {
       { observe: 'events', reportProgress: true },
     );
   }
+}
+
+/** Une portion sans sa période ne veut rien dire : le serveur l'appliquerait à la période en cours. */
+function gradeParams({ periodId, part }: GradeQuery): Record<string, string> {
+  return periodId ? { periodId, ...(part ? { part } : {}) } : {};
 }
 
 /**

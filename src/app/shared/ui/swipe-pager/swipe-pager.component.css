@@ -1,0 +1,44 @@
+:host {
+  display: block;
+}
+
+section {
+  overflow: hidden;
+}
+
+/*
+ * Changement de période : le contenu glisse de 24 px dans le sens du changement et se fond.
+ * Le nom alterne entre deux copies pour rejouer l'animation.
+ */
+.content {
+  animation-duration: var(--duration-day-change);
+  animation-timing-function: var(--ease-out);
+}
+
+@keyframes slide-in-forward-0 {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes slide-in-forward-1 {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes slide-in-backward-0 {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+@keyframes slide-in-backward-1 {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}

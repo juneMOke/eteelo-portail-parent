@@ -1,0 +1,57 @@
+/* Surface Papier, en pied de page. */
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-page);
+}
+
+.icon {
+  display: grid;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-accent);
+}
+
+.text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 12rem;
+}
+
+h2 {
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+}
+
+p {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+/* Le seul accent terre cuite de la page. */
+.download {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-pill);
+  background: var(--color-tone-alert);
+  color: var(--color-on-tone);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+}

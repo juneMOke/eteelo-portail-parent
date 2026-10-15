@@ -1,0 +1,65 @@
+@if (data(); as data) {
+  @if (data.selection; as current) {
+    @if (periods(); as periods) {
+      <app-term-picker
+        [periods]="periods"
+        [selection]="current"
+        (selectionChange)="selection.select($event)"
+      />
+    }
+  }
+  <p class="visually-hidden" aria-live="polite">{{ announcement() }}</p>
+
+  <div class="list" [attr.aria-busy]="resource.isLoading()">
+    @if (graded()) {
+      <ul class="courses">
+        @for (course of data.courses; track course.courseId) {
+          <li [id]="'course-' + course.courseId">
+            <app-course-row
+              [course]="course"
+              [expanded]="expanded().has(course.courseId)"
+              (toggle)="toggle(course.courseId)"
+            >
+              <ul class="evaluations">
+                @for (item of course.evaluations; track item.evaluationId) {
+                  <li>
+                    <app-result-card
+                      [evaluation]="item"
+                      [link]="cardLink(item)"
+                      [queryParams]="cardQueryParams(data.selection, course.courseId)"
+                      [context]="cardContext(item)"
+                    />
+                  </li>
+                }
+              </ul>
+            </app-course-row>
+          </li>
+        }
+      </ul>
+    } @else {
+      <ui-empty-period [heading]="emptyHeading()" />
+    }
+  </div>
+
+  <a
+    class="sibling"
+    [routerLink]="reportCardLink()"
+    [queryParams]="selectionParams(data.selection)"
+  >
+    Voir Mon bulletin de cette période ›
+  </a>
+} @else if (failed()) {
+  <ui-load-error
+    heading="Impossible d’afficher les notes"
+    message="Les notes nécessitent une connexion. Vérifiez-la, puis réessayez."
+    (retry)="retry()"
+  />
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement des cours…</span>
+    <ui-skeleton height="44px" />
+    <ui-skeleton height="64px" />
+    <ui-skeleton height="64px" />
+    <ui-skeleton height="64px" />
+  </div>
+}

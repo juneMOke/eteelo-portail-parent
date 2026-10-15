@@ -43,4 +43,28 @@ describe('ParentApi', () => {
 
     await expect(result).rejects.toThrow();
   });
+
+  it('demande la semaine du jour donné, ou la semaine en cours', () => {
+    api.gradesWeek('c1', '2026-09-24').subscribe();
+    api.gradesWeek('c1').subscribe();
+
+    http.expectOne('/api/v1/parent/children/c1/grades/week?weekOf=2026-09-24').flush({});
+    http.expectOne('/api/v1/parent/children/c1/grades/week').flush({});
+  });
+
+  it('lit les périodes scolaires de l’enfant', () => {
+    api.gradePeriods('c1').subscribe();
+
+    http.expectOne('/api/v1/parent/children/c1/grades/periods').flush([]);
+  });
+
+  it('ne demande une portion qu’avec sa période', () => {
+    api.gradeCourses('c1', { periodId: 't1', part: 'SECOND' }).subscribe();
+    api.gradeCourses('c1', { part: 'SECOND' }).subscribe();
+    api.reportCard('c1', { periodId: 't1' }).subscribe();
+
+    http.expectOne('/api/v1/parent/children/c1/grades/courses?periodId=t1&part=SECOND').flush({});
+    http.expectOne('/api/v1/parent/children/c1/grades/courses').flush({});
+    http.expectOne('/api/v1/parent/children/c1/grades/report-card?periodId=t1').flush({});
+  });
 });

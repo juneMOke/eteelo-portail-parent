@@ -1,0 +1,51 @@
+@if (week(); as week) {
+  <app-week-navigator [week]="week" (weekChange)="selectWeek($event)" />
+
+  <ui-swipe-pager
+    [position]="week.weekStart"
+    label="Évaluations de la semaine"
+    [attr.aria-busy]="loading()"
+    (swipe)="onSwipe($event, week)"
+  >
+    @for (day of days(); track day.date) {
+      <section class="day" [attr.aria-labelledby]="'day-' + day.date">
+        <h2 class="day-heading" [id]="'day-' + day.date">{{ day.label }}</h2>
+        <ul class="cards">
+          @for (item of day.items; track item.evaluationId) {
+            <li>
+              <app-result-card
+                [evaluation]="item"
+                [link]="cardLink(item)"
+                [queryParams]="cardQueryParams(week)"
+                [context]="item.subjectLabel"
+                [showCode]="true"
+              />
+            </li>
+          }
+        </ul>
+      </section>
+    } @empty {
+      <ui-empty-period
+        heading="Aucune évaluation cette semaine"
+        [linkLabel]="lastEvaluationLabel()"
+        [queryParams]="{ date: week.lastEvaluationDate }"
+        message="Les notes apparaîtront ici dès que l’école les publiera."
+        (linkClick)="focusNavigator()"
+      />
+    }
+  </ui-swipe-pager>
+} @else if (resource.error()) {
+  <ui-load-error
+    heading="Impossible d’afficher les notes"
+    message="Les notes nécessitent une connexion. Vérifiez-la, puis réessayez."
+    (retry)="resource.reload()"
+  />
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement des notes…</span>
+    <ui-skeleton height="74px" />
+    <ui-skeleton width="40%" height="16px" />
+    <ui-skeleton height="72px" />
+    <ui-skeleton height="72px" />
+  </div>
+}

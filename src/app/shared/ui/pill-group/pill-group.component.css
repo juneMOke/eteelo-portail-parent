@@ -1,0 +1,48 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.group-label {
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.pill {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.pill:hover:not([aria-disabled='true'], [aria-checked='true']) {
+  background: var(--color-accent-soft);
+}
+
+/* Pilule active : pleine, bleu ardoise. */
+.pill[aria-checked='true'] {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-on-tone);
+}
+
+/* Inactive : visible, sa raison en infobulle. */
+.pill[aria-disabled='true'] {
+  border-style: dashed;
+  color: var(--color-text-muted);
+  cursor: default;
+}

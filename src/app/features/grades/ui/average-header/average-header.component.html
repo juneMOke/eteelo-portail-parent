@@ -1,0 +1,33 @@
+<p class="visually-hidden">{{ spoken() }}</p>
+
+<div class="band" aria-hidden="true">
+  <div class="titles">
+    <p class="title">Moyenne générale</p>
+    <p class="scope">{{ report().averageLabel }}</p>
+  </div>
+  <ui-badge class="status" [class.provisional]="!official()" tone="pending" [onTone]="official()">
+    {{ status() }}
+  </ui-badge>
+</div>
+
+<div class="body">
+  <app-average aria-hidden="true" [average]="report().average" size="xl" />
+
+  @if (evolution(); as evolution) {
+    <p class="evolution">{{ evolution }}</p>
+  }
+
+  @if (!official() && report().gradedCount; as count) {
+    <p class="note">
+      Calculée sur {{ count }} {{ count > 1 ? 'notes' : 'note' }}. Peut différer du bulletin
+      officiel.
+    </p>
+  }
+
+  @if (rank(); as rank) {
+    <p class="rank">
+      <span class="rank-label">Rang dans la classe</span>
+      <span class="rank-value">{{ rank }}</span>
+    </p>
+  }
+</div>

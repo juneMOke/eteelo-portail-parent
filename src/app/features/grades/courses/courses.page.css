@@ -1,0 +1,51 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: var(--reading-max-width);
+  margin-inline: auto;
+}
+
+.courses {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.courses > li {
+  scroll-margin-top: var(--space-9);
+}
+
+.evaluations {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Changement de période : fondu de la liste seule, sans compteur animé. */
+.list {
+  animation: list-in var(--duration-content) var(--ease-out);
+}
+
+@keyframes list-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.sibling {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}

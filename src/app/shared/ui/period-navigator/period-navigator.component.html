@@ -1,0 +1,46 @@
+<div class="navigator">
+  <button
+    type="button"
+    class="arrow"
+    [attr.aria-label]="previousLabel()"
+    [disabled]="!hasPrevious()"
+    (click)="step.emit(-1)"
+  >
+    <ui-icon name="chevron-left" [size]="22" [strokeWidth]="2" />
+  </button>
+
+  <div class="label">
+    <p #labelRef class="date" tabindex="-1">{{ label() }}</p>
+    @if (meta()) {
+      <p class="meta">{{ meta() }}</p>
+    }
+  </div>
+
+  <button
+    type="button"
+    class="arrow"
+    [attr.aria-label]="nextLabel()"
+    [disabled]="!hasNext()"
+    (click)="step.emit(1)"
+  >
+    <ui-icon name="chevron-right" [size]="22" [strokeWidth]="2" />
+  </button>
+</div>
+
+<div class="jump">
+  <label class="jump-label" [for]="inputId">Choisir une date</label>
+  <input
+    type="date"
+    class="jump-input"
+    [id]="inputId"
+    [value]="value()"
+    [min]="min()"
+    [max]="max()"
+    (change)="onPick($event)"
+  />
+  @if (showCurrent()) {
+    <button type="button" class="today" (click)="goCurrent()">{{ currentLabel() }}</button>
+  }
+</div>
+
+<p class="visually-hidden" aria-live="polite">{{ announcement() }}</p>

@@ -14,7 +14,7 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { statusView } from '../data-access/assignment-status';
 import { durationLabel } from '../data-access/formats';
-import { civilToDate } from '../data-access/school-days';
+import { civilToDate } from '../../../shared/date/civil-date';
 import { DocumentRowComponent } from '../ui/document-row/document-row.component';
 import {
   BannerFact,
@@ -74,6 +74,10 @@ export default class AssessmentDetailPage {
 
   protected readonly listLink = computed(() =>
     childLink(this.childId(), navEntry('assessments').path),
+  );
+  /** Mes cours sur le cours de cette évaluation, dès que le serveur le dit (lot P10). */
+  protected readonly courseLink = computed(() =>
+    this.data()?.courseId ? childLink(this.childId(), navEntry('courses').path) : null,
   );
   protected readonly attendanceLink = computed(() =>
     childLink(this.childId(), navEntry('attendance').path),

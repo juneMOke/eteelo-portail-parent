@@ -1,4 +1,5 @@
 import { AssignmentWindow, CivilDate, Weekday } from '../../../core/api/assignments.contract';
+import { addDays, civilToDate, daysBetween, isCivilDate } from '../../../shared/date/civil-date';
 
 /**
  * Calendrier du navigateur de jour, en dates civiles de l'école (`YYYY-MM-DD`) : aucune
@@ -7,26 +8,6 @@ import { AssignmentWindow, CivilDate, Weekday } from '../../../core/api/assignme
  */
 
 const WEEKDAYS: readonly (Weekday | 'SUN')[] = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-const DAY_MS = 86_400_000;
-const CIVIL_DATE = /^\d{4}-\d{2}-\d{2}$/;
-
-/** Minuit UTC du jour civil : se formate avec le fuseau 'UTC' pour ne jamais glisser d'un jour. */
-export function civilToDate(day: CivilDate): Date {
-  return new Date(`${day}T00:00:00Z`);
-}
-
-export function isCivilDate(value: string | null | undefined): value is CivilDate {
-  return !!value && CIVIL_DATE.test(value) && !Number.isNaN(civilToDate(value).getTime());
-}
-
-export function addDays(day: CivilDate, count: number): CivilDate {
-  return new Date(civilToDate(day).getTime() + count * DAY_MS).toISOString().slice(0, 10);
-}
-
-export function daysBetween(from: CivilDate, to: CivilDate): number {
-  return Math.round((civilToDate(to).getTime() - civilToDate(from).getTime()) / DAY_MS);
-}
-
 export function isSchoolDay(day: CivilDate, window: AssignmentWindow): boolean {
   const weekday = WEEKDAYS[civilToDate(day).getUTCDay()];
   return weekday !== 'SUN' && window.schoolDays.includes(weekday);

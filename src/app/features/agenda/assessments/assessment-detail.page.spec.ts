@@ -89,6 +89,18 @@ describe('AssessmentDetailPage', () => {
     expect(el.querySelector('.no-document')).toBeNull();
   });
 
+  it('mène à toutes les notes du cours dans Mes cours', async () => {
+    const el = await render(CHEMISTRY_GRADED.evaluationId);
+    const link = [...el.querySelectorAll('app-result-block a')].find((a) =>
+      a.textContent?.includes('Voir toutes les notes'),
+    );
+
+    expect(link?.textContent?.trim()).toBe('Voir toutes les notes de Chimie ›');
+    expect(link?.getAttribute('href')).toBe(
+      `/c/${GRACE.childId}/grades/courses?course=c0a1b2c3-0000-4000-8000-000000000003`,
+    );
+  });
+
   it('donne la marche à suivre pour une absence, sans note', async () => {
     const el = await render(FRENCH_ABSENT.evaluationId);
     const result = el.querySelector('app-result-block');

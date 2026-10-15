@@ -1,0 +1,53 @@
+@if (report(); as report) {
+  @if (report.selection; as current) {
+    @if (periods(); as periods) {
+      <app-term-picker
+        [periods]="periods"
+        [selection]="current"
+        (selectionChange)="selection.select($event)"
+      />
+    }
+  }
+  <p class="visually-hidden" aria-live="polite">{{ announcement() }}</p>
+
+  <div class="summary" [attr.aria-busy]="resource.isLoading()">
+    @if (ungraded()) {
+      <ui-empty-period
+        heading="Le bulletin de cette période sera publié par l’école en fin de période."
+      />
+    } @else {
+      <app-average-header [report]="report" />
+
+      <section class="lines" aria-labelledby="report-lines-title">
+        <h2 id="report-lines-title" class="lines-title">Moyenne par cours</h2>
+        <ul>
+          @for (line of report.lines; track line.courseId) {
+            <li>
+              <app-report-line
+                [line]="line"
+                [link]="coursesLink()"
+                [queryParams]="lineQueryParams(report.selection, line.courseId)"
+              />
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  </div>
+
+  <app-report-document [title]="documentTitle()" [document]="report.document" />
+} @else if (failed()) {
+  <ui-load-error
+    heading="Impossible d’afficher le bulletin"
+    message="Le bulletin nécessite une connexion. Vérifiez-la, puis réessayez."
+    (retry)="retry()"
+  />
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement du bulletin…</span>
+    <ui-skeleton height="44px" />
+    <ui-skeleton height="180px" />
+    <ui-skeleton height="56px" />
+    <ui-skeleton height="56px" />
+  </div>
+}

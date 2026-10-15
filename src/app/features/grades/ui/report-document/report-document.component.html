@@ -1,0 +1,15 @@
+<span class="icon" aria-hidden="true"><ui-icon name="file-text" [size]="22" /></span>
+<div class="text">
+  <h2>{{ title() }}</h2>
+  @if (document()) {
+    <p>{{ meta() }}</p>
+  } @else {
+    <p>Le bulletin signé sera disponible ici après sa publication par l’école.</p>
+  }
+</div>
+@if (document(); as document) {
+  <a class="download" [href]="document.href" download>
+    <ui-icon name="download" [size]="18" />
+    Télécharger
+  </a>
+}

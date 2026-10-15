@@ -17,7 +17,7 @@ import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.componen
 import { statusView } from '../data-access/assignment-status';
 import { deliveryLabel } from '../data-access/formats';
 import { isNotFound } from '../data-access/not-found';
-import { civilToDate } from '../data-access/school-days';
+import { civilToDate } from '../../../shared/date/civil-date';
 import { DocumentRowComponent } from '../ui/document-row/document-row.component';
 import {
   BannerFact,
@@ -90,6 +90,10 @@ export default class HomeworkDetailPage {
   protected readonly listLink = computed(() =>
     childLink(this.childId(), navEntry('homework').path),
   );
+  /** Mes cours sur le cours de cette évaluation, dès que le serveur le dit (lot P10). */
+  protected readonly courseLink = computed(() =>
+    this.data()?.courseId ? childLink(this.childId(), navEntry('courses').path) : null,
+  );
   protected readonly attendanceLink = computed(() =>
     childLink(this.childId(), navEntry('attendance').path),
   );
@@ -159,7 +163,9 @@ export default class HomeworkDetailPage {
     return files.map((document, index) => ({
       document,
       heading:
-        files.length > 1 ? `Copie déposée — page ${index + 1} sur ${files.length}` : 'Copie déposée',
+        files.length > 1
+          ? `Copie déposée — page ${index + 1} sur ${files.length}`
+          : 'Copie déposée',
     }));
   });
 

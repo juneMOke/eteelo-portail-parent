@@ -1,0 +1,27 @@
+<a class="card" [routerLink]="link()" [queryParams]="queryParams()" [attr.aria-label]="spoken()">
+  @if (showCode()) {
+    <span class="code" aria-hidden="true">{{ evaluation().subjectCode }}</span>
+  }
+
+  <span class="body">
+    <span class="title">{{ evaluation().title }}</span>
+    <span class="context">{{ contextLine() }}</span>
+    @if (revised(); as revised) {
+      <span class="revised">Note modifiée le {{ revised }}</span>
+    }
+  </span>
+
+  <span class="aside">
+    @if (score(); as score) {
+      <ui-grade class="score" [points]="score.points" [maxPoints]="score.maxPoints" />
+    } @else {
+      <span class="placeholder">{{ state().placeholder }}</span>
+    }
+    <!-- « En attente » tient lieu de note et d'état : il n'est écrit qu'une fois. -->
+    @if (score() || state().word !== state().placeholder) {
+      <span class="word">{{ state().word }}</span>
+    }
+  </span>
+
+  <ui-icon class="chevron" name="chevron-right" [size]="18" [strokeWidth]="2" />
+</a>

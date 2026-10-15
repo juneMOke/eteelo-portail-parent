@@ -1,0 +1,61 @@
+import { Component, viewChild } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { SheetComponent } from './sheet.component';
+
+@Component({
+  imports: [SheetComponent],
+  template: `<ui-sheet heading="Choisir la période" (closed)="closed = closed + 1"
+    ><p>Contenu</p></ui-sheet
+  >`,
+})
+class HostComponent {
+  readonly sheet = viewChild.required(SheetComponent);
+  closed = 0;
+}
+
+describe('SheetComponent', () => {
+  beforeAll(() => {
+    // jsdom n'implémente pas showModal/close.
+    HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
+      this.setAttribute('open', '');
+    };
+    HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
+      this.removeAttribute('open');
+    };
+  });
+
+  async function render() {
+    const fixture = TestBed.createComponent(HostComponent);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    return { host: fixture.componentInstance, dialog: el.querySelector('dialog')!, el };
+  }
+
+  it('nomme la feuille par son titre et projette son contenu', async () => {
+    const { dialog, el } = await render();
+    const heading = el.querySelector('h2')!;
+
+    expect(heading.textContent).toBe('Choisir la période');
+    expect(dialog.getAttribute('aria-labelledby')).toBe(heading.id);
+    expect(el.querySelector('p')?.textContent).toBe('Contenu');
+  });
+
+  it('s’ouvre, puis se ferme sur le voile mais pas sur le contenu', async () => {
+    const { host, dialog, el } = await render();
+
+    host.sheet().open();
+    expect(dialog.hasAttribute('open')).toBe(true);
+    el.querySelector('p')!.click();
+    expect(dialog.hasAttribute('open')).toBe(true);
+    dialog.click();
+    expect(dialog.hasAttribute('open')).toBe(false);
+  });
+
+  it('signale sa fermeture, par Échap comme par le voile', async () => {
+    const { host, dialog } = await render();
+
+    dialog.dispatchEvent(new Event('close'));
+
+    expect(host.closed).toBe(1);
+  });
+});

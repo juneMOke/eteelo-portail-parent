@@ -1,17 +1,20 @@
-import { DatePipe } from '@angular/common';
+import { formatDate } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  LOCALE_ID,
   computed,
+  inject,
   input,
-  linkedSignal,
   output,
   viewChild,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { AssignmentWindow, CivilDate } from '../../../../core/api/assignments.contract';
+import { civilToDate } from '../../../../shared/date/civil-date';
+import { EmptyPeriodComponent } from '../../../../shared/ui/empty-period/empty-period.component';
+import { SwipePagerComponent } from '../../../../shared/ui/swipe-pager/swipe-pager.component';
 import { countLabel } from '../../data-access/formats';
-import { civilToDate, isSchoolDay, nextBusyDay, stepSchoolDay } from '../../data-access/school-days';
+import { isSchoolDay, nextBusyDay, stepSchoolDay } from '../../data-access/school-days';
 import { DayNavigatorComponent } from '../day-navigator/day-navigator.component';
 
 /** Textes d'une liste par jour : seuls les mots changent entre devoirs et évaluations. */
@@ -28,10 +31,6 @@ export interface DayListLabels {
   readonly next: string;
 }
 
-/** Écart horizontal minimal d'un balayage, et dérive verticale tolérée. */
-const SWIPE_MIN_X = 60;
-const SWIPE_MAX_Y = 40;
-
 /**
  * Squelette commun de Mes devoirs et Mes évaluations : ① le navigateur de jour, puis ③ les
  * cartes du jour (projetées par la page) ou ④ le jour vide, qui mène au prochain jour occupé.
@@ -39,7 +38,7 @@ const SWIPE_MAX_Y = 40;
  */
 @Component({
   selector: 'app-day-list',
-  imports: [DatePipe, DayNavigatorComponent, RouterLink],
+  imports: [DayNavigatorComponent, EmptyPeriodComponent, SwipePagerComponent],
   templateUrl: './day-list.component.html',
   styleUrl: './day-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,26 +54,7 @@ export class DayListComponent {
   readonly dayChange = output<CivilDate>();
 
   private readonly navigator = viewChild.required(DayNavigatorComponent);
-  private touchStart: { x: number; y: number } | null = null;
-
-  /**
-   * Glissement de la liste à chaque changement de jour, quelle qu'en soit la source (flèche,
-   * lien, URL) : sens déduit de l'ancien jour ; deux noms d'animation alternés pour la rejouer.
-   */
-  private readonly dayChangeMotion = linkedSignal<
-    CivilDate,
-    { backward: boolean; odd: boolean }
-  >({
-    source: this.day,
-    computation: (day, previous) => ({
-      backward: !!previous && day < previous.source,
-      odd: previous ? !previous.value.odd : false,
-    }),
-  });
-  protected readonly dayAnimation = computed(() => {
-    const { backward, odd } = this.dayChangeMotion();
-    return `day-in-${backward ? 'backward' : 'forward'}-${odd ? 1 : 0}`;
-  });
+  private readonly locale = inject(LOCALE_ID);
 
   protected readonly schoolDay = computed(() => isSchoolDay(this.day(), this.window()));
 
@@ -88,9 +68,11 @@ export class DayListComponent {
   /** Prochain jour occupé, pour sortir d'un jour vide sans taper à l'aveugle. */
   protected readonly nextDay = computed(() => nextBusyDay(this.day(), this.busyDays()));
 
-  protected nextDayDate(day: CivilDate): Date {
-    return civilToDate(day);
-  }
+  protected readonly nextDayLabel = computed(() => {
+    const next = this.nextDay();
+    if (!next) return null;
+    return `${this.labels().next} : ${formatDate(civilToDate(next), 'EEEE dd/MM', this.locale, 'UTC')}`;
+  });
 
   protected select(day: CivilDate): void {
     this.dayChange.emit(day);
@@ -101,20 +83,9 @@ export class DayListComponent {
     this.navigator().focusDate();
   }
 
-  protected onTouchStart(event: TouchEvent): void {
-    const touch = event.changedTouches[0];
-    this.touchStart = touch ? { x: touch.clientX, y: touch.clientY } : null;
-  }
-
   /** Balayage horizontal sur la liste : même effet que les flèches. */
-  protected onTouchEnd(event: TouchEvent): void {
-    const start = this.touchStart;
-    const touch = event.changedTouches[0];
-    this.touchStart = null;
-    if (!start || !touch) return;
-    const dx = touch.clientX - start.x;
-    if (Math.abs(dx) < SWIPE_MIN_X || Math.abs(touch.clientY - start.y) > SWIPE_MAX_Y) return;
-    const target = stepSchoolDay(this.day(), dx < 0 ? 1 : -1, this.window());
+  protected onSwipe(direction: 1 | -1): void {
+    const target = stepSchoolDay(this.day(), direction, this.window());
     if (target) this.select(target);
   }
 }

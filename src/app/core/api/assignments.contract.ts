@@ -75,7 +75,12 @@ export interface AssignmentDocument {
   readonly href: string;
 }
 
-export interface EvaluationDetail extends EvaluationSummary {
+/** Cours de l'évaluation dans Mes notes (lot P10) ; absent tant que P10 n'est pas livré. */
+export interface CourseReference {
+  readonly courseId?: string | null;
+}
+
+export interface EvaluationDetail extends EvaluationSummary, CourseReference {
   readonly announcedAt: Instant;
   readonly programme: readonly string[];
   readonly instructions: string | null;
@@ -134,7 +139,7 @@ export interface ApiErrorBody {
   readonly detailCode?: SubmissionRefusal | null;
 }
 
-export interface HomeworkDetail extends HomeworkSummary {
+export interface HomeworkDetail extends HomeworkSummary, CourseReference {
   readonly assignedAt: Instant;
   readonly lateSubmissionAllowed: boolean;
   readonly programme: readonly string[];

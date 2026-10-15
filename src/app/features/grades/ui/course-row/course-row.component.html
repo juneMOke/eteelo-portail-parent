@@ -1,0 +1,28 @@
+<h2 class="heading">
+  <button
+    type="button"
+    class="header"
+    [attr.aria-expanded]="expanded()"
+    [attr.aria-controls]="panelId"
+    [attr.aria-label]="spoken()"
+    (click)="toggle.emit()"
+  >
+    <span class="code" aria-hidden="true">{{ course().subjectCode }}</span>
+    <span class="body">
+      <span class="label">{{ course().subjectLabel }}</span>
+      <span class="summary">{{ summary() }}</span>
+    </span>
+    <app-average [average]="course().average" size="md" />
+    <ui-icon class="chevron" name="chevron-down" [size]="18" [strokeWidth]="2" />
+  </button>
+</h2>
+
+<div class="panel" [id]="panelId" [attr.hidden]="expanded() ? null : ''">
+  <div class="panel-content">
+    @if (course().count) {
+      <ng-content />
+    } @else {
+      <p class="none">Pas encore d’évaluation pour ce cours.</p>
+    }
+  </div>
+</div>

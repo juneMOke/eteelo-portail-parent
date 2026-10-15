@@ -6,7 +6,7 @@ import {
   RouterStateSnapshot,
   TitleStrategy,
 } from '@angular/router';
-import { HOME_ENTRY, NavEntry, NavEntryId, navEntry } from './nav';
+import { HOME_ENTRY, NAV_ENTRIES, NavEntry, NavEntryId, navEntry } from './nav';
 
 const APP_NAME = 'Portail parent · ETEELO CONNECT';
 
@@ -24,13 +24,25 @@ function deepest(route: ActivatedRouteSnapshot): ActivatedRouteSnapshot {
   return current;
 }
 
+/** Page d'origine annoncée par `?from=` ; ignorée si elle n'est pas au catalogue. */
+function origin(route: ActivatedRouteSnapshot): NavEntry | null {
+  const from = route.queryParamMap.get('from');
+  return NAV_ENTRIES.find((entry) => entry.id === from && entry !== HOME_ENTRY) ?? null;
+}
+
 /**
  * Pages imbriquées (`data.back`, ex. une fiche) : le retour mène à la page de la liste et lui
- * rend le jour affiché (`?date=`), pour retrouver « même jour, même position ».
+ * rend le jour affiché (`?date=`), pour retrouver « même jour, même position ». Une fiche
+ * ouverte depuis une autre page (`?from=grades-week`) y ramène, avec les autres paramètres.
  */
 function backTarget(route: ActivatedRouteSnapshot): BackTarget {
   const back = route.data['back'] as NavEntryId | undefined;
   if (!back) return HOME_BACK;
+  const from = origin(route);
+  if (from) {
+    const { from: _, ...queryParams } = route.queryParams;
+    return { entry: from, queryParams };
+  }
   const date = route.queryParamMap.get('date');
   return { entry: navEntry(back), queryParams: date ? { date } : {} };
 }
