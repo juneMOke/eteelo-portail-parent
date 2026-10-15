@@ -111,17 +111,4 @@ describe('DayListComponent', () => {
 
     expect(host.emitted).toEqual(['2026-09-28', '2026-09-24']);
   });
-
-  it('fait glisser la liste dans le sens du changement de jour', async () => {
-    const { fixture, host, el } = await render({ count: 1 });
-    const animation = () => el.querySelector<HTMLElement>('.day-content')!.style.animationName;
-
-    expect(animation()).toBe('day-in-forward-0');
-    host.day.set('2026-09-23');
-    await fixture.whenStable();
-    expect(animation()).toBe('day-in-backward-1');
-    host.day.set('2026-09-25');
-    await fixture.whenStable();
-    expect(animation()).toBe('day-in-forward-0');
-  });
 });

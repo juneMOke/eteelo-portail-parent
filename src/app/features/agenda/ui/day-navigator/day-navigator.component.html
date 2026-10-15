@@ -1,49 +1,17 @@
-<div class="navigator">
-  <button
-    type="button"
-    class="arrow"
-    aria-label="Jour précédent"
-    [disabled]="!previous()"
-    (click)="step(-1)"
-  >
-    <ui-icon name="chevron-left" [size]="22" [strokeWidth]="2" />
-  </button>
-
-  <div class="label">
-    <p #dateLabel class="date" tabindex="-1">{{ date() | date: 'EEEE d MMMM y' : 'UTC' }}</p>
-    <p class="meta">
-      @if (relative(); as relative) {
-        <span>{{ relative }}</span> ·
-      }
-      <span>{{ summary() }}</span>
-    </p>
-  </div>
-
-  <button
-    type="button"
-    class="arrow"
-    aria-label="Jour suivant"
-    [disabled]="!next()"
-    (click)="step(1)"
-  >
-    <ui-icon name="chevron-right" [size]="22" [strokeWidth]="2" />
-  </button>
-</div>
-
-<div class="jump">
-  <label class="jump-label" [for]="inputId">Choisir une date</label>
-  <input
-    type="date"
-    class="jump-input"
-    [id]="inputId"
-    [value]="day()"
-    [min]="window().from"
-    [max]="window().to"
-    (change)="pick($event)"
-  />
-  @if (showToday()) {
-    <button type="button" class="today" (click)="goToday()">Aujourd’hui</button>
-  }
-</div>
-
-<p class="visually-hidden" aria-live="polite">{{ announcement() }}</p>
+<ui-period-navigator
+  [label]="label()"
+  [meta]="meta()"
+  previousLabel="Jour précédent"
+  nextLabel="Jour suivant"
+  [hasPrevious]="!!previous()"
+  [hasNext]="!!next()"
+  [value]="day()"
+  [min]="window().from"
+  [max]="window().to"
+  currentLabel="Aujourd’hui"
+  [showCurrent]="showToday()"
+  [announcement]="announcement()"
+  (step)="step($event)"
+  (pick)="dayChange.emit($event)"
+  (current)="dayChange.emit(window().today)"
+/>

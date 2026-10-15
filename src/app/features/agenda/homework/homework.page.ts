@@ -14,7 +14,8 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { statusView } from '../data-access/assignment-status';
 import { deliveryLabel } from '../data-access/formats';
-import { civilToDate, openingDay } from '../data-access/school-days';
+import { civilToDate } from '../../../shared/date/civil-date';
+import { openingDay } from '../data-access/school-days';
 import { AssignmentCardComponent } from '../ui/assignment-card/assignment-card.component';
 import { DayListComponent, DayListLabels } from '../ui/day-list/day-list.component';
 import { HomeworkFacade } from './data-access/homework.facade';

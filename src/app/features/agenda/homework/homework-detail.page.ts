@@ -17,7 +17,7 @@ import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.componen
 import { statusView } from '../data-access/assignment-status';
 import { deliveryLabel } from '../data-access/formats';
 import { isNotFound } from '../data-access/not-found';
-import { civilToDate } from '../data-access/school-days';
+import { civilToDate } from '../../../shared/date/civil-date';
 import { DocumentRowComponent } from '../ui/document-row/document-row.component';
 import {
   BannerFact,

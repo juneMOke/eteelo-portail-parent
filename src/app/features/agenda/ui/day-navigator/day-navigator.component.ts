@@ -1,11 +1,8 @@
-import { DatePipe, formatDate } from '@angular/common';
+import { formatDate } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  Injector,
   LOCALE_ID,
-  afterNextRender,
   computed,
   inject,
   input,
@@ -13,16 +10,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { AssignmentWindow, CivilDate } from '../../../../core/api/assignments.contract';
-import { IconComponent } from '../../../../shared/ui/icon/icon.component';
-import {
-  civilToDate,
-  inWindow,
-  isCivilDate,
-  relativeDay,
-  stepSchoolDay,
-} from '../../data-access/school-days';
-
-let nextId = 0;
+import { civilToDate } from '../../../../shared/date/civil-date';
+import { PeriodNavigatorComponent } from '../../../../shared/ui/period-navigator/period-navigator.component';
+import { inWindow, relativeDay, stepSchoolDay } from '../../data-access/school-days';
 
 /**
  * ① Navigateur de jour et ② saut de date. Deux flèches qui vont de jour d'école en jour
@@ -31,9 +21,8 @@ let nextId = 0;
  */
 @Component({
   selector: 'app-day-navigator',
-  imports: [DatePipe, IconComponent],
+  imports: [PeriodNavigatorComponent],
   templateUrl: './day-navigator.component.html',
-  styleUrl: './day-navigator.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DayNavigatorComponent {
@@ -44,14 +33,18 @@ export class DayNavigatorComponent {
   readonly dayChange = output<CivilDate>();
 
   private readonly locale = inject(LOCALE_ID);
-  private readonly injector = inject(Injector);
-  private readonly dateLabel = viewChild.required<ElementRef<HTMLElement>>('dateLabel');
+  private readonly navigator = viewChild.required(PeriodNavigatorComponent);
 
-  protected readonly inputId = `day-jump-${nextId++}`;
-  protected readonly date = computed(() => civilToDate(this.day()));
+  private readonly date = computed(() => civilToDate(this.day()));
+  protected readonly label = computed(() =>
+    formatDate(this.date(), 'EEEE d MMMM y', this.locale, 'UTC'),
+  );
   protected readonly previous = computed(() => stepSchoolDay(this.day(), -1, this.window()));
   protected readonly next = computed(() => stepSchoolDay(this.day(), 1, this.window()));
-  protected readonly relative = computed(() => relativeDay(this.day(), this.window().today));
+  protected readonly meta = computed(() => {
+    const relative = relativeDay(this.day(), this.window().today);
+    return relative ? `${relative} · ${this.summary()}` : this.summary();
+  });
   protected readonly showToday = computed(
     () => this.day() !== this.window().today && inWindow(this.window().today, this.window()),
   );
@@ -61,12 +54,9 @@ export class DayNavigatorComponent {
     return `${day.charAt(0).toUpperCase()}${day.slice(1)}, ${this.summary()}`;
   });
 
-  /**
-   * Rend le focus à la date une fois le nouveau jour affiché : à appeler quand le contrôle
-   * activé disparaît ou se désactive, pour qu'un lecteur d'écran ne reparte pas du haut.
-   */
+  /** Rend le focus à la date une fois le nouveau jour affiché. */
   focusDate(): void {
-    afterNextRender(() => this.dateLabel().nativeElement.focus(), { injector: this.injector });
+    this.navigator().focusLabel();
   }
 
   /** Flèche : à la borne, elle se désactive et perd le focus ; on le rend à la date. */
@@ -75,21 +65,5 @@ export class DayNavigatorComponent {
     if (!target) return;
     this.dayChange.emit(target);
     if (!stepSchoolDay(target, direction, this.window())) this.focusDate();
-  }
-
-  /** « Aujourd'hui » disparaît une fois le jour atteint. */
-  protected goToday(): void {
-    this.dayChange.emit(this.window().today);
-    this.focusDate();
-  }
-
-  /** Une date refusée (vide, hors fenêtre) remet le champ sur le jour affiché. */
-  protected pick(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (isCivilDate(input.value) && inWindow(input.value, this.window())) {
-      this.dayChange.emit(input.value);
-    } else {
-      input.value = this.day();
-    }
   }
 }

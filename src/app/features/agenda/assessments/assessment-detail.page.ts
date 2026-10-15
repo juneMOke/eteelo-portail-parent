@@ -14,7 +14,7 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { statusView } from '../data-access/assignment-status';
 import { durationLabel } from '../data-access/formats';
-import { civilToDate } from '../data-access/school-days';
+import { civilToDate } from '../../../shared/date/civil-date';
 import { DocumentRowComponent } from '../ui/document-row/document-row.component';
 import {
   BannerFact,

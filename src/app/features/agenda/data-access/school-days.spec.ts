@@ -1,13 +1,5 @@
 import { AssignmentWindow } from '../../../core/api/assignments.contract';
-import {
-  addDays,
-  isCivilDate,
-  isSchoolDay,
-  nextBusyDay,
-  openingDay,
-  relativeDay,
-  stepSchoolDay,
-} from './school-days';
+import { isSchoolDay, nextBusyDay, openingDay, relativeDay, stepSchoolDay } from './school-days';
 
 // Mardi 22 septembre 2026 ; école du lundi au vendredi.
 const WINDOW: AssignmentWindow = {
@@ -18,18 +10,6 @@ const WINDOW: AssignmentWindow = {
 };
 
 describe('school-days', () => {
-  it('compte les jours sans glisser de fuseau', () => {
-    expect(addDays('2026-09-30', 1)).toBe('2026-10-01');
-    expect(addDays('2026-03-01', -1)).toBe('2026-02-28');
-  });
-
-  it('reconnaît une date civile valide', () => {
-    expect(isCivilDate('2026-09-24')).toBe(true);
-    expect(isCivilDate('2026-13-40')).toBe(false);
-    expect(isCivilDate('24/09/2026')).toBe(false);
-    expect(isCivilDate(undefined)).toBe(false);
-  });
-
   it("ne tient que les jours de cours de l'école", () => {
     expect(isSchoolDay('2026-09-25', WINDOW)).toBe(true); // vendredi
     expect(isSchoolDay('2026-09-26', WINDOW)).toBe(false); // samedi
