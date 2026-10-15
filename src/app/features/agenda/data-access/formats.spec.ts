@@ -1,6 +1,13 @@
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
-import { countLabel, durationLabel, fileSizeLabel, fileTypeLabel, middleEllipsis } from './formats';
+import {
+  countLabel,
+  deliveryLabel,
+  durationLabel,
+  fileSizeLabel,
+  fileTypeLabel,
+  middleEllipsis,
+} from './formats';
 
 registerLocaleData(localeFr);
 
@@ -41,5 +48,11 @@ describe('formats', () => {
     expect(countLabel(0, 'épreuve', 'épreuves', 'Aucune épreuve')).toBe('Aucune épreuve');
     expect(countLabel(1, 'épreuve', 'épreuves', 'Aucune épreuve')).toBe('1 épreuve');
     expect(countLabel(3, 'épreuve', 'épreuves', 'Aucune épreuve')).toBe('3 épreuves');
+  });
+
+  it('nomme le mode de remise, et reste neutre sur une valeur inconnue', () => {
+    expect(deliveryLabel('ONLINE')).toBe('En ligne');
+    expect(deliveryLabel('IN_CLASS')).toBe('En classe');
+    expect(deliveryLabel('BY_POST')).toBe('Non précisé');
   });
 });

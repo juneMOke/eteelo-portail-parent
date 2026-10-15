@@ -28,6 +28,9 @@ export class DocumentRowComponent {
   /** Titre du bloc, ex. « Corrigé de l'épreuve ». */
   readonly heading = input.required<string>();
   readonly answerKey = input(false);
+  /** Date du document : « publié le 17/09/2026 », ou « déposé le 17/09/2026 à 21:05 ». */
+  readonly dateLabel = input('publié le');
+  readonly dateFormat = input('dd/MM/yyyy');
 
   private readonly locale = inject(LOCALE_ID);
 

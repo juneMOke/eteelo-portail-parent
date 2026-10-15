@@ -1,0 +1,124 @@
+@if (data(); as homework) {
+  <app-identity-banner
+    [heading]="homework.title"
+    [subtitle]="subtitle()"
+    [status]="status()"
+    [teacher]="homework.teacherLabel"
+    [facts]="facts()"
+  />
+
+  <p class="confirmation" role="status">{{ confirmation() }}</p>
+
+  <!-- Ce qui répond à la question du moment monte en premier. -->
+  @if (layout() === 'result-first') {
+    @if (homework.result; as result) {
+      <app-result-block
+        [result]="result"
+        [attendanceLink]="attendanceLink()"
+        [attendanceQueryParams]="{ date: homework.dueDate }"
+        absenceFact="Devoir à rattraper."
+      />
+    }
+    @for (document of answerKeys(); track document.href) {
+      <app-document-row [document]="document" heading="Corrigé du devoir" [answerKey]="true" />
+    }
+  }
+
+  @if (layout() !== 'instructions-first') {
+    <ng-container [ngTemplateOutlet]="copy" [ngTemplateOutletContext]="{ $implicit: homework }" />
+  }
+  @if (layout() === 'submission-first') {
+    <ng-container [ngTemplateOutlet]="uploadBlock" />
+  }
+
+  <app-instructions-block
+    [heading]="instructions().heading"
+    [items]="instructions().items"
+    [note]="homework.instructions"
+    [emptyMessage]="instructions().empty"
+  />
+
+  @if (layout() === 'instructions-first') {
+    <ng-container [ngTemplateOutlet]="uploadBlock" />
+    @if (delivery(); as delivery) {
+      <section class="delivery" aria-labelledby="delivery-heading">
+        <h3 id="delivery-heading">Remise du devoir</h3>
+        <p>{{ delivery.fact }}</p>
+        @if (delivery.late; as late) {
+          <p class="late">{{ late }}</p>
+        }
+      </section>
+    }
+  }
+
+  @for (document of subjects(); track document.href) {
+    <app-document-row [document]="document" heading="Énoncé du devoir" />
+  }
+  @for (document of otherDocuments(); track document.href) {
+    <app-document-row [document]="document" heading="Document du devoir" />
+  }
+  @if (layout() === 'instructions-first' && !subjects().length && !otherDocuments().length) {
+    <p class="no-document">Aucun document déposé par l’enseignant pour ce devoir.</p>
+  }
+
+  <ng-template #copy let-homework>
+    @for (item of submittedFiles(); track item.document.href) {
+      <app-document-row
+        [document]="item.document"
+        [heading]="item.heading"
+        dateLabel="déposé le"
+        dateFormat="dd/MM/yyyy 'à' HH:mm"
+      />
+    }
+    @if (homework.submission?.late) {
+      <p class="late-copy">Copie déposée après l’échéance.</p>
+    }
+  </ng-template>
+
+  <ng-template #uploadBlock>
+    @if (upload(); as upload) {
+      <section class="delivery upload" aria-labelledby="upload-heading">
+        <h3 id="upload-heading">{{ upload.heading }}</h3>
+        <p>{{ upload.fact }}</p>
+        <ui-file-upload
+          [accept]="submissionTypes"
+          [maxTotalBytes]="submissionMaxBytes"
+          [maxFiles]="submissionMaxFiles"
+          [chooseLabel]="upload.choose"
+          hint="PDF ou photo · 10 Mo maximum"
+          formatMessage="Format accepté : PDF ou photo."
+          tooLargeMessage="Ce dépôt dépasse 10 Mo."
+          [tooManyMessage]="'Pas plus de ' + submissionMaxFiles + ' photos : envoyez plutôt un PDF.'"
+          [progress]="submission.progress()"
+          [failure]="submission.failure()"
+          [(files)]="files"
+          (filesChange)="filesChanged()"
+          (send)="send($event)"
+        />
+      </section>
+    }
+  </ng-template>
+} @else if (notFound()) {
+  <ui-empty-state
+    icon="info"
+    heading="Devoir introuvable"
+    message="Il n’est pas, ou plus, visible pour cet enfant."
+  >
+    <a class="button" [routerLink]="listLink()">Voir Mes devoirs</a>
+  </ui-empty-state>
+} @else if (homework.error()) {
+  <ui-empty-state
+    icon="info"
+    heading="Impossible d’afficher le devoir"
+    message="Vérifiez votre connexion, puis réessayez."
+  >
+    <button type="button" class="button" (click)="homework.reload()">Réessayer</button>
+  </ui-empty-state>
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement du devoir…</span>
+    <ui-skeleton height="172px" />
+    <ui-skeleton height="140px" />
+    <ui-skeleton height="72px" />
+  </div>
+}

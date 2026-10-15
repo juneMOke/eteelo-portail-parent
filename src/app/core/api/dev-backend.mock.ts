@@ -5,10 +5,17 @@ import {
   evaluationListFixture,
 } from '../../../testing/assessments.fixture';
 import { bootstrapFixture } from '../../../testing/bootstrap.fixture';
+import {
+  homeworkDetailFixture,
+  homeworkListFixture,
+  submittedHomeworkFixture,
+} from '../../../testing/homework.fixture';
 import { PARENT_API, PARENT_AUTH_API, PARENT_CHILDREN_API } from './parent-api';
 
 const identity = { ...bootstrapFixture().parent, fullName: 'Léonie Kabila' };
 const EVALUATION_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/evaluations(?:/([^/?]+))?$`);
+const HOMEWORK_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/homework(?:/([^/?]+))?$`);
+const SUBMISSION_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/homework/([^/?]+)/submission$`);
 
 /** Serveur factice : répond aux routes du portail parent sans quitter le navigateur. */
 const mockBackend: HttpInterceptorFn = (req, next) => {
@@ -22,6 +29,17 @@ const mockBackend: HttpInterceptorFn = (req, next) => {
   const evaluation = req.method === 'GET' ? EVALUATION_ROUTE.exec(req.url) : null;
   if (evaluation) {
     const body = evaluation[1] ? evaluationDetailFixture(evaluation[1]) : evaluationListFixture();
+    if (body) return ok(body);
+  }
+  const homework = req.method === 'GET' ? HOMEWORK_ROUTE.exec(req.url) : null;
+  if (homework) {
+    const body = homework[1] ? homeworkDetailFixture(homework[1]) : homeworkListFixture();
+    if (body) return ok(body);
+  }
+  const submission = req.method === 'POST' ? SUBMISSION_ROUTE.exec(req.url) : null;
+  if (submission && req.body instanceof FormData) {
+    const files = req.body.getAll('files').filter((part): part is File => part instanceof File);
+    const body = submittedHomeworkFixture(submission[1], files, new Date().toISOString());
     if (body) return ok(body);
   }
   if (req.url.startsWith(PARENT_API)) {

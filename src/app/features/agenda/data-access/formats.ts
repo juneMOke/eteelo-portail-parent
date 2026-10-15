@@ -1,5 +1,3 @@
-import { formatNumber } from '@angular/common';
-
 /** Mise en forme des données brutes des devoirs et évaluations ; aucun calcul métier. */
 
 /** « 45 min », « 2 h », « 1 h 30 » ; null si la durée n'est pas connue. */
@@ -11,11 +9,7 @@ export function durationLabel(minutes: number | null): string | null {
   return rest === 0 ? `${hours} h` : `${hours} h ${String(rest).padStart(2, '0')}`;
 }
 
-/** Poids d'un fichier : le parent paie ses données (« 1,2 Mo », « 850 Ko »). */
-export function fileSizeLabel(bytes: number, locale: string): string {
-  if (bytes >= 1_000_000) return `${formatNumber(bytes / 1_000_000, locale, '1.0-1')} Mo`;
-  return `${formatNumber(Math.max(1, Math.round(bytes / 1_000)), locale, '1.0-0')} Ko`;
-}
+export { fileSizeLabel } from '../../../shared/format/file-size';
 
 const FILE_TYPES: Readonly<Record<string, string>> = {
   'application/pdf': 'PDF',
@@ -39,4 +33,14 @@ export function middleEllipsis(name: string, max = 40): string {
 export function countLabel(count: number, one: string, many: string, none: string): string {
   if (count === 0) return none;
   return `${count} ${count === 1 ? one : many}`;
+}
+
+const DELIVERY_MODES: Readonly<Record<string, string>> = {
+  ONLINE: 'En ligne',
+  IN_CLASS: 'En classe',
+};
+
+/** Mode de remise d'un devoir ; une valeur inconnue reste neutre. */
+export function deliveryLabel(mode: string): string {
+  return DELIVERY_MODES[mode] ?? 'Non précisé';
 }

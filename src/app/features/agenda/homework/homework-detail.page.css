@@ -1,0 +1,84 @@
+/* Une colonne de lecture ; la fiche entre par la droite, « derrière » la carte. */
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: var(--reading-max-width);
+  margin-inline: auto;
+  animation: page-in var(--duration-page-in) var(--ease-out);
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+}
+
+.delivery {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+/* ⑦ Même bandeau que les autres blocs de la fiche. */
+.delivery h3 {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-accent);
+  color: var(--color-on-tone);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.delivery p {
+  padding: var(--space-4) var(--space-4) 0;
+  font-size: var(--text-md);
+}
+
+.delivery p:last-child {
+  padding-bottom: var(--space-4);
+}
+
+.delivery .late {
+  padding-top: var(--space-2);
+  color: var(--color-text-secondary);
+}
+
+.upload ui-file-upload {
+  padding: var(--space-4);
+}
+
+.confirmation:empty {
+  display: none;
+}
+
+.confirmation {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--color-tone-info-soft);
+  color: var(--color-tone-info);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.late-copy {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.no-document {
+  padding: var(--space-4);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-card);
+  background: var(--color-page);
+  color: var(--color-text-secondary);
+  font-size: var(--text-md);
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}

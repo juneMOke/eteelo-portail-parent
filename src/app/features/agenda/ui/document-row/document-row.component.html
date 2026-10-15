@@ -5,7 +5,7 @@
   <span class="file">
     <span class="name" [title]="document().fileName">{{ name() }}</span>
     <span class="meta">
-      {{ meta() }} · publié le {{ document().publishedAt | date: 'dd/MM/yyyy' }}
+      {{ meta() }} · {{ dateLabel() }} {{ document().publishedAt | date: dateFormat() }}
     </span>
   </span>
   <a

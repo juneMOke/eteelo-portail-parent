@@ -84,3 +84,65 @@ export interface EvaluationDetail extends EvaluationSummary {
   readonly result: AssignmentResult | null;
   readonly documents: readonly AssignmentDocument[];
 }
+
+/** Remise d'un devoir : déposé en ligne, ou remis en classe à l'enseignant. */
+export type DeliveryMode = 'ONLINE' | 'IN_CLASS' | (string & {});
+
+export interface HomeworkSummary {
+  readonly evaluationId: string;
+  readonly title: string;
+  readonly subjectLabel: string;
+  readonly teacherLabel: string | null;
+  /** Jour de l'échéance, dans le fuseau de l'école ; c'est le jour où la liste range le devoir. */
+  readonly dueDate: CivilDate;
+  /** Heure limite `HH:mm` ; null si l'enseignant n'en a pas fixé. */
+  readonly dueTime: string | null;
+  /** Échéance en UTC ; fin de `dueDate` quand `dueTime` est null. */
+  readonly dueAt: Instant;
+  readonly deliveryMode: DeliveryMode;
+  readonly status: AssignmentStatus;
+  readonly points: number | null;
+  readonly maxPoints: number;
+}
+
+export interface HomeworkList extends AssignmentWindow {
+  readonly items: readonly HomeworkSummary[];
+}
+
+/** Copie déposée par le parent (lot P9) : la plus récente fait foi. */
+export interface HomeworkSubmission {
+  readonly submittedAt: Instant;
+  /** Déposée après l'échéance, sous dépôt tardif permis. */
+  readonly late: boolean;
+  /** Dans l'ordre des pages, `kind` `SUBMISSION`. */
+  readonly files: readonly AssignmentDocument[];
+}
+
+/** Causes fines d'un refus de dépôt (422) ; toutes terminales : le même envoi échouera toujours. */
+export type SubmissionRefusal =
+  | 'SUBMISSION_NOT_ONLINE'
+  | 'SUBMISSION_CLOSED'
+  | 'UNSUPPORTED_DOCUMENT_TYPE'
+  | 'EMPTY_DOCUMENT'
+  | 'DOCUMENT_TOO_LARGE'
+  | 'SUBMISSION_TOO_MANY_FILES'
+  | (string & {});
+
+/** Corps d'erreur de l'API (`ApiError`), réduit à ce que le portail lit. */
+export interface ApiErrorBody {
+  readonly message?: string;
+  readonly detailCode?: SubmissionRefusal | null;
+}
+
+export interface HomeworkDetail extends HomeworkSummary {
+  readonly assignedAt: Instant;
+  readonly lateSubmissionAllowed: boolean;
+  readonly programme: readonly string[];
+  readonly instructions: string | null;
+  /** Toujours présentes : un devoir est visible avec ses questions dès sa création. */
+  readonly questions: readonly AssignmentQuestion[];
+  readonly result: AssignmentResult | null;
+  readonly documents: readonly AssignmentDocument[];
+  /** null sans dépôt. */
+  readonly submission: HomeworkSubmission | null;
+}
