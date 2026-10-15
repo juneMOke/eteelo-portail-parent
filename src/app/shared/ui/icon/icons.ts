@@ -30,6 +30,7 @@ export const ICONS = {
   swap: ['m17 2 4 4-4 4', 'M3 11v-1a4 4 0 0 1 4-4h14', 'm7 22-4-4 4-4', 'M21 13v1a4 4 0 0 1-4 4H3'],
   'chevron-right': ['m9 18 6-6-6-6'],
   'chevron-left': ['m15 18-6-6 6-6'],
+  'chevron-down': ['m6 9 6 6 6-6'],
   'alert-circle': ['M12 8v5M12 16.5v.01', 'M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18z'],
   'arrow-left': ['m12 19-7-7 7-7', 'M19 12H5'],
   info: ['M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18z', 'M12 16v-4', 'M12 8h.01'],
@@ -40,6 +41,7 @@ export const ICONS = {
     'm21 15-5-5L5 21',
   ],
   upload: ['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'm17 8-5-5-5 5', 'M12 3v12'],
+  download: ['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'm7 10 5 5 5-5', 'M12 15V3'],
   x: ['M18 6 6 18', 'm6 6 12 12'],
 } as const satisfies Record<string, readonly string[]>;
 

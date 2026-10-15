@@ -12,6 +12,11 @@
         }
       </span>
     </p>
+    @if (courseLink(); as link) {
+      <a class="secondary" [routerLink]="link" [queryParams]="courseQueryParams()">
+        Voir toutes les notes de {{ subjectLabel() }} ›
+      </a>
+    }
 
     @if (result().teacherComment; as comment) {
       <figure class="comment">

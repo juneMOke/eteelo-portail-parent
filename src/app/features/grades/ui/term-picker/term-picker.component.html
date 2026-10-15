@@ -1,0 +1,25 @@
+<app-term-options
+  class="inline"
+  [terms]="tree().terms"
+  [termId]="tree().selection.termId"
+  [periodId]="tree().selection.periodId"
+  (termPick)="pickTerm($event)"
+  (periodPick)="pickPeriod($event)"
+/>
+
+<button type="button" class="compact" aria-haspopup="dialog" (click)="openSheet()">
+  <span class="visually-hidden">Période affichée :</span>
+  <span class="compact-label">{{ tree().selection.label }}</span>
+  <ui-icon name="chevron-down" [size]="18" [strokeWidth]="2" />
+  <span class="visually-hidden">. Changer</span>
+</button>
+
+<ui-sheet heading="Choisir la période">
+  <app-term-options
+    [terms]="tree().terms"
+    [termId]="draftTerm()"
+    [periodId]="draftPeriod()"
+    (termPick)="draftTerm.set($event)"
+    (periodPick)="pickDraftPeriod($event)"
+  />
+</ui-sheet>

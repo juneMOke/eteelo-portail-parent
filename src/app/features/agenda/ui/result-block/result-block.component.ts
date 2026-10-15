@@ -31,6 +31,10 @@ export class ResultBlockComponent {
   readonly attendanceQueryParams = input<Params>({});
   /** Phrase de fait d'une absence, selon le genre de l'évaluation. */
   readonly absenceFact = input('Épreuve à rattraper.');
+  /** Mes cours, ce cours déplié : « Voir toutes les notes de Français ». Null tant que le serveur ne dit pas le cours. */
+  readonly courseLink = input<readonly string[] | null>(null);
+  readonly courseQueryParams = input<Params>({});
+  readonly subjectLabel = input('');
 
   private readonly locale = inject(LOCALE_ID);
 

@@ -62,4 +62,21 @@ describe('PageTitleStrategy', () => {
     await router.navigateByUrl('/assessments/41e0');
     expect(strategy.back().queryParams).toEqual({});
   });
+
+  it('ramène une fiche à la page de Mes notes d’où elle a été ouverte, dans son état', async () => {
+    const router = TestBed.inject(Router);
+    const strategy = TestBed.inject(PageTitleStrategy);
+
+    await router.navigateByUrl('/assessments/41e0?from=courses&term=t1&period=p1&course=c9');
+    expect(strategy.back()).toEqual({
+      entry: expect.objectContaining({ id: 'courses', title: 'Mes cours' }),
+      queryParams: { term: 't1', period: 'p1', course: 'c9' },
+    });
+
+    await router.navigateByUrl('/assessments/41e0?from=home&date=2026-09-24');
+    expect(strategy.back()).toEqual({
+      entry: expect.objectContaining({ id: 'assessments' }),
+      queryParams: { date: '2026-09-24' },
+    });
+  });
 });

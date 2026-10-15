@@ -75,6 +75,10 @@ export default class AssessmentDetailPage {
   protected readonly listLink = computed(() =>
     childLink(this.childId(), navEntry('assessments').path),
   );
+  /** Mes cours sur le cours de cette évaluation, dès que le serveur le dit (lot P10). */
+  protected readonly courseLink = computed(() =>
+    this.data()?.courseId ? childLink(this.childId(), navEntry('courses').path) : null,
+  );
   protected readonly attendanceLink = computed(() =>
     childLink(this.childId(), navEntry('attendance').path),
   );

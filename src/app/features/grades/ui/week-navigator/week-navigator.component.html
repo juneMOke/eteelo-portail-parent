@@ -1,0 +1,17 @@
+<ui-period-navigator
+  [label]="label()"
+  [meta]="summary()"
+  previousLabel="Semaine précédente"
+  nextLabel="Semaine suivante"
+  [hasPrevious]="hasPrevious()"
+  [hasNext]="hasNext()"
+  [value]="week().from"
+  [min]="week().firstWeekStart"
+  [max]="lastDay()"
+  currentLabel="Cette semaine"
+  [showCurrent]="week().from !== week().currentWeekStart"
+  [announcement]="label() + ', ' + summary()"
+  (step)="step($event)"
+  (pick)="weekChange.emit($event)"
+  (current)="weekChange.emit(week().currentWeekStart)"
+/>

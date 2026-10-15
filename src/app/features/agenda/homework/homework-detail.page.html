@@ -15,6 +15,9 @@
       <app-result-block
         [result]="result"
         [attendanceLink]="attendanceLink()"
+        [courseLink]="courseLink()"
+        [courseQueryParams]="{ course: homework.courseId }"
+        [subjectLabel]="homework.subjectLabel"
         [attendanceQueryParams]="{ date: homework.dueDate }"
         absenceFact="Devoir à rattraper."
       />
@@ -88,7 +91,9 @@
           hint="PDF ou photo · 10 Mo maximum"
           formatMessage="Format accepté : PDF ou photo."
           tooLargeMessage="Ce dépôt dépasse 10 Mo."
-          [tooManyMessage]="'Pas plus de ' + submissionMaxFiles + ' photos : envoyez plutôt un PDF.'"
+          [tooManyMessage]="
+            'Pas plus de ' + submissionMaxFiles + ' photos : envoyez plutôt un PDF.'
+          "
           [progress]="submission.progress()"
           [failure]="submission.failure()"
           [(files)]="files"

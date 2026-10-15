@@ -6,11 +6,14 @@ import {
   evaluationListFixture,
 } from '../../src/testing/assessments.fixture';
 import { bootstrapFixture } from '../../src/testing/bootstrap.fixture';
+import { gradeCoursesFixture } from '../../src/testing/grade-courses.fixture';
+import { gradeWeekFixture } from '../../src/testing/grades-week.fixture';
 import {
   homeworkDetailFixture,
   homeworkListFixture,
   submittedHomeworkFixture,
 } from '../../src/testing/homework.fixture';
+import { reportCardFixture } from '../../src/testing/report-card.fixture';
 
 interface ParentApiMock {
   /** Corps du bootstrap, ou un code HTTP d'erreur. */
@@ -21,15 +24,19 @@ interface ParentApiMock {
   homework?: HomeworkList | number;
   /** Code HTTP d'échec du dépôt de copie ; par défaut le dépôt réussit. */
   submission?: number;
+  /** Code HTTP d'erreur des trois routes de Mes notes ; par défaut, les données factices. */
+  grades?: number;
 }
 
 const EVALUATION_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/evaluations(?:\/([^/]+))?$/;
 const HOMEWORK_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/homework(?:\/([^/]+))?$/;
 const SUBMISSION_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/homework\/([^/]+)\/submission$/;
+const GRADES_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/grades\/(week|courses|report-card)$/;
+const REPORT_CARD_DOCUMENT = /^\/api\/v1\/parent\/children\/[^/]+\/report-cards\/[^/]+\/document$/;
 
 /**
- * Simule l'API du portail parent : bootstrap, authentification, Mes évaluations, Mes devoirs et
- * le dépôt de copie ; tout le reste répond 404.
+ * Simule l'API du portail parent : bootstrap, authentification, Mes évaluations, Mes devoirs, le
+ * dépôt de copie et Mes notes ; tout le reste répond 404.
  */
 export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promise<void> {
   const bootstrap = mock.bootstrap ?? bootstrapFixture();
@@ -37,7 +44,7 @@ export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promi
   const homework = mock.homework ?? homeworkListFixture();
 
   await page.route('**/api/v1/parent/**', async (route) => {
-    const { pathname } = new URL(route.request().url());
+    const { pathname, searchParams } = new URL(route.request().url());
     const method = route.request().method();
 
     if (pathname === '/api/v1/parent/bootstrap') {
@@ -64,6 +71,24 @@ export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promi
       return typeof homework === 'number'
         ? route.fulfill({ status: homework })
         : route.fulfill({ json: homework });
+    }
+    const grades = method === 'GET' ? GRADES_ROUTE.exec(pathname) : null;
+    if (grades) {
+      if (mock.grades) return route.fulfill({ status: mock.grades });
+      const query = {
+        termId: searchParams.get('termId') ?? undefined,
+        periodId: searchParams.get('periodId') ?? undefined,
+      };
+      const body =
+        grades[1] === 'week'
+          ? gradeWeekFixture(searchParams.get('date') ?? undefined)
+          : grades[1] === 'courses'
+            ? gradeCoursesFixture(query)
+            : reportCardFixture(query);
+      return route.fulfill({ json: body });
+    }
+    if (method === 'GET' && REPORT_CARD_DOCUMENT.test(pathname)) {
+      return route.fulfill({ contentType: 'application/pdf', body: '%PDF-1.4\n' });
     }
     const submission = method === 'POST' ? SUBMISSION_ROUTE.exec(pathname) : null;
     if (submission) {

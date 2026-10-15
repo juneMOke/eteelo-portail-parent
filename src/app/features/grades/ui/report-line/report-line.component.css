@@ -1,0 +1,54 @@
+:host {
+  display: block;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    'label average chevron'
+    'track track chevron';
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  min-height: var(--tap-target);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  color: var(--color-text);
+}
+
+.line:hover {
+  background: var(--color-accent-soft);
+}
+
+.label {
+  grid-area: label;
+  overflow: hidden;
+  color: var(--color-heading);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Jauge de 6 px, au ton de la moyenne, sans remplissage animé. */
+.track {
+  grid-area: track;
+  height: 6px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--color-border-soft);
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+}
+
+app-average {
+  grid-area: average;
+}
+
+.chevron {
+  grid-area: chevron;
+  color: var(--color-text-muted);
+}

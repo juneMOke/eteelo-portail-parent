@@ -127,6 +127,8 @@ const ANSWER_KEY_HREF = `/api/v1/parent/children/${GRACE.childId}/evaluations/${
 
 const DETAILS: Readonly<Record<string, Omit<EvaluationDetail, keyof EvaluationSummary>>> = {
   [CHEMISTRY_GRADED.evaluationId]: {
+    // Cours de Chimie dans Mes notes (`COURSE.chemistry` de grades-week.fixture).
+    courseId: 'c0a1b2c3-0000-4000-8000-000000000003',
     announcedAt: '2026-09-08T09:12:00Z',
     programme: ['Les acides et leurs propriétés', 'Le pH', 'Les indicateurs colorés'],
     instructions: 'Calculatrice non autorisée.',

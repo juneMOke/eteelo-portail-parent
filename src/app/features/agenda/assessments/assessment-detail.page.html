@@ -13,6 +13,9 @@
       <app-result-block
         [result]="result"
         [attendanceLink]="attendanceLink()"
+        [courseLink]="courseLink()"
+        [courseQueryParams]="{ course: evaluation.courseId }"
+        [subjectLabel]="evaluation.subjectLabel"
         [attendanceQueryParams]="{ date: evaluation.date }"
       />
     }

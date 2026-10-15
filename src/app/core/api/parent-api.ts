@@ -10,6 +10,7 @@ import {
   HomeworkDetail,
   HomeworkList,
 } from './assignments.contract';
+import { GradeCourses, GradeWeek, ReportCard, TermQuery } from './grades.contract';
 
 type Schemas = components['schemas'];
 export type ParentIdentity = Schemas['ParentPortalIdentityResponse'];
@@ -73,6 +74,27 @@ export class ParentApi {
     );
   }
 
+  /** Évaluations d'une semaine (Ma semaine) ; sans date, la semaine en cours. */
+  gradesWeek(childId: string, date?: string): Observable<GradeWeek> {
+    return this.http.get<GradeWeek>(`${PARENT_CHILDREN_API}/${childId}/grades/week`, {
+      params: date ? { date } : {},
+    });
+  }
+
+  /** Moyennes et évaluations par cours (Mes cours) ; sans sélection, la période en cours. */
+  gradeCourses(childId: string, query: TermQuery = {}): Observable<GradeCourses> {
+    return this.http.get<GradeCourses>(`${PARENT_CHILDREN_API}/${childId}/grades/courses`, {
+      params: termParams(query),
+    });
+  }
+
+  /** Mon bulletin ; sans sélection, la dernière période publiée, sinon la période en cours. */
+  reportCard(childId: string, query: TermQuery = {}): Observable<ReportCard> {
+    return this.http.get<ReportCard>(`${PARENT_CHILDREN_API}/${childId}/grades/report-card`, {
+      params: termParams(query),
+    });
+  }
+
   /**
    * Dépose (ou remplace) la copie d'un devoir : une partie `files` par page, dans l'ordre. Rend
    * les événements pour suivre la progression de l'envoi ; la réponse porte la fiche relue.
@@ -90,6 +112,18 @@ export class ParentApi {
       { observe: 'events', reportProgress: true },
     );
   }
+}
+
+function termParams({ termId, periodId }: TermQuery): Record<string, string> {
+  return {
+    ...(termId ? { termId } : {}),
+    ...(termId && periodId ? { periodId } : {}),
+  };
+}
+
+/** PDF scellé d'un bulletin publié : servi tel quel, jamais généré par l'application. */
+export function reportCardDocumentUrl(childId: string, reportCardId: string): string {
+  return `${PARENT_CHILDREN_API}/${childId}/report-cards/${reportCardId}/document`;
 }
 
 /**
