@@ -1,0 +1,64 @@
+@if (data(); as evaluation) {
+  <app-identity-banner
+    [heading]="evaluation.title"
+    [subtitle]="subtitle()"
+    [status]="status()"
+    [teacher]="evaluation.teacherLabel"
+    [facts]="facts()"
+  />
+
+  <!-- Ce qui répond à la question du moment monte en premier. -->
+  @if (layout() === 'result-first') {
+    @if (evaluation.result; as result) {
+      <app-result-block
+        [result]="result"
+        [attendanceLink]="attendanceLink()"
+        [attendanceQueryParams]="{ date: evaluation.date }"
+      />
+    }
+    @for (document of answerKeys(); track document.href) {
+      <app-document-row [document]="document" heading="Corrigé de l’épreuve" [answerKey]="true" />
+    }
+    @for (document of otherDocuments(); track document.href) {
+      <app-document-row [document]="document" heading="Document de l’épreuve" />
+    }
+  }
+
+  <app-instructions-block
+    [heading]="instructions().heading"
+    [items]="instructions().items"
+    [note]="evaluation.instructions"
+    [emptyMessage]="instructions().empty"
+  />
+
+  @if (layout() === 'instructions-first') {
+    @for (document of otherDocuments(); track document.href) {
+      <app-document-row [document]="document" heading="Document de l’épreuve" />
+    } @empty {
+      <p class="no-document">Aucun document déposé par l’enseignant pour cette évaluation.</p>
+    }
+  }
+} @else if (notFound()) {
+  <ui-empty-state
+    icon="info"
+    heading="Évaluation introuvable"
+    message="Elle n’est pas, ou plus, visible pour cet enfant."
+  >
+    <a class="button" [routerLink]="listLink()">Voir Mes évaluations</a>
+  </ui-empty-state>
+} @else if (evaluation.error()) {
+  <ui-empty-state
+    icon="info"
+    heading="Impossible d’afficher l’évaluation"
+    message="Vérifiez votre connexion, puis réessayez."
+  >
+    <button type="button" class="button" (click)="evaluation.reload()">Réessayer</button>
+  </ui-empty-state>
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement de l’évaluation…</span>
+    <ui-skeleton height="172px" />
+    <ui-skeleton height="140px" />
+    <ui-skeleton height="72px" />
+  </div>
+}

@@ -1,0 +1,19 @@
+<header class="head">
+  <div class="top">
+    <h2 class="heading">{{ heading() }}</h2>
+    <ui-badge [tone]="status().tone" [onTone]="true">{{ status().label }}</ui-badge>
+  </div>
+  <p class="subtitle">{{ subtitle() }}</p>
+  @if (teacher(); as teacher) {
+    <p class="teacher">{{ teacher }}</p>
+  }
+</header>
+
+<dl class="facts">
+  @for (fact of facts(); track fact.label) {
+    <div class="fact">
+      <dt>{{ fact.label }}</dt>
+      <dd>{{ fact.value ?? '—' }}</dd>
+    </div>
+  }
+</dl>

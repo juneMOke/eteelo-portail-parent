@@ -1,9 +1,15 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import * as v from 'valibot';
 import { Bootstrap, BootstrapSchema } from '../session/bootstrap.schema';
 import { components } from './api-types';
+import {
+  EvaluationDetail,
+  EvaluationList,
+  HomeworkDetail,
+  HomeworkList,
+} from './assignments.contract';
 
 type Schemas = components['schemas'];
 export type ParentIdentity = Schemas['ParentPortalIdentityResponse'];
@@ -43,6 +49,46 @@ export class ParentApi {
 
   closeSession(): Observable<void> {
     return this.http.delete<void>(`${PARENT_AUTH_API}/session`);
+  }
+
+  /** Épreuves de la fenêtre par défaut : début de période à aujourd'hui + 28 jours. */
+  evaluations(childId: string): Observable<EvaluationList> {
+    return this.http.get<EvaluationList>(`${PARENT_CHILDREN_API}/${childId}/evaluations`);
+  }
+
+  evaluation(childId: string, evaluationId: string): Observable<EvaluationDetail> {
+    return this.http.get<EvaluationDetail>(
+      `${PARENT_CHILDREN_API}/${childId}/evaluations/${evaluationId}`,
+    );
+  }
+
+  /** Devoirs de la fenêtre par défaut, triés par échéance puis matière. */
+  homework(childId: string): Observable<HomeworkList> {
+    return this.http.get<HomeworkList>(`${PARENT_CHILDREN_API}/${childId}/homework`);
+  }
+
+  homeworkDetail(childId: string, evaluationId: string): Observable<HomeworkDetail> {
+    return this.http.get<HomeworkDetail>(
+      `${PARENT_CHILDREN_API}/${childId}/homework/${evaluationId}`,
+    );
+  }
+
+  /**
+   * Dépose (ou remplace) la copie d'un devoir : une partie `files` par page, dans l'ordre. Rend
+   * les événements pour suivre la progression de l'envoi ; la réponse porte la fiche relue.
+   */
+  submitHomework(
+    childId: string,
+    evaluationId: string,
+    files: readonly File[],
+  ): Observable<HttpEvent<HomeworkDetail>> {
+    const body = new FormData();
+    for (const file of files) body.append('files', file, file.name);
+    return this.http.post<HomeworkDetail>(
+      `${PARENT_CHILDREN_API}/${childId}/homework/${evaluationId}/submission`,
+      body,
+      { observe: 'events', reportProgress: true },
+    );
   }
 }
 

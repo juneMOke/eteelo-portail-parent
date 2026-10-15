@@ -1,0 +1,31 @@
+/* Une colonne de lecture ; la fiche entre par la droite, « derrière » la carte. */
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: var(--reading-max-width);
+  margin-inline: auto;
+  animation: page-in var(--duration-page-in) var(--ease-out);
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+}
+
+.no-document {
+  padding: var(--space-4);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-card);
+  background: var(--color-page);
+  color: var(--color-text-secondary);
+  font-size: var(--text-md);
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}

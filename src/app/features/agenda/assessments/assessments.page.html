@@ -1,0 +1,45 @@
+@if (data(); as list) {
+  @if (day(); as day) {
+    <app-day-list
+      [day]="day"
+      [window]="list"
+      [count]="items().length"
+      [busyDays]="busyDays()"
+      [labels]="labels"
+      (dayChange)="selectDay($event)"
+    >
+      <ul class="cards">
+        @for (item of items(); track item.evaluationId) {
+          <li>
+            <app-assignment-card
+              [link]="cardLink(item.evaluationId)"
+              [queryParams]="{ date: item.date }"
+              [heading]="item.title"
+              [when]="cardWhen(item)"
+              [teacher]="item.teacherLabel"
+              [status]="statusView(item.status)"
+              [points]="item.status === 'GRADED' ? item.points : null"
+              [maxPoints]="item.maxPoints"
+            />
+          </li>
+        }
+      </ul>
+    </app-day-list>
+  }
+} @else if (list.error()) {
+  <ui-empty-state
+    icon="info"
+    heading="Impossible d’afficher les évaluations"
+    message="Vérifiez votre connexion, puis réessayez."
+  >
+    <button type="button" class="button" (click)="list.reload()">Réessayer</button>
+  </ui-empty-state>
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement des évaluations…</span>
+    <ui-skeleton height="74px" />
+    <ui-skeleton width="60%" height="44px" />
+    <ui-skeleton height="88px" />
+    <ui-skeleton height="88px" />
+  </div>
+}

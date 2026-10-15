@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { schoolLogoUrl } from '../api/parent-api';
-import { NAV_ENTRIES } from '../navigation/nav';
+import { HOME_ENTRY, NAV_ENTRIES, childLink } from '../navigation/nav';
 import { PageTitleStrategy } from '../navigation/page-title.strategy';
 import { SessionStore } from '../session/session.store';
 import { ChildPickerSheetComponent } from './child-picker-sheet/child-picker-sheet.component';
@@ -37,9 +37,18 @@ export default class ShellComponent {
   });
   protected readonly title = this.page.title;
   protected readonly isHome = this.page.isHome;
+  protected readonly back = this.page.back;
 
-  /** Même page, autre enfant : seul le segment c/:childId de l'URL change. */
+  /**
+   * Même page, autre enfant : seul le segment c/:childId de l'URL change. Depuis une fiche
+   * (page imbriquée), on va à la liste de l'autre enfant : la fiche n'est pas la sienne.
+   */
   protected selectChild(childId: string): void {
+    const back = this.back().entry;
+    if (back.id !== HOME_ENTRY.id) {
+      void this.router.navigate(childLink(childId, back.path));
+      return;
+    }
     void this.router.navigateByUrl(this.router.url.replace(/^\/c\/[^/?#]+/, `/c/${childId}`));
   }
 }

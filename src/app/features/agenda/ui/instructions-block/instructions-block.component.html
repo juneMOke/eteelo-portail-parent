@@ -1,0 +1,26 @@
+<h3 class="head">{{ heading() }}</h3>
+
+<div class="body">
+  @if (items().length) {
+    <!-- role="list" : Safari retire la sémantique de liste quand les puces sont masquées. -->
+    <ol class="items" role="list">
+      @for (item of items(); track $index) {
+        <li class="item">
+          <span class="number" aria-hidden="true">{{ $index + 1 }}</span>
+          <span class="text">
+            {{ item.text }}
+            @if (item.points) {
+              <span class="points">({{ pointsLabel(item.points) }})</span>
+            }
+          </span>
+        </li>
+      }
+    </ol>
+  } @else {
+    <p class="empty">{{ emptyMessage() }}</p>
+  }
+
+  @if (note(); as note) {
+    <p class="note">{{ note }}</p>
+  }
+</div>

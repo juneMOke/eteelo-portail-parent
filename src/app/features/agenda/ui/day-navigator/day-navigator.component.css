@@ -1,0 +1,116 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.navigator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.arrow {
+  display: grid;
+  flex: none;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-soft);
+  color: var(--color-accent);
+  cursor: pointer;
+  transition: background-color var(--duration-hover);
+}
+
+.arrow:hover:not(:disabled) {
+  background: var(--color-accent-soft);
+}
+
+/* À la borne : visible pour que la mise en page ne saute pas, mais inactive. */
+.arrow:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.date {
+  color: var(--color-heading);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+}
+
+.date:focus {
+  outline: none;
+}
+
+.date:focus-visible {
+  border-radius: var(--radius-sm);
+  box-shadow: var(--focus-ring);
+}
+
+.date::first-letter {
+  text-transform: uppercase;
+}
+
+.meta {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.jump {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding-inline: var(--space-1);
+}
+
+.jump-label {
+  color: var(--color-text-secondary);
+  font-family: var(--font-title);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.jump-input {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-md);
+}
+
+.today {
+  min-height: var(--tap-target);
+  margin-left: auto;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+@media (min-width: 905px) {
+  .date {
+    font-size: var(--text-lg);
+  }
+}

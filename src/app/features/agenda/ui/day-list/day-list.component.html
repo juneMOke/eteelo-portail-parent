@@ -1,0 +1,37 @@
+<app-day-navigator
+  [day]="day()"
+  [window]="window()"
+  [summary]="summary()"
+  (dayChange)="select($event)"
+/>
+
+<section
+  class="day"
+  [attr.aria-label]="labels().region"
+  (touchstart)="onTouchStart($event)"
+  (touchend)="onTouchEnd($event)"
+>
+  <!-- À chaque jour, la liste glisse dans le sens du changement. -->
+  <div class="day-content" [style.animation-name]="dayAnimation()">
+    @if (count()) {
+      <ng-content />
+    } @else {
+      <div class="empty-day">
+        <h2>{{ schoolDay() ? labels().emptyDay : 'Pas d’école ce jour' }}</h2>
+        @if (nextDay(); as next) {
+          <a
+            class="next"
+            [routerLink]="[]"
+            [queryParams]="{ date: next }"
+            replaceUrl
+            (click)="focusNavigator()"
+          >
+            {{ labels().next }} : {{ nextDayDate(next) | date: 'EEEE dd/MM' : 'UTC' }}
+          </a>
+        } @else {
+          <p>Rien n’est prévu pour les quatre prochaines semaines.</p>
+        }
+      </div>
+    }
+  </div>
+</section>
