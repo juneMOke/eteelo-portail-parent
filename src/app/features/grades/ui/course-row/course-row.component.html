@@ -9,7 +9,7 @@
   >
     <span class="code" aria-hidden="true">{{ course().subjectCode }}</span>
     <span class="body">
-      <span class="label">{{ course().label }}</span>
+      <span class="label">{{ course().subjectLabel }}</span>
       <span class="summary">{{ summary() }}</span>
     </span>
     <app-average [average]="course().average" size="md" />
@@ -19,7 +19,7 @@
 
 <div class="panel" [id]="panelId" [attr.hidden]="expanded() ? null : ''">
   <div class="panel-content">
-    @if (course().evaluationCount) {
+    @if (course().count) {
       <ng-content />
     } @else {
       <p class="none">Pas encore d’évaluation pour ce cours.</p>

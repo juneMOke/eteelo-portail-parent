@@ -3,7 +3,7 @@
 <div class="band" aria-hidden="true">
   <div class="titles">
     <p class="title">Moyenne générale</p>
-    <p class="scope">{{ report().scopeLabel }}</p>
+    <p class="scope">{{ report().averageLabel }}</p>
   </div>
   <ui-badge class="status" [class.provisional]="!official()" tone="pending" [onTone]="official()">
     {{ status() }}

@@ -1,5 +1,13 @@
 @if (data(); as data) {
-  <app-term-picker [tree]="data" (selectionChange)="selection.select($event)" />
+  @if (data.selection; as current) {
+    @if (periods(); as periods) {
+      <app-term-picker
+        [periods]="periods"
+        [selection]="current"
+        (selectionChange)="selection.select($event)"
+      />
+    }
+  }
   <p class="visually-hidden" aria-live="polite">{{ announcement() }}</p>
 
   <div class="list" [attr.aria-busy]="resource.isLoading()">
@@ -18,7 +26,7 @@
                     <app-result-card
                       [evaluation]="item"
                       [link]="cardLink(item)"
-                      [queryParams]="cardQueryParams(data, course.courseId)"
+                      [queryParams]="cardQueryParams(data.selection, course.courseId)"
                       [context]="cardContext(item)"
                     />
                   </li>
@@ -36,15 +44,15 @@
   <a
     class="sibling"
     [routerLink]="reportCardLink()"
-    [queryParams]="{ term: data.selection.termId, period: data.selection.periodId }"
+    [queryParams]="selectionParams(data.selection)"
   >
     Voir Mon bulletin de cette période ›
   </a>
-} @else if (resource.error()) {
+} @else if (failed()) {
   <ui-load-error
     heading="Impossible d’afficher les notes"
     message="Les notes nécessitent une connexion. Vérifiez-la, puis réessayez."
-    (retry)="resource.reload()"
+    (retry)="retry()"
   />
 } @else {
   <div class="loading" role="status" aria-busy="true">

@@ -6,6 +6,7 @@ import {
 } from '../../../testing/assessments.fixture';
 import { bootstrapFixture } from '../../../testing/bootstrap.fixture';
 import { gradeCoursesFixture } from '../../../testing/grade-courses.fixture';
+import { GRADE_PERIODS } from '../../../testing/grades-terms.fixture';
 import { gradeWeekFixture } from '../../../testing/grades-week.fixture';
 import {
   homeworkDetailFixture,
@@ -19,7 +20,9 @@ const identity = { ...bootstrapFixture().parent, fullName: 'Léonie Kabila' };
 const EVALUATION_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/evaluations(?:/([^/?]+))?$`);
 const HOMEWORK_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/homework(?:/([^/?]+))?$`);
 const SUBMISSION_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/homework/([^/?]+)/submission$`);
-const GRADES_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/grades/(week|courses|report-card)$`);
+const GRADES_ROUTE = new RegExp(
+  `^${PARENT_CHILDREN_API}/[^/]+/grades/(week|periods|courses|report-card)$`,
+);
 
 /** Serveur factice : répond aux routes du portail parent sans quitter le navigateur. */
 const mockBackend: HttpInterceptorFn = (req, next) => {
@@ -43,10 +46,11 @@ const mockBackend: HttpInterceptorFn = (req, next) => {
   const grades = req.method === 'GET' ? GRADES_ROUTE.exec(req.url) : null;
   if (grades) {
     const query = {
-      termId: req.params.get('termId') ?? undefined,
       periodId: req.params.get('periodId') ?? undefined,
+      part: req.params.get('part') ?? undefined,
     };
-    if (grades[1] === 'week') return ok(gradeWeekFixture(req.params.get('date') ?? undefined));
+    if (grades[1] === 'week') return ok(gradeWeekFixture(req.params.get('weekOf') ?? undefined));
+    if (grades[1] === 'periods') return ok(GRADE_PERIODS);
     return ok(grades[1] === 'courses' ? gradeCoursesFixture(query) : reportCardFixture(query));
   }
   const submission = req.method === 'POST' ? SUBMISSION_ROUTE.exec(req.url) : null;

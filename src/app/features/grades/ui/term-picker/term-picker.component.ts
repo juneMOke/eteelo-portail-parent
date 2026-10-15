@@ -6,12 +6,11 @@ import {
   output,
   viewChild,
 } from '@angular/core';
-import { TermSelection, TermTree } from '../../../../core/api/grades.contract';
+import { GradePart, GradePeriod, GradeSelection } from '../../../../core/api/grades.contract';
 import { IconComponent } from '../../../../shared/ui/icon/icon.component';
 import { SheetComponent } from '../../../../shared/ui/sheet/sheet.component';
+import { TermChoice } from '../../data-access/term-selection';
 import { TermOptionsComponent } from '../term-options/term-options.component';
-
-export type TermChoice = Pick<TermSelection, 'termId' | 'periodId'>;
 
 /**
  * ③ Choix trimestre · période, partagé par Mes cours et Mon bulletin. Deux rangées de pilules ;
@@ -27,41 +26,42 @@ export type TermChoice = Pick<TermSelection, 'termId' | 'periodId'>;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TermPickerComponent {
-  readonly tree = input.required<TermTree>();
+  readonly periods = input.required<readonly GradePeriod[]>();
+  readonly selection = input.required<GradeSelection>();
   readonly selectionChange = output<TermChoice>();
 
   private readonly sheet = viewChild.required(SheetComponent);
 
-  /** Trimestre parcouru dans la feuille, avant d'en choisir la période. */
-  protected readonly draftTerm = linkedSignal(() => this.tree().selection.termId);
+  /** Période scolaire parcourue dans la feuille, avant d'en choisir la partie. */
+  protected readonly draftTerm = linkedSignal(() => this.selection().periodId);
 
   protected openSheet(): void {
-    this.draftTerm.set(this.tree().selection.termId);
+    this.draftTerm.set(this.selection().periodId);
     this.sheet().open();
   }
 
   /** En ligne : un trimestre choisi s'affiche en entier. */
-  protected pickTerm(termId: string): void {
-    this.choose({ termId, periodId: null });
+  protected pickTerm(periodId: string): void {
+    this.choose({ periodId, part: 'ALL' });
   }
 
-  protected pickPeriod(periodId: string | null): void {
-    this.choose({ termId: this.tree().selection.termId, periodId });
+  protected pickPart(part: GradePart): void {
+    this.choose({ periodId: this.selection().periodId, part });
   }
 
-  protected pickDraftPeriod(periodId: string | null): void {
+  protected pickDraftPart(part: GradePart): void {
     this.sheet().close();
-    this.choose({ termId: this.draftTerm(), periodId });
+    this.choose({ periodId: this.draftTerm(), part });
   }
 
-  /** Période cochée dans la feuille : seulement sur le trimestre de la sélection. */
-  protected draftPeriod(): string | null | undefined {
-    const { termId, periodId } = this.tree().selection;
-    return this.draftTerm() === termId ? periodId : undefined;
+  /** Partie cochée dans la feuille : seulement sur la période de la sélection. */
+  protected draftPart(): GradePart | undefined {
+    const { periodId, part } = this.selection();
+    return this.draftTerm() === periodId ? part : undefined;
   }
 
   private choose(choice: TermChoice): void {
-    const { termId, periodId } = this.tree().selection;
-    if (choice.termId !== termId || choice.periodId !== periodId) this.selectionChange.emit(choice);
+    const { periodId, part } = this.selection();
+    if (choice.periodId !== periodId || choice.part !== part) this.selectionChange.emit(choice);
   }
 }

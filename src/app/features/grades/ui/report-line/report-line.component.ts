@@ -8,9 +8,9 @@ import {
 } from '@angular/core';
 import { Params, RouterLink } from '@angular/router';
 import { ReportCardLine } from '../../../../core/api/grades.contract';
-import { gradeLevel } from '../../../../shared/ui/grade/grade.component';
 import { IconComponent } from '../../../../shared/ui/icon/icon.component';
 import { percentLabel } from '../../data-access/grade-formats';
+import { averageColor } from '../../data-access/grade-state';
 import { AverageComponent } from '../average/average.component';
 
 /**
@@ -32,17 +32,22 @@ export class ReportLineComponent {
 
   private readonly locale = inject(LOCALE_ID);
 
+  /** La moyenne du cours ; null tant qu'il n'a pas de note. */
+  protected readonly average = computed(() => {
+    const { percent, state } = this.line();
+    return percent === null ? null : { percent, state: state ?? '' };
+  });
   protected readonly gauge = computed(() => {
-    const average = this.line().average;
+    const average = this.average();
     if (!average) return null;
     return {
       width: `${Math.min(Math.max(average.percent, 0), 100)}%`,
-      color: `var(--color-grade-${gradeLevel(average.percent, 100)})`,
+      color: averageColor(average.state),
     };
   });
   protected readonly spoken = computed(() => {
-    const { label, average } = this.line();
+    const average = this.average();
     const value = average ? percentLabel(average.percent, this.locale) : 'pas encore de note';
-    return `${label}, ${value}. Voir le détail dans Mes cours.`;
+    return `${this.line().subjectLabel}, ${value}. Voir le détail dans Mes cours.`;
   });
 }

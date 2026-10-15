@@ -25,31 +25,40 @@ test.describe('Mon bulletin', () => {
     await expect(page.locator('app-report-document')).toContainText('après sa publication');
   });
 
-  test('montre le bulletin officiel du trimestre, son rang et son PDF', async ({ page }) => {
+  test('passe du trimestre entier à une période', async ({ page }) => {
     await mockParentApi(page);
     await page.goto(REPORT_CARD);
 
-    await choosePeriod(page, '1er trimestre', 'Tout le trimestre');
+    await choosePeriod(page, '1er trimestre', '1re période');
 
-    await expect(page).toHaveURL(`${REPORT_CARD}?term=${TERM.first}`);
+    await expect(page).toHaveURL(`${REPORT_CARD}?term=${TERM.first}&part=FIRST`);
+    await expect(page.locator('app-average-header')).toContainText(
+      'Moyenne provisoire · 1er trimestre · 1re période',
+    );
+  });
+
+  test('s’ouvre sur le bulletin officiel publié, son rang et son PDF', async ({ page }) => {
+    await mockParentApi(page, { reportCardPublished: true });
+    await page.goto(REPORT_CARD);
+
     const header = page.locator('app-average-header');
     await expect(header).toContainText('Officiel · publié le 19/12');
     await expect(header).toContainText('Moyenne de l’année au 1er trimestre');
     await expect(header).toContainText('8e sur 32');
     await expect(page.getByRole('link', { name: 'Télécharger' })).toHaveAttribute(
       'href',
-      /\/report-cards\/[^/]+\/document$/,
+      /\/grades\/report-card\/[^/]+\/pdf$/,
     );
   });
 
   test('ouvre Mes cours sur le cours d’une ligne', async ({ page }) => {
-    await mockParentApi(page);
+    await mockParentApi(page, { reportCardPublished: true });
     await page.goto(`${REPORT_CARD}?term=${TERM.first}`);
 
     await page.getByRole('link', { name: /^Géographie, 45,0/ }).click();
 
     await expect(page).toHaveURL(
-      `/c/${GRACE.childId}/grades/courses?term=${TERM.first}&course=${COURSE.geography}`,
+      `/c/${GRACE.childId}/grades/courses?term=${TERM.first}&part=ALL&course=${COURSE.geography}`,
     );
     await expect(page.getByRole('button', { name: /^Géographie, moyenne/ })).toHaveAttribute(
       'aria-expanded',

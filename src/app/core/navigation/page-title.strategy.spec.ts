@@ -67,10 +67,10 @@ describe('PageTitleStrategy', () => {
     const router = TestBed.inject(Router);
     const strategy = TestBed.inject(PageTitleStrategy);
 
-    await router.navigateByUrl('/assessments/41e0?from=courses&term=t1&period=p1&course=c9');
+    await router.navigateByUrl('/assessments/41e0?from=courses&term=t1&part=FIRST&course=c9');
     expect(strategy.back()).toEqual({
       entry: expect.objectContaining({ id: 'courses', title: 'Mes cours' }),
-      queryParams: { term: 't1', period: 'p1', course: 'c9' },
+      queryParams: { term: 't1', part: 'FIRST', course: 'c9' },
     });
 
     await router.navigateByUrl('/assessments/41e0?from=home&date=2026-09-24');

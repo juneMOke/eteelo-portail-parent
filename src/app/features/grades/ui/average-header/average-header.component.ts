@@ -31,20 +31,18 @@ export class AverageHeaderComponent {
 
   protected readonly official = computed(() => this.report().status === 'OFFICIAL');
 
-  /** « Officiel · publié le 26/09 », « Officiel · mis à jour le 29/09 », « Provisoire ». */
+  /** « Officiel · publié le 26/09 », « Provisoire ». */
   protected readonly status = computed(() => {
-    const { publishedAt, updatedAt } = this.report();
+    const { publishedAt } = this.report();
     if (!this.official()) return 'Provisoire';
-    if (updatedAt) return `Officiel · mis à jour le ${this.day(updatedAt, 'dd/MM')}`;
     return publishedAt ? `Officiel · publié le ${this.day(publishedAt, 'dd/MM')}` : 'Officiel';
   });
 
   /** Lu avant le chiffre : « Bulletin officiel, publié le 19 décembre. Moyenne générale 58,4 %. » */
   protected readonly spoken = computed(() => {
-    const { publishedAt, updatedAt, average } = this.report();
-    const at = updatedAt ?? publishedAt;
+    const { publishedAt, average } = this.report();
     const origin = this.official()
-      ? `Bulletin officiel${at ? `, ${updatedAt ? 'mis à jour' : 'publié'} le ${this.day(at, 'd MMMM')}` : ''}.`
+      ? `Bulletin officiel${publishedAt ? `, publié le ${this.day(publishedAt, 'd MMMM')}` : ''}.`
       : 'Moyenne provisoire.';
     const value = average ? percentLabel(average.percent, this.locale) : 'pas encore de note';
     return `${origin} Moyenne générale ${value}.`;

@@ -13,24 +13,22 @@ describe('ReportDocumentComponent', () => {
     const fixture = TestBed.createComponent(ReportDocumentComponent);
     fixture.componentRef.setInput('title', 'Bulletin du 1er trimestre');
     fixture.componentRef.setInput('document', document);
-    fixture.componentRef.setInput('href', '/api/v1/parent/children/c1/report-cards/r1/document');
     await fixture.whenStable();
     return fixture.nativeElement as HTMLElement;
   }
 
   it('propose le PDF signé de l’école', async () => {
     const el = await render({
-      reportCardId: 'r1',
-      fileName: 'Bulletin-T1.pdf',
+      href: '/api/v1/parent/children/c1/grades/report-card/r1/pdf',
+      number: 'BUL-2026-0042',
       sizeBytes: 245_760,
-      signedBy: 'la direction',
     });
     const link = el.querySelector('a')!;
 
     expect(el.querySelector('h2')?.textContent).toBe('Bulletin du 1er trimestre');
-    expect(el.querySelector('p')?.textContent).toBe('PDF · 246 Ko · signé par la direction');
+    expect(el.querySelector('p')?.textContent).toBe('PDF · 246 Ko · n° BUL-2026-0042');
     expect(link.textContent?.trim()).toBe('Télécharger');
-    expect(link.getAttribute('href')).toBe('/api/v1/parent/children/c1/report-cards/r1/document');
+    expect(link.getAttribute('href')).toBe('/api/v1/parent/children/c1/grades/report-card/r1/pdf');
     expect(link.hasAttribute('download')).toBe(true);
   });
 

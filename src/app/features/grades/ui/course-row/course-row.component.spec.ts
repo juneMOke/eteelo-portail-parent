@@ -3,7 +3,7 @@ import localeFr from '@angular/common/locales/fr';
 import { Component, LOCALE_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { COURSES } from '../../../../../testing/grade-courses.fixture';
-import { CourseGrades } from '../../../../core/api/grades.contract';
+import { GradeCourse } from '../../../../core/api/grades.contract';
 import { CourseRowComponent } from './course-row.component';
 
 registerLocaleData(localeFr);
@@ -21,12 +21,12 @@ registerLocaleData(localeFr);
   `,
 })
 class HostComponent {
-  readonly course = signal<CourseGrades>(COURSES[0]);
+  readonly course = signal<GradeCourse>(COURSES[0]);
   readonly expanded = signal(false);
 }
 
 describe('CourseRowComponent', () => {
-  async function render(course: CourseGrades) {
+  async function render(course: GradeCourse) {
     TestBed.configureTestingModule({ providers: [{ provide: LOCALE_ID, useValue: 'fr' }] });
     const fixture = TestBed.createComponent(HostComponent);
     fixture.componentInstance.course.set(course);

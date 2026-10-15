@@ -15,7 +15,7 @@ test.describe('Ma semaine', () => {
     await expect(page).toHaveURL(WEEK);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Ma semaine');
     await expect(page.locator('app-week-navigator .date')).toHaveText(
-      'Semaine du 21 au 25 septembre',
+      'Semaine du 21 au 26 septembre',
     );
     await expect(page.locator('app-week-navigator .meta')).toHaveText(
       '1 évaluation · 0 notée · 1 en attente',
@@ -66,7 +66,7 @@ test.describe('Ma semaine', () => {
     await page.locator('app-top-bar').getByRole('link', { name: 'Ma semaine' }).click();
     await expect(page).toHaveURL(`${WEEK}?date=2026-09-14`);
     await expect(page.locator('app-week-navigator .date')).toHaveText(
-      'Semaine du 14 au 18 septembre',
+      'Semaine du 14 au 19 septembre',
     );
   });
 

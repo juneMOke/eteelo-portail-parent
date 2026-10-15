@@ -1,10 +1,11 @@
-import type { GradeWeek, GradedEvaluation } from '../app/core/api/grades.contract';
+import type { GradeCard, GradeWeek } from '../app/core/api/grades.contract';
 import {
   CHEMISTRY_GRADED,
   FRENCH_ABSENT,
   GEOGRAPHY_LOW,
   MATHS_AWAITING,
 } from './assessments.fixture';
+import { GRACE } from './bootstrap.fixture';
 import { MATHS_GRADED } from './homework.fixture';
 
 /**
@@ -24,7 +25,7 @@ export const COURSE = {
   civics: 'c0a1b2c3-0000-4000-8000-000000000008',
 } as const;
 
-export const MATHS_HOMEWORK_PASSED: GradedEvaluation = {
+export const MATHS_HOMEWORK_PASSED: GradeCard = {
   evaluationId: MATHS_GRADED.evaluationId,
   courseId: COURSE.maths,
   kind: 'HOMEWORK',
@@ -32,159 +33,162 @@ export const MATHS_HOMEWORK_PASSED: GradedEvaluation = {
   subjectLabel: 'Mathématiques',
   subjectCode: 'MATH',
   date: '2026-09-14',
-  notions: ['Fractions équivalentes', 'PPCM'],
+  topics: ['Fractions équivalentes', 'PPCM'],
   state: 'PASSED',
   points: 15,
   maxPoints: 20,
-  gradeChangedAt: null,
+  revisedAt: null,
+  href: `/api/v1/parent/children/${GRACE.childId}/homework/${MATHS_GRADED.evaluationId}`,
 };
 
-export const CHEMISTRY_PASSED: GradedEvaluation = {
+export const CHEMISTRY_PASSED: GradeCard = {
   evaluationId: CHEMISTRY_GRADED.evaluationId,
   courseId: COURSE.chemistry,
-  kind: 'INTERRO',
+  kind: 'TEST',
   title: 'Interrogation de Chimie — les acides',
   subjectLabel: 'Chimie',
   subjectCode: 'CHIM',
   date: '2026-09-15',
-  notions: ['Acides et bases', 'pH'],
+  topics: ['Acides et bases', 'pH'],
   state: 'PASSED',
   points: 13.5,
   maxPoints: 20,
-  gradeChangedAt: null,
+  revisedAt: null,
+  href: `/api/v1/parent/children/${GRACE.childId}/evaluations/${CHEMISTRY_GRADED.evaluationId}`,
 };
 
-export const GEOGRAPHY_FAILED: GradedEvaluation = {
+export const GEOGRAPHY_FAILED: GradeCard = {
   evaluationId: GEOGRAPHY_LOW.evaluationId,
   courseId: COURSE.geography,
-  kind: 'INTERRO',
+  kind: 'TEST',
   title: 'Interrogation de Géographie — les fleuves du Congo',
   subjectLabel: 'Géographie',
   subjectCode: 'GEO',
   date: '2026-09-16',
-  notions: ['Bassin du Congo', 'Affluents'],
+  topics: ['Bassin du Congo', 'Affluents'],
   state: 'FAILED',
   points: 9,
   maxPoints: 20,
-  gradeChangedAt: '2026-09-29T10:00:00Z',
+  revisedAt: '2026-09-29T10:00:00Z',
+  href: `/api/v1/parent/children/${GRACE.childId}/evaluations/${GEOGRAPHY_LOW.evaluationId}`,
 };
 
-export const FRENCH_EXCUSED: GradedEvaluation = {
+export const FRENCH_EXCUSED: GradeCard = {
   evaluationId: FRENCH_ABSENT.evaluationId,
   courseId: COURSE.french,
-  kind: 'EXAMEN',
+  kind: 'EXAM',
   title: 'Examen de Français — rédaction',
   subjectLabel: 'Français',
   subjectCode: 'FRA',
   date: '2026-09-17',
-  notions: ['Rédaction argumentée'],
+  topics: ['Rédaction argumentée'],
   state: 'ABSENT_EXCUSED',
   points: null,
   maxPoints: 40,
-  gradeChangedAt: null,
+  revisedAt: null,
+  href: `/api/v1/parent/children/${GRACE.childId}/evaluations/${FRENCH_ABSENT.evaluationId}`,
 };
 
-export const ENGLISH_AVERAGE: GradedEvaluation = {
+export const ENGLISH_AVERAGE: GradeCard = {
   evaluationId: '41e0a1b2-c3d4-4e5f-8a6b-7c8d9e0f1a11',
   courseId: COURSE.english,
-  kind: 'INTERRO',
+  kind: 'TEST',
   title: 'Interrogation d’Anglais — le prétérit',
   subjectLabel: 'Anglais',
   subjectCode: 'ANG',
   date: '2026-09-18',
-  notions: ['Prétérit simple'],
+  topics: ['Prétérit simple'],
   state: 'AVERAGE',
   points: 5.5,
   maxPoints: 10,
-  gradeChangedAt: null,
+  revisedAt: null,
+  href: `/api/v1/parent/children/${GRACE.childId}/evaluations/41e0a1b2-c3d4-4e5f-8a6b-7c8d9e0f1a11`,
 };
 
-export const HISTORY_UNEXCUSED: GradedEvaluation = {
+export const HISTORY_UNEXCUSED: GradeCard = {
   evaluationId: '41e0a1b2-c3d4-4e5f-8a6b-7c8d9e0f1a12',
   courseId: COURSE.history,
-  kind: 'INTERRO',
+  kind: 'TEST',
   title: 'Interrogation d’Histoire — le royaume Kongo',
   subjectLabel: 'Histoire',
   subjectCode: 'HIST',
   date: '2026-09-18',
-  notions: ['Royaume Kongo'],
+  topics: ['Royaume Kongo'],
   state: 'ABSENT_UNEXCUSED',
   points: 0,
   maxPoints: 20,
-  gradeChangedAt: null,
+  revisedAt: null,
+  href: `/api/v1/parent/children/${GRACE.childId}/evaluations/41e0a1b2-c3d4-4e5f-8a6b-7c8d9e0f1a12`,
 };
 
-export const PHYSICS_PENDING: GradedEvaluation = {
+export const PHYSICS_PENDING: GradeCard = {
   evaluationId: '41e0a1b2-c3d4-4e5f-8a6b-7c8d9e0f1a13',
   courseId: COURSE.physics,
-  kind: 'INTERRO',
+  kind: 'TEST',
   title: 'Interrogation de Physique — les forces',
   subjectLabel: 'Physique',
   subjectCode: 'PHY',
   date: '2026-09-18',
-  notions: ['Forces et mouvement'],
+  topics: ['Forces et mouvement'],
   state: 'PENDING',
   points: null,
   maxPoints: 20,
-  gradeChangedAt: null,
+  revisedAt: null,
+  href: `/api/v1/parent/children/${GRACE.childId}/evaluations/41e0a1b2-c3d4-4e5f-8a6b-7c8d9e0f1a13`,
 };
 
-export const MATHS_PENDING: GradedEvaluation = {
+export const MATHS_PENDING: GradeCard = {
   evaluationId: MATHS_AWAITING.evaluationId,
   courseId: COURSE.maths,
-  kind: 'INTERRO',
+  kind: 'TEST',
   title: 'Interrogation de Mathématiques — les fractions',
   subjectLabel: 'Mathématiques',
   subjectCode: 'MATH',
   date: '2026-09-21',
-  notions: ['Fractions', 'Simplification'],
+  topics: ['Fractions', 'Simplification'],
   state: 'PENDING',
   points: null,
   maxPoints: 20,
-  gradeChangedAt: null,
+  revisedAt: null,
+  href: `/api/v1/parent/children/${GRACE.childId}/evaluations/${MATHS_AWAITING.evaluationId}`,
 };
 
-/** Semaine du 14 au 18 septembre : les six états. */
-export const FULL_WEEK: readonly GradedEvaluation[] = [
-  MATHS_HOMEWORK_PASSED,
-  CHEMISTRY_PASSED,
-  GEOGRAPHY_FAILED,
-  FRENCH_EXCUSED,
-  ENGLISH_AVERAGE,
-  HISTORY_UNEXCUSED,
-  PHYSICS_PENDING,
-];
+const BOUNDS = { firstWeek: '2026-09-07', currentWeek: '2026-09-21' } as const;
 
-const BOUNDS = { firstWeekStart: '2026-09-07', currentWeekStart: '2026-09-21' } as const;
-
-/** La semaine qui contient `date` (par défaut la semaine en cours), comme la rend le serveur. */
-export function gradeWeekFixture(date = '2026-09-22'): GradeWeek {
-  if (date >= '2026-09-14' && date <= '2026-09-20') {
+/** La semaine qui contient `weekOf` (par défaut la semaine en cours), comme la rend le serveur. */
+export function gradeWeekFixture(weekOf = '2026-09-22'): GradeWeek {
+  if (weekOf >= '2026-09-14' && weekOf <= '2026-09-20') {
     return {
       ...BOUNDS,
-      from: '2026-09-14',
-      to: '2026-09-18',
-      lastEvaluationDate: '2026-09-18',
-      counts: { total: 7, graded: 5, pending: 1 },
-      items: FULL_WEEK,
+      weekStart: '2026-09-14',
+      weekEnd: '2026-09-19',
+      lastEvaluationDate: null,
+      summary: { total: 7, graded: 6, pending: 1 },
+      days: [
+        { date: '2026-09-14', items: [MATHS_HOMEWORK_PASSED] },
+        { date: '2026-09-15', items: [CHEMISTRY_PASSED] },
+        { date: '2026-09-16', items: [GEOGRAPHY_FAILED] },
+        { date: '2026-09-17', items: [FRENCH_EXCUSED] },
+        { date: '2026-09-18', items: [ENGLISH_AVERAGE, HISTORY_UNEXCUSED, PHYSICS_PENDING] },
+      ],
     };
   }
-  if (date >= '2026-09-21') {
+  if (weekOf >= '2026-09-21') {
     return {
       ...BOUNDS,
-      from: '2026-09-21',
-      to: '2026-09-25',
-      lastEvaluationDate: '2026-09-21',
-      counts: { total: 1, graded: 0, pending: 1 },
-      items: [MATHS_PENDING],
+      weekStart: '2026-09-21',
+      weekEnd: '2026-09-26',
+      lastEvaluationDate: null,
+      summary: { total: 1, graded: 0, pending: 1 },
+      days: [{ date: '2026-09-21', items: [MATHS_PENDING] }],
     };
   }
   return {
     ...BOUNDS,
-    from: '2026-09-07',
-    to: '2026-09-11',
+    weekStart: '2026-09-07',
+    weekEnd: '2026-09-12',
     lastEvaluationDate: null,
-    counts: { total: 0, graded: 0, pending: 0 },
-    items: [],
+    summary: { total: 0, graded: 0, pending: 0 },
+    days: [],
   };
 }

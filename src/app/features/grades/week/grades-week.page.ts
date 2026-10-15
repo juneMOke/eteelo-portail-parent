@@ -8,14 +8,13 @@ import {
   viewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GradeWeek, GradedEvaluation } from '../../../core/api/grades.contract';
+import { GradeCard, GradeWeek } from '../../../core/api/grades.contract';
 import { CivilDate, addDays } from '../../../shared/date/civil-date';
 import { EmptyPeriodComponent } from '../../../shared/ui/empty-period/empty-period.component';
 import { LoadErrorComponent } from '../../../shared/ui/load-error/load-error.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { SwipePagerComponent } from '../../../shared/ui/swipe-pager/swipe-pager.component';
 import { latestValue } from '../../../shared/resource/latest-value';
-import { groupByDay } from '../data-access/day-groups';
 import { dayLabel } from '../data-access/grade-formats';
 import { evaluationLink, evaluationQueryParams } from '../data-access/grade-links';
 import { GradesFacade } from '../data-access/grades.facade';
@@ -24,7 +23,7 @@ import { WeekNavigatorComponent } from '../ui/week-navigator/week-navigator.comp
 
 /**
  * Ma semaine : « qu'a-t-il eu cette semaine ? ». Les évaluations d'une semaine, groupées par
- * jour, sans aucune moyenne. La semaine vit dans l'URL (`?date=`) : la fiche y ramène, le
+ * jour par le serveur, sans aucune moyenne. La semaine vit dans l'URL (`?date=`) : la fiche y ramène, le
  * changement d'enfant la garde. La semaine affichée reste à l'écran pendant que la suivante
  * arrive, plutôt qu'un squelette à chaque flèche.
  */
@@ -55,13 +54,13 @@ export default class GradesWeekPage {
 
   protected readonly resource = this.facade.weekResource(() => ({
     childId: this.childId(),
-    date: this.date(),
+    weekOf: this.date(),
   }));
   protected readonly week = latestValue(this.resource);
   protected readonly loading = computed(() => this.resource.isLoading());
 
   protected readonly days = computed(() =>
-    groupByDay(this.week()?.items ?? []).map((day) => ({
+    (this.week()?.days ?? []).map((day) => ({
       ...day,
       label: dayLabel(day.date, this.locale),
     })),
@@ -71,12 +70,12 @@ export default class GradesWeekPage {
     return last ? `Dernière évaluation : ${dayLabel(last, this.locale).toLowerCase()}` : null;
   });
 
-  protected cardLink(item: GradedEvaluation): string[] {
+  protected cardLink(item: GradeCard): string[] {
     return evaluationLink(this.childId(), item);
   }
 
   protected cardQueryParams(week: GradeWeek) {
-    return evaluationQueryParams('grades-week', { date: week.from });
+    return evaluationQueryParams('grades-week', { date: week.weekStart });
   }
 
   protected selectWeek(date: CivilDate): void {
@@ -89,8 +88,8 @@ export default class GradesWeekPage {
 
   /** Balayage : même effet que les flèches, dans les bornes. */
   protected onSwipe(direction: 1 | -1, week: GradeWeek): void {
-    const target = addDays(week.from, 7 * direction);
-    if (target >= week.firstWeekStart && target <= week.currentWeekStart) this.selectWeek(target);
+    const target = addDays(week.weekStart, 7 * direction);
+    if (target >= week.firstWeek && target <= week.currentWeek) this.selectWeek(target);
   }
 
   /** Le lien de la semaine vide disparaît avec elle : le focus passe au navigateur. */

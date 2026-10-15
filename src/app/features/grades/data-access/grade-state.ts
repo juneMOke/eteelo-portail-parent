@@ -1,4 +1,5 @@
-import { GradeState, GradedEvaluation } from '../../../core/api/grades.contract';
+import { GradeState, GradeCard } from '../../../core/api/grades.contract';
+import { GradeLevel } from '../../../shared/ui/grade/grade.component';
 import { Tone } from '../../../shared/ui/tone';
 
 export interface GradeStateView {
@@ -31,9 +32,21 @@ export function gradeStateView(state: GradeState): GradeStateView {
 
 /** La note à afficher, ou null quand l'état en tient lieu. */
 export function displayedScore(
-  evaluation: Pick<GradedEvaluation, 'state' | 'points' | 'maxPoints'>,
+  evaluation: Pick<GradeCard, 'state' | 'points' | 'maxPoints'>,
 ): { points: number; maxPoints: number } | null {
   const { points, maxPoints, state } = evaluation;
   if (points === null || gradeStateView(state).placeholder !== null) return null;
   return { points, maxPoints };
+}
+
+const AVERAGE_LEVELS: Readonly<Record<string, GradeLevel>> = {
+  PASSED: 'good',
+  AVERAGE: 'fair',
+  FAILED: 'low',
+};
+
+/** Couleur d'une moyenne, tirée du ton que le serveur lui donne ; neutre sans moyenne. */
+export function averageColor(state: GradeState | null): string {
+  const level = state ? AVERAGE_LEVELS[state] : undefined;
+  return level ? `var(--color-grade-${level})` : 'var(--color-text-muted)';
 }

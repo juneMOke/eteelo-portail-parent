@@ -10,7 +10,7 @@ import {
   HomeworkDetail,
   HomeworkList,
 } from './assignments.contract';
-import { GradeCourses, GradeWeek, ReportCard, TermQuery } from './grades.contract';
+import { GradeCourses, GradePeriod, GradeQuery, GradeWeek, ReportCard } from './grades.contract';
 
 type Schemas = components['schemas'];
 export type ParentIdentity = Schemas['ParentPortalIdentityResponse'];
@@ -74,24 +74,29 @@ export class ParentApi {
     );
   }
 
-  /** Évaluations d'une semaine (Ma semaine) ; sans date, la semaine en cours. */
-  gradesWeek(childId: string, date?: string): Observable<GradeWeek> {
+  /** Évaluations d'une semaine (Ma semaine) ; sans jour, la semaine en cours. */
+  gradesWeek(childId: string, weekOf?: string): Observable<GradeWeek> {
     return this.http.get<GradeWeek>(`${PARENT_CHILDREN_API}/${childId}/grades/week`, {
-      params: date ? { date } : {},
+      params: weekOf ? { weekOf } : {},
     });
+  }
+
+  /** Périodes scolaires de l'année de l'enfant, pour le choix trimestre · période. */
+  gradePeriods(childId: string): Observable<GradePeriod[]> {
+    return this.http.get<GradePeriod[]>(`${PARENT_CHILDREN_API}/${childId}/grades/periods`);
   }
 
   /** Moyennes et évaluations par cours (Mes cours) ; sans sélection, la période en cours. */
-  gradeCourses(childId: string, query: TermQuery = {}): Observable<GradeCourses> {
+  gradeCourses(childId: string, query: GradeQuery = {}): Observable<GradeCourses> {
     return this.http.get<GradeCourses>(`${PARENT_CHILDREN_API}/${childId}/grades/courses`, {
-      params: termParams(query),
+      params: gradeParams(query),
     });
   }
 
-  /** Mon bulletin ; sans sélection, la dernière période publiée, sinon la période en cours. */
-  reportCard(childId: string, query: TermQuery = {}): Observable<ReportCard> {
+  /** Mon bulletin ; sans sélection, le dernier bulletin publié, sinon la période en cours. */
+  reportCard(childId: string, query: GradeQuery = {}): Observable<ReportCard> {
     return this.http.get<ReportCard>(`${PARENT_CHILDREN_API}/${childId}/grades/report-card`, {
-      params: termParams(query),
+      params: gradeParams(query),
     });
   }
 
@@ -114,16 +119,9 @@ export class ParentApi {
   }
 }
 
-function termParams({ termId, periodId }: TermQuery): Record<string, string> {
-  return {
-    ...(termId ? { termId } : {}),
-    ...(termId && periodId ? { periodId } : {}),
-  };
-}
-
-/** PDF scellé d'un bulletin publié : servi tel quel, jamais généré par l'application. */
-export function reportCardDocumentUrl(childId: string, reportCardId: string): string {
-  return `${PARENT_CHILDREN_API}/${childId}/report-cards/${reportCardId}/document`;
+/** Une portion sans sa période ne veut rien dire : le serveur l'appliquerait à la période en cours. */
+function gradeParams({ periodId, part }: GradeQuery): Record<string, string> {
+  return periodId ? { periodId, ...(part ? { part } : {}) } : {};
 }
 
 /**

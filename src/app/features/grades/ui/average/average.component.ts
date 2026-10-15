@@ -6,13 +6,13 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { Average } from '../../../../core/api/grades.contract';
-import { gradeLevel } from '../../../../shared/ui/grade/grade.component';
+import { GradeAverage } from '../../../../core/api/grades.contract';
 import { percentLabel } from '../../data-access/grade-formats';
+import { averageColor } from '../../data-access/grade-state';
 
 /**
- * Une moyenne en pourcentage (« 64,5 % »), en Lora, à la couleur des notes (exception
- * documentée du CLAUDE.md). « — » quand le cours n'a pas encore de note.
+ * Une moyenne en pourcentage (« 64,5 % »), en Lora, à la couleur du ton que le serveur lui
+ * donne. « — » quand le cours n'a pas encore de note.
  */
 @Component({
   selector: 'app-average',
@@ -43,7 +43,7 @@ import { percentLabel } from '../../data-access/grade-formats';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AverageComponent {
-  readonly average = input.required<Average | null>();
+  readonly average = input.required<Pick<GradeAverage, 'percent' | 'state'> | null>();
   readonly size = input<'md' | 'lg' | 'xl'>('md');
 
   private readonly locale = inject(LOCALE_ID);
@@ -52,10 +52,5 @@ export class AverageComponent {
     const average = this.average();
     return average ? percentLabel(average.percent, this.locale) : '—';
   });
-  protected readonly color = computed(() => {
-    const average = this.average();
-    return average
-      ? `var(--color-grade-${gradeLevel(average.percent, 100)})`
-      : 'var(--color-text-muted)';
-  });
+  protected readonly color = computed(() => averageColor(this.average()?.state ?? null));
 }

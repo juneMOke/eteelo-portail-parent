@@ -26,14 +26,13 @@ export class ReportDocumentComponent {
   /** « Bulletin du 1er trimestre ». */
   readonly title = input.required<string>();
   readonly document = input.required<ReportCardDocument | null>();
-  readonly href = input<string | null>(null);
 
   private readonly locale = inject(LOCALE_ID);
 
-  /** « PDF · 240 Ko · signé par la direction ». */
+  /** « PDF · 240 Ko · n° BUL-2026-0042 ». */
   protected readonly meta = computed(() => {
     const document = this.document();
     if (!document) return '';
-    return `PDF · ${fileSizeLabel(document.sizeBytes, this.locale)} · signé par ${document.signedBy}`;
+    return `PDF · ${fileSizeLabel(document.sizeBytes, this.locale)} · n° ${document.number}`;
   });
 }

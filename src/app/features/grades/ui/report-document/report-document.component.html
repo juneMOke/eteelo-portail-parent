@@ -7,8 +7,8 @@
     <p>Le bulletin signé sera disponible ici après sa publication par l’école.</p>
   }
 </div>
-@if (document() && href(); as href) {
-  <a class="download" [href]="href" download>
+@if (document(); as document) {
+  <a class="download" [href]="document.href" download>
     <ui-icon name="download" [size]="18" />
     Télécharger
   </a>

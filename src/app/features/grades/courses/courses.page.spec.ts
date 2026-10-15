@@ -7,9 +7,9 @@ import { of } from 'rxjs';
 import { settle } from '../../../../testing/async';
 import { GRACE } from '../../../../testing/bootstrap.fixture';
 import { gradeCoursesFixture } from '../../../../testing/grade-courses.fixture';
-import { PERIOD, TERM } from '../../../../testing/grades-terms.fixture';
+import { GRADE_PERIODS, TERM } from '../../../../testing/grades-terms.fixture';
 import { COURSE } from '../../../../testing/grades-week.fixture';
-import { TermQuery } from '../../../core/api/grades.contract';
+import { GradeQuery } from '../../../core/api/grades.contract';
 import { ParentApi } from '../../../core/api/parent-api';
 import { TermSelectionMemory } from '../data-access/term-selection';
 import CoursesPage from './courses.page';
@@ -18,15 +18,16 @@ registerLocaleData(localeFr);
 
 describe('CoursesPage', () => {
   async function render(
-    inputs: { term?: string; period?: string; course?: string } = {},
+    inputs: { term?: string; part?: string; course?: string } = {},
     before: () => void = () => undefined,
   ) {
-    const gradeCourses = vi.fn((_: string, query: TermQuery) => of(gradeCoursesFixture(query)));
+    const gradeCourses = vi.fn((_: string, query: GradeQuery) => of(gradeCoursesFixture(query)));
+    const gradePeriods = () => of([...GRADE_PERIODS]);
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
         { provide: LOCALE_ID, useValue: 'fr' },
-        { provide: ParentApi, useValue: { gradeCourses } },
+        { provide: ParentApi, useValue: { gradeCourses, gradePeriods } },
       ],
     });
     Element.prototype.scrollIntoView ??= () => undefined;
@@ -60,7 +61,7 @@ describe('CoursesPage', () => {
   });
 
   it('déplie le cours ciblé, et ses évaluations ramènent à lui', async () => {
-    const { el } = await render({ term: TERM.first, period: PERIOD.first, course: COURSE.maths });
+    const { el } = await render({ term: TERM.first, part: 'FIRST', course: COURSE.maths });
     const maths = rows(el)[0];
 
     expect(maths.querySelector('.header')?.getAttribute('aria-expanded')).toBe('true');
@@ -69,7 +70,7 @@ describe('CoursesPage', () => {
       'Lundi 21/09 · Fractions, Simplification',
     );
     expect(maths.querySelector('app-result-card a')?.getAttribute('href')).toContain(
-      `?from=courses&term=${TERM.first}&period=${PERIOD.first}&course=${COURSE.maths}`,
+      `?from=courses&term=${TERM.first}&part=FIRST&course=${COURSE.maths}`,
     );
   });
 
@@ -86,7 +87,7 @@ describe('CoursesPage', () => {
   });
 
   it('dit qu’une période n’est pas encore cotée, sans reproche', async () => {
-    const { el } = await render({ term: TERM.first, period: PERIOD.second });
+    const { el } = await render({ term: TERM.first, part: 'SECOND' });
 
     expect(el.querySelector('ui-empty-period h2')?.textContent).toBe(
       'Aucune évaluation pour la 2e période du 1er trimestre.',
@@ -106,24 +107,25 @@ describe('CoursesPage', () => {
 
     expect(navigate).toHaveBeenCalledWith(
       [],
-      expect.objectContaining({ queryParams: { term: TERM.first, period: null, course: null } }),
+      expect.objectContaining({ queryParams: { term: TERM.first, part: 'ALL', course: null } }),
     );
     expect(TestBed.inject(TermSelectionMemory).recall(GRACE.childId)).toEqual({
-      termId: TERM.first,
+      periodId: TERM.first,
+      part: 'ALL',
     });
   });
 
   it('reprend la sélection de la session quand l’URL n’en porte pas', async () => {
     const { gradeCourses } = await render({}, () =>
       TestBed.inject(TermSelectionMemory).remember(GRACE.childId, {
-        termId: TERM.first,
-        periodId: PERIOD.second,
+        periodId: TERM.first,
+        part: 'SECOND',
       }),
     );
 
     expect(gradeCourses).toHaveBeenCalledWith(GRACE.childId, {
-      termId: TERM.first,
-      periodId: PERIOD.second,
+      periodId: TERM.first,
+      part: 'SECOND',
     });
   });
 
@@ -131,7 +133,7 @@ describe('CoursesPage', () => {
     const { el } = await render();
 
     expect(el.querySelector('a.sibling')?.getAttribute('href')).toBe(
-      `/c/${GRACE.childId}/grades/report-card?term=${TERM.first}&period=${PERIOD.first}`,
+      `/c/${GRACE.childId}/grades/report-card?term=${TERM.first}&part=FIRST`,
     );
   });
 });

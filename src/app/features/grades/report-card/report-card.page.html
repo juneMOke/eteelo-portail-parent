@@ -1,5 +1,13 @@
 @if (report(); as report) {
-  <app-term-picker [tree]="report" (selectionChange)="selection.select($event)" />
+  @if (report.selection; as current) {
+    @if (periods(); as periods) {
+      <app-term-picker
+        [periods]="periods"
+        [selection]="current"
+        (selectionChange)="selection.select($event)"
+      />
+    }
+  }
   <p class="visually-hidden" aria-live="polite">{{ announcement() }}</p>
 
   <div class="summary" [attr.aria-busy]="resource.isLoading()">
@@ -18,7 +26,7 @@
               <app-report-line
                 [line]="line"
                 [link]="coursesLink()"
-                [queryParams]="lineQueryParams(report, line.courseId)"
+                [queryParams]="lineQueryParams(report.selection, line.courseId)"
               />
             </li>
           }
@@ -27,16 +35,12 @@
     }
   </div>
 
-  <app-report-document
-    [title]="'Bulletin du ' + report.selection.label"
-    [document]="report.document"
-    [href]="documentHref()"
-  />
-} @else if (resource.error()) {
+  <app-report-document [title]="documentTitle()" [document]="report.document" />
+} @else if (failed()) {
   <ui-load-error
     heading="Impossible d’afficher le bulletin"
     message="Le bulletin nécessite une connexion. Vérifiez-la, puis réessayez."
-    (retry)="resource.reload()"
+    (retry)="retry()"
   />
 } @else {
   <div class="loading" role="status" aria-busy="true">

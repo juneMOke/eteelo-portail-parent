@@ -1,15 +1,5 @@
-import { formatDate } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  LOCALE_ID,
-  computed,
-  inject,
-  input,
-  output,
-} from '@angular/core';
-import { Term } from '../../../../core/api/grades.contract';
-import { civilToDate } from '../../../../shared/date/civil-date';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { GradePart, GradePeriod } from '../../../../core/api/grades.contract';
 import {
   PillGroupComponent,
   PillOption,
@@ -17,23 +7,24 @@ import {
 
 /**
  * Les deux rangées de pilules de ③ : « Trimestre » puis « Période » (« Tout le trimestre », les
- * périodes, l'examen). Une pilule à venir est affichée mais inactive, avec sa date d'ouverture.
+ * deux périodes, l'examen). Libellés et ordre viennent du serveur ; un cycle semestriel lit
+ * « Semestre » et « Tout le semestre ».
  */
 @Component({
   selector: 'app-term-options',
   imports: [PillGroupComponent],
   template: `
     <ui-pill-group
-      label="Trimestre"
+      [label]="unitLabel()"
       [options]="termOptions()"
-      [checked]="termId()"
+      [checked]="periodId()"
       (pick)="pickTerm($event)"
     />
     <ui-pill-group
       label="Période"
-      [options]="periodOptions()"
-      [checked]="periodId()"
-      (pick)="periodPick.emit($event)"
+      [options]="partOptions()"
+      [checked]="part()"
+      (pick)="pickPart($event)"
     />
   `,
   styles: `
@@ -46,41 +37,41 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TermOptionsComponent {
-  readonly terms = input.required<readonly Term[]>();
-  /** Trimestre dont on montre les périodes. */
-  readonly termId = input.required<string>();
-  /** Période cochée ; null pour « Tout le trimestre », undefined si aucune ne l'est. */
-  readonly periodId = input<string | null | undefined>(undefined);
+  readonly periods = input.required<readonly GradePeriod[]>();
+  /** Période scolaire dont on montre les parties. */
+  readonly periodId = input.required<string>();
+  /** Partie cochée ; undefined si aucune ne l'est. */
+  readonly part = input<GradePart | undefined>(undefined);
   readonly termPick = output<string>();
-  readonly periodPick = output<string | null>();
+  readonly partPick = output<GradePart>();
 
-  private readonly locale = inject(LOCALE_ID);
+  /** « trimestre » ou « semestre », dernier mot du libellé du serveur (« 1er trimestre »). */
+  private readonly unit = computed(() => this.periods()[0]?.label.split(' ').at(-1) ?? 'trimestre');
+  protected readonly unitLabel = computed(
+    () => `${this.unit().charAt(0).toUpperCase()}${this.unit().slice(1)}`,
+  );
 
   protected readonly termOptions = computed(() =>
-    this.terms().map((term) => this.option(term.termId, term.label, term.available, term.opensOn)),
+    this.periods().map((period) => option(period.periodId, period.label)),
   );
-  protected readonly periodOptions = computed(() => {
-    const term = this.terms().find((candidate) => candidate.termId === this.termId());
-    if (!term) return [];
+  protected readonly partOptions = computed(() => {
+    const period = this.periods().find((candidate) => candidate.periodId === this.periodId());
+    if (!period) return [];
     return [
-      this.option(null, 'Tout le trimestre', term.available, term.opensOn),
-      ...term.periods.map((p) => this.option(p.periodId, p.label, p.available, p.opensOn)),
+      option('ALL', `Tout le ${this.unit()}`),
+      ...period.parts.map((part) => option(part.part, part.label)),
     ];
   });
 
-  protected pickTerm(termId: string | null): void {
-    if (termId) this.termPick.emit(termId);
+  protected pickTerm(periodId: string | null): void {
+    if (periodId) this.termPick.emit(periodId);
   }
 
-  private option(
-    id: string | null,
-    label: string,
-    available: boolean,
-    opensOn: string,
-  ): PillOption {
-    const hint = available
-      ? null
-      : `Ouvre le ${formatDate(civilToDate(opensOn), 'dd/MM', this.locale, 'UTC')}`;
-    return { id, label, available, hint };
+  protected pickPart(part: string | null): void {
+    if (part) this.partPick.emit(part);
   }
+}
+
+function option(id: string, label: string): PillOption {
+  return { id, label, available: true, hint: null };
 }

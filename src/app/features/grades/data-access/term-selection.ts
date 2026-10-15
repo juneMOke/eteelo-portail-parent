@@ -1,46 +1,50 @@
 import { Injectable, Signal, computed, inject } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { TermQuery, TermSelection } from '../../../core/api/grades.contract';
+import { GradePart, GradeQuery } from '../../../core/api/grades.contract';
 
 /**
- * Choix trimestre · période de Mes cours et Mon bulletin. Il vit dans l'URL (`?term=&period=`)
+ * Choix trimestre · période de Mes cours et Mon bulletin. Il vit dans l'URL (`?term=&part=`)
  * pour que le retour d'une fiche et le changement d'enfant le gardent. Il suit aussi le parent
  * d'une page à l'autre pendant la session (spec 05 ③) : la mémoire ci-dessous, en mémoire vive
  * seulement, rien sur le téléphone.
  */
 
-type Choice = Pick<TermSelection, 'termId' | 'periodId'>;
-
-/** Paramètres d'URL d'une sélection ; une période nulle vaut « tout le trimestre ». */
-export function selectionParams(selection: Choice): Params {
-  return { term: selection.termId, period: selection.periodId };
+/** Une portion choisie : la période scolaire (`term` dans l'URL) et sa partie. */
+export interface TermChoice {
+  readonly periodId: string;
+  readonly part: GradePart;
 }
 
-/** Requête au serveur depuis l'URL ; une période sans trimestre ne veut rien dire. */
-export function termQuery(term?: string | null, period?: string | null): TermQuery {
+/** Paramètres d'URL d'une sélection ; aucun quand le serveur n'en a retenu aucune. */
+export function selectionParams(choice: TermChoice | null): Params {
+  return choice ? { term: choice.periodId, part: choice.part } : {};
+}
+
+/** Requête au serveur depuis l'URL ; une partie sans sa période ne veut rien dire. */
+export function termQuery(term?: string | null, part?: string | null): GradeQuery {
   if (!term) return {};
-  return period ? { termId: term, periodId: period } : { termId: term };
+  return part ? { periodId: term, part } : { periodId: term };
 }
 
 @Injectable({ providedIn: 'root' })
 export class TermSelectionMemory {
-  private readonly selections = new Map<string, TermQuery>();
+  private readonly selections = new Map<string, GradeQuery>();
 
-  remember(childId: string, selection: Choice): void {
-    this.selections.set(childId, termQuery(selection.termId, selection.periodId));
+  remember(childId: string, choice: TermChoice): void {
+    this.selections.set(childId, termQuery(choice.periodId, choice.part));
   }
 
   /** La dernière sélection choisie pour cet enfant pendant la session. */
-  recall(childId: string): TermQuery | undefined {
+  recall(childId: string): GradeQuery | undefined {
     return this.selections.get(childId);
   }
 }
 
 export interface TermSelectionControl {
   /** Ce qu'on demande au serveur : l'URL, sinon la sélection de la session, sinon son défaut. */
-  readonly query: Signal<TermQuery>;
+  readonly query: Signal<GradeQuery>;
   /** Retient le choix et l'inscrit dans l'URL, sans empiler d'historique. */
-  select(choice: Choice): void;
+  select(choice: TermChoice): void;
 }
 
 /**
@@ -50,7 +54,7 @@ export interface TermSelectionControl {
 export function injectTermSelection(params: {
   childId: () => string;
   term: () => string | undefined;
-  period: () => string | undefined;
+  part: () => string | undefined;
 }): TermSelectionControl {
   const memory = inject(TermSelectionMemory);
   const router = inject(Router);
@@ -58,9 +62,9 @@ export function injectTermSelection(params: {
   return {
     query: computed(() => {
       const term = params.term();
-      return term ? termQuery(term, params.period()) : (memory.recall(params.childId()) ?? {});
+      return term ? termQuery(term, params.part()) : (memory.recall(params.childId()) ?? {});
     }),
-    select(choice: Choice): void {
+    select(choice: TermChoice): void {
       memory.remember(params.childId(), choice);
       void router.navigate([], {
         relativeTo: route,

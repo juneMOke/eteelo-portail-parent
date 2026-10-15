@@ -20,7 +20,7 @@ describe('AverageHeaderComponent', () => {
   }
 
   it('dit un bulletin officiel avant son chiffre, avec le rang', async () => {
-    const { text } = await render(reportCardFixture({ termId: TERM.first }));
+    const { text } = await render(reportCardFixture({ periodId: TERM.first }, true));
 
     expect(text('.visually-hidden')).toBe(
       'Bulletin officiel, publié le 19 décembre. Moyenne générale 58,4 %.',
@@ -31,26 +31,17 @@ describe('AverageHeaderComponent', () => {
     expect(text('.rank-value')).toBe('8e sur 32');
   });
 
-  it('dit un rectificatif', async () => {
-    const report = {
-      ...reportCardFixture({ termId: TERM.first }),
-      updatedAt: '2027-01-08T10:00:00Z',
-    };
-    const { text } = await render(report);
-
-    expect(text('.status')).toBe('Officiel · mis à jour le 08/01');
-  });
-
   it('dit une moyenne provisoire et sur combien de notes, sans rang', async () => {
     const report: ReportCard = {
       ...reportCardFixture(),
-      evolution: { delta: 0.8, comparedToLabel: 'la 1re période' },
+      evolution: { points: 0.8, versus: '1er trimestre · 1re période' },
     };
     const { el, text } = await render(report);
 
+    expect(text('.scope')).toBe('Moyenne provisoire · 1er trimestre');
     expect(text('.status')).toBe('Provisoire');
     expect(text('.note')).toBe('Calculée sur 6 notes. Peut différer du bulletin officiel.');
-    expect(text('.evolution')).toBe('+0,8 pt par rapport à la 1re période');
+    expect(text('.evolution')).toBe('+0,8 pt par rapport au 1er trimestre · 1re période');
     expect(el.querySelector('.rank')).toBeNull();
   });
 });

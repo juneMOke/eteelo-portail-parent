@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { GRACE } from '../src/testing/bootstrap.fixture';
-import { PERIOD, TERM } from '../src/testing/grades-terms.fixture';
+import { TERM } from '../src/testing/grades-terms.fixture';
 import { COURSE, MATHS_HOMEWORK_PASSED } from '../src/testing/grades-week.fixture';
 import { mockParentApi } from './support/parent-api';
 import { choosePeriod } from './support/term-picker';
@@ -41,9 +41,7 @@ test.describe('Mes cours', () => {
     );
     await page.locator('app-top-bar').getByRole('link', { name: 'Mes cours' }).click();
 
-    await expect(page).toHaveURL(
-      `${COURSES}?term=${TERM.first}&period=${PERIOD.first}&course=${COURSE.maths}`,
-    );
+    await expect(page).toHaveURL(`${COURSES}?term=${TERM.first}&part=FIRST&course=${COURSE.maths}`);
     await expect(page.getByRole('button', { name: /^Mathématiques, moyenne/ })).toHaveAttribute(
       'aria-expanded',
       'true',
@@ -56,19 +54,21 @@ test.describe('Mes cours', () => {
 
     await choosePeriod(page, '1er trimestre', '2e période');
 
-    await expect(page).toHaveURL(`${COURSES}?term=${TERM.first}&period=${PERIOD.second}`);
+    await expect(page).toHaveURL(`${COURSES}?term=${TERM.first}&part=SECOND`);
     await expect(
       page.getByRole('heading', { name: 'Aucune évaluation pour la 2e période du 1er trimestre.' }),
     ).toBeVisible();
   });
 
   test('garde la sélection en passant à Mon bulletin', async ({ page }) => {
-    await mockParentApi(page);
+    await mockParentApi(page, { reportCardPublished: true });
     await page.goto(`${COURSES}?term=${TERM.first}`);
 
     await page.getByRole('link', { name: 'Voir Mon bulletin de cette période ›' }).click();
 
-    await expect(page).toHaveURL(`/c/${GRACE.childId}/grades/report-card?term=${TERM.first}`);
+    await expect(page).toHaveURL(
+      `/c/${GRACE.childId}/grades/report-card?term=${TERM.first}&part=ALL`,
+    );
     await expect(page.locator('app-average-header')).toContainText('Officiel');
   });
 });

@@ -7,6 +7,7 @@ import {
 } from '../../src/testing/assessments.fixture';
 import { bootstrapFixture } from '../../src/testing/bootstrap.fixture';
 import { gradeCoursesFixture } from '../../src/testing/grade-courses.fixture';
+import { GRADE_PERIODS } from '../../src/testing/grades-terms.fixture';
 import { gradeWeekFixture } from '../../src/testing/grades-week.fixture';
 import {
   homeworkDetailFixture,
@@ -24,15 +25,18 @@ interface ParentApiMock {
   homework?: HomeworkList | number;
   /** Code HTTP d'échec du dépôt de copie ; par défaut le dépôt réussit. */
   submission?: number;
-  /** Code HTTP d'erreur des trois routes de Mes notes ; par défaut, les données factices. */
+  /** Code HTTP d'erreur des routes de Mes notes ; par défaut, les données factices. */
   grades?: number;
+  /** Le bulletin du 1er trimestre est publié : Mon bulletin s'ouvre sur lui. */
+  reportCardPublished?: boolean;
 }
 
 const EVALUATION_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/evaluations(?:\/([^/]+))?$/;
 const HOMEWORK_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/homework(?:\/([^/]+))?$/;
 const SUBMISSION_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/homework\/([^/]+)\/submission$/;
-const GRADES_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/grades\/(week|courses|report-card)$/;
-const REPORT_CARD_DOCUMENT = /^\/api\/v1\/parent\/children\/[^/]+\/report-cards\/[^/]+\/document$/;
+const GRADES_ROUTE =
+  /^\/api\/v1\/parent\/children\/[^/]+\/grades\/(week|periods|courses|report-card)$/;
+const REPORT_CARD_PDF = /^\/api\/v1\/parent\/children\/[^/]+\/grades\/report-card\/[^/]+\/pdf$/;
 
 /**
  * Simule l'API du portail parent : bootstrap, authentification, Mes évaluations, Mes devoirs, le
@@ -76,18 +80,18 @@ export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promi
     if (grades) {
       if (mock.grades) return route.fulfill({ status: mock.grades });
       const query = {
-        termId: searchParams.get('termId') ?? undefined,
         periodId: searchParams.get('periodId') ?? undefined,
+        part: searchParams.get('part') ?? undefined,
       };
-      const body =
-        grades[1] === 'week'
-          ? gradeWeekFixture(searchParams.get('date') ?? undefined)
-          : grades[1] === 'courses'
-            ? gradeCoursesFixture(query)
-            : reportCardFixture(query);
-      return route.fulfill({ json: body });
+      const bodies = {
+        week: () => gradeWeekFixture(searchParams.get('weekOf') ?? undefined),
+        periods: () => GRADE_PERIODS,
+        courses: () => gradeCoursesFixture(query),
+        'report-card': () => reportCardFixture(query, mock.reportCardPublished),
+      };
+      return route.fulfill({ json: bodies[grades[1] as keyof typeof bodies]() });
     }
-    if (method === 'GET' && REPORT_CARD_DOCUMENT.test(pathname)) {
+    if (method === 'GET' && REPORT_CARD_PDF.test(pathname)) {
       return route.fulfill({ contentType: 'application/pdf', body: '%PDF-1.4\n' });
     }
     const submission = method === 'POST' ? SUBMISSION_ROUTE.exec(pathname) : null;

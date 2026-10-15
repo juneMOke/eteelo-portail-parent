@@ -1,4 +1,4 @@
-import { displayedScore, gradeStateView } from './grade-state';
+import { averageColor, displayedScore, gradeStateView } from './grade-state';
 
 describe('grade-state', () => {
   it('donne un mot et un ton à chacun des six états', () => {
@@ -34,5 +34,12 @@ describe('grade-state', () => {
     expect(displayedScore({ state: 'ABSENT_UNEXCUSED', points: 0, maxPoints: 20 })?.points).toBe(0);
     expect(displayedScore({ state: 'PENDING', points: null, maxPoints: 20 })).toBeNull();
     expect(displayedScore({ state: 'ABSENT_EXCUSED', points: null, maxPoints: 40 })).toBeNull();
+  });
+
+  it('colore une moyenne selon le ton du serveur', () => {
+    expect(averageColor('PASSED')).toBe('var(--color-grade-good)');
+    expect(averageColor('AVERAGE')).toBe('var(--color-grade-fair)');
+    expect(averageColor('FAILED')).toBe('var(--color-grade-low)');
+    expect(averageColor(null)).toBe('var(--color-text-muted)');
   });
 });

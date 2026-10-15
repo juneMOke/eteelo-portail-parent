@@ -1,8 +1,13 @@
-import type { Term, TermQuery, TermTree } from '../app/core/api/grades.contract';
+import type {
+  GradePart,
+  GradePeriod,
+  GradeQuery,
+  GradeSelection,
+} from '../app/core/api/grades.contract';
 
 /**
- * Trimestres de Grâce (contrat Mes notes) : seul le 1er est ouvert ; son examen ouvre le
- * 7 décembre. Partagés par Mes cours et Mon bulletin.
+ * Périodes scolaires de Grâce (contrat Mes notes) : le 1er trimestre est en cours, dans sa
+ * 1re période. Partagées par Mes cours et Mon bulletin.
  */
 export const TERM = {
   first: 'a1000000-0000-4000-8000-000000000001',
@@ -10,69 +15,59 @@ export const TERM = {
   third: 'a1000000-0000-4000-8000-000000000003',
 } as const;
 
-export const PERIOD = {
-  first: 'b1000000-0000-4000-8000-000000000001',
-  second: 'b1000000-0000-4000-8000-000000000002',
-  exam: 'b1000000-0000-4000-8000-000000000003',
-} as const;
-
-export const TERMS: readonly Term[] = [
-  {
-    termId: TERM.first,
-    label: '1er trimestre',
-    opensOn: '2026-09-07',
-    available: true,
-    periods: [
+function term(
+  periodId: string,
+  order: number,
+  startDate: string,
+  endDate: string,
+  current = false,
+): GradePeriod {
+  return {
+    periodId,
+    label: order === 1 ? '1er trimestre' : `${order}e trimestre`,
+    order,
+    status: 'OPEN',
+    startDate,
+    endDate,
+    current,
+    parts: [
+      { part: 'FIRST', label: '1re période', status: 'OPEN', startDate, endDate, current },
+      { part: 'SECOND', label: '2e période', status: 'OPEN', startDate, endDate, current: false },
       {
-        periodId: PERIOD.first,
-        label: '1re période',
-        kind: 'PERIOD',
-        opensOn: '2026-09-07',
-        available: true,
-      },
-      {
-        periodId: PERIOD.second,
-        label: '2e période',
-        kind: 'PERIOD',
-        opensOn: '2026-10-19',
-        available: true,
-      },
-      {
-        periodId: PERIOD.exam,
+        part: 'EXAM',
         label: 'Examen',
-        kind: 'EXAM',
-        opensOn: '2026-12-07',
-        available: false,
+        status: 'OPEN',
+        startDate: null,
+        endDate: null,
+        current: false,
       },
     ],
-  },
-  {
-    termId: TERM.second,
-    label: '2e trimestre',
-    opensOn: '2027-01-04',
-    available: false,
-    periods: [],
-  },
-  {
-    termId: TERM.third,
-    label: '3e trimestre',
-    opensOn: '2027-04-12',
-    available: false,
-    periods: [],
-  },
+  };
+}
+
+export const GRADE_PERIODS: readonly GradePeriod[] = [
+  term(TERM.first, 1, '2026-09-07', '2026-12-18', true),
+  term(TERM.second, 2, '2027-01-04', '2027-03-26'),
+  term(TERM.third, 3, '2027-04-12', '2027-07-02'),
 ];
 
-const PERIOD_LABELS: Readonly<Record<string, string>> = {
-  [PERIOD.first]: '1re période',
-  [PERIOD.second]: '2e période',
-  [PERIOD.exam]: 'Examen',
+const PART_LABELS: Readonly<Record<string, string>> = {
+  FIRST: '1re période',
+  SECOND: '2e période',
+  EXAM: 'Examen',
 };
 
-/** Arbre et sélection rendus pour une requête ; sans requête, la sélection par défaut. */
-export function termTreeFixture(query: TermQuery, fallback: Required<TermQuery>): TermTree {
-  const termId = query.termId ?? fallback.termId;
-  const periodId = query.termId ? (query.periodId ?? null) : fallback.periodId;
-  const term = TERMS.find((candidate) => candidate.termId === termId) ?? TERMS[0];
-  const label = periodId ? `${term.label} · ${PERIOD_LABELS[periodId]}` : term.label;
-  return { terms: TERMS, selection: { termId: term.termId, periodId, label } };
+/**
+ * Portion retenue par le serveur pour une requête : une période sans portion vaut toute la
+ * période ; sans requête, le défaut de la page.
+ */
+export function selectionFixture(
+  query: GradeQuery,
+  fallback: { readonly periodId: string; readonly part: GradePart },
+): GradeSelection {
+  const periodId = query.periodId ?? fallback.periodId;
+  const part = query.periodId ? (query.part ?? 'ALL') : fallback.part;
+  const period = GRADE_PERIODS.find((candidate) => candidate.periodId === periodId);
+  const label = period?.label ?? '';
+  return { periodId, part, label: part === 'ALL' ? label : `${label} · ${PART_LABELS[part]}` };
 }

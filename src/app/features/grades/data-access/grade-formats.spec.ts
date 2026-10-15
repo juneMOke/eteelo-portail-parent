@@ -1,6 +1,6 @@
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
-import { PERIOD, TERM, TERMS } from '../../../../testing/grades-terms.fixture';
+import { GRADE_PERIODS, TERM } from '../../../../testing/grades-terms.fixture';
 import {
   dayLabel,
   evolutionLabel,
@@ -50,27 +50,27 @@ describe('grade-formats', () => {
   });
 
   it('écrit un rang et une évolution', () => {
-    expect(rankLabel({ position: 8, classSize: 32 })).toBe('8e sur 32');
-    expect(rankLabel({ position: 1, classSize: 32 })).toBe('1er sur 32');
-    expect(evolutionLabel({ delta: 0.8, comparedToLabel: 'la 1re période' }, 'fr')).toBe(
-      '+0,8 pt par rapport à la 1re période',
+    expect(rankLabel({ position: 8, of: 32 })).toBe('8e sur 32');
+    expect(rankLabel({ position: 1, of: 32 })).toBe('1er sur 32');
+    expect(evolutionLabel({ points: 0.8, versus: '1er trimestre · 1re période' }, 'fr')).toBe(
+      '+0,8 pt par rapport au 1er trimestre · 1re période',
     );
-    expect(evolutionLabel({ delta: -2.25, comparedToLabel: 'la 1re période' }, 'fr')).toBe(
-      '−2,3 pt par rapport à la 1re période',
+    expect(evolutionLabel({ points: -2.25, versus: '1er trimestre' }, 'fr')).toBe(
+      '−2,3 pt par rapport au 1er trimestre',
     );
   });
 
   it('dit la sélection dans une phrase', () => {
-    const phrase = (periodId: string | null) =>
-      selectionPhrase({ terms: TERMS, selection: { termId: TERM.first, periodId, label: '' } });
+    const phrase = (part: string) =>
+      selectionPhrase(GRADE_PERIODS, { periodId: TERM.first, part, label: '' });
 
-    expect(phrase(PERIOD.second)).toBe('la 2e période du 1er trimestre');
-    expect(phrase(PERIOD.exam)).toBe('l’examen du 1er trimestre');
-    expect(phrase(null)).toBe('le 1er trimestre');
+    expect(phrase('SECOND')).toBe('la 2e période du 1er trimestre');
+    expect(phrase('EXAM')).toBe('l’examen du 1er trimestre');
+    expect(phrase('ALL')).toBe('le 1er trimestre');
   });
 
   it('annonce la sélection et le nombre de cours', () => {
-    const selection = { termId: 't1', periodId: 'p2', label: '1er trimestre · 2e période' };
+    const selection = { periodId: 't1', part: 'SECOND', label: '1er trimestre · 2e période' };
 
     expect(selectionAnnouncement(selection, 5)).toBe('1er trimestre, 2e période, 5 cours.');
   });

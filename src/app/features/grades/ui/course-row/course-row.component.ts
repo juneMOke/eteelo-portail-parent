@@ -8,7 +8,7 @@ import {
   output,
 } from '@angular/core';
 import { formatDate } from '@angular/common';
-import { CourseGrades } from '../../../../core/api/grades.contract';
+import { GradeCourse } from '../../../../core/api/grades.contract';
 import { civilToDate } from '../../../../shared/date/civil-date';
 import { IconComponent } from '../../../../shared/ui/icon/icon.component';
 import { percentLabel, pointsLabel } from '../../data-access/grade-formats';
@@ -30,7 +30,7 @@ let nextId = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseRowComponent {
-  readonly course = input.required<CourseGrades>();
+  readonly course = input.required<GradeCourse>();
   readonly expanded = input(false);
   readonly toggle = output<void>();
 
@@ -40,24 +40,24 @@ export class CourseRowComponent {
 
   /** « M. Ilunga · 4 évaluations, dernière 16,5/20 le 22/09 » ou « Pas encore d'évaluation ». */
   protected readonly summary = computed(() => {
-    const { teacherLabel, evaluationCount, last } = this.course();
-    if (evaluationCount === 0) {
+    const { teacherLabel, count, last } = this.course();
+    if (count === 0) {
       return [teacherLabel, 'Pas encore d’évaluation'].filter(Boolean).join(' · ');
     }
-    const count = `${evaluationCount} ${evaluationCount > 1 ? 'évaluations' : 'évaluation'}`;
+    const counted = `${count} ${count > 1 ? 'évaluations' : 'évaluation'}`;
     const lastGrade = last
       ? `, dernière ${pointsLabel(last.points, last.maxPoints, this.locale)} le ${formatDate(civilToDate(last.date), 'dd/MM', this.locale, 'UTC')}`
       : '';
-    return [teacherLabel, `${count}${lastGrade}`].filter(Boolean).join(' · ');
+    return [teacherLabel, `${counted}${lastGrade}`].filter(Boolean).join(' · ');
   });
 
   /** « Mathématiques, moyenne 75,0 %, 2 évaluations. » */
   protected readonly spoken = computed(() => {
-    const { label, average, evaluationCount } = this.course();
+    const { subjectLabel, average, count } = this.course();
     const mean = average
       ? `moyenne ${percentLabel(average.percent, this.locale)}`
       : 'pas de moyenne';
-    const count = `${evaluationCount} ${evaluationCount > 1 ? 'évaluations' : 'évaluation'}`;
-    return `${label}, ${mean}, ${count}.`;
+    const counted = `${count} ${count > 1 ? 'évaluations' : 'évaluation'}`;
+    return `${subjectLabel}, ${mean}, ${counted}.`;
   });
 }

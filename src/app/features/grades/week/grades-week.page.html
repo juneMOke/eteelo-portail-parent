@@ -2,7 +2,7 @@
   <app-week-navigator [week]="week" (weekChange)="selectWeek($event)" />
 
   <ui-swipe-pager
-    [position]="week.from"
+    [position]="week.weekStart"
     label="Évaluations de la semaine"
     [attr.aria-busy]="loading()"
     (swipe)="onSwipe($event, week)"

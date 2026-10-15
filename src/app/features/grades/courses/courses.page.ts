@@ -12,7 +12,7 @@ import {
   linkedSignal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { GradeCourses, GradedEvaluation } from '../../../core/api/grades.contract';
+import { GradeCard, GradeSelection } from '../../../core/api/grades.contract';
 import { latestValue } from '../../../shared/resource/latest-value';
 import { EmptyPeriodComponent } from '../../../shared/ui/empty-period/empty-period.component';
 import { LoadErrorComponent } from '../../../shared/ui/load-error/load-error.component';
@@ -49,7 +49,7 @@ import { TermPickerComponent } from '../ui/term-picker/term-picker.component';
 export default class CoursesPage {
   readonly childId = input.required<string>();
   readonly term = input<string>();
-  readonly period = input<string>();
+  readonly part = input<string>();
   /** Cours à déplier et à amener à l'écran. */
   readonly course = input<string>();
 
@@ -61,13 +61,19 @@ export default class CoursesPage {
   protected readonly selection = injectTermSelection({
     childId: this.childId,
     term: this.term,
-    period: this.period,
+    part: this.part,
   });
+  protected readonly periodsResource = this.facade.periodsResource(this.childId);
+  protected readonly periods = latestValue(this.periodsResource);
   protected readonly resource = this.facade.coursesResource(() => ({
     childId: this.childId(),
     query: this.selection.query(),
   }));
   protected readonly data = latestValue(this.resource);
+  protected readonly selectionParams = selectionParams;
+  protected readonly failed = computed(
+    () => !!this.resource.error() || !!this.periodsResource.error(),
+  );
 
   /** Cours ouverts ; un changement de cours ciblé (ou de sélection) repart de lui seul. */
   protected readonly expanded = linkedSignal<string | undefined, ReadonlySet<string>>({
@@ -75,16 +81,17 @@ export default class CoursesPage {
     computation: (course) => new Set(course ? [course] : []),
   });
   protected readonly graded = computed(() =>
-    (this.data()?.courses ?? []).some((course) => course.evaluationCount > 0),
+    (this.data()?.courses ?? []).some((course) => course.count > 0),
   );
   protected readonly emptyHeading = computed(() => {
-    const data = this.data();
-    return data ? `Aucune évaluation pour ${selectionPhrase(data)}.` : '';
+    const selection = this.data()?.selection;
+    if (!selection) return 'Aucune évaluation pour le moment.';
+    return `Aucune évaluation pour ${selectionPhrase(this.periods() ?? [], selection)}.`;
   });
   /** « 1er trimestre, 2e période, 5 cours. » */
   protected readonly announcement = computed(() => {
     const data = this.data();
-    return data ? selectionAnnouncement(data.selection, data.courses.length) : '';
+    return data?.selection ? selectionAnnouncement(data.selection, data.courses.length) : '';
   });
 
   constructor() {
@@ -99,6 +106,11 @@ export default class CoursesPage {
     });
   }
 
+  protected retry(): void {
+    this.periodsResource.reload();
+    this.resource.reload();
+  }
+
   protected toggle(courseId: string): void {
     this.expanded.update((open) => {
       const next = new Set(open);
@@ -107,18 +119,15 @@ export default class CoursesPage {
     });
   }
 
-  protected cardLink(item: GradedEvaluation): string[] {
+  protected cardLink(item: GradeCard): string[] {
     return evaluationLink(this.childId(), item);
   }
 
-  protected cardQueryParams(data: GradeCourses, courseId: string) {
-    return evaluationQueryParams('courses', {
-      ...selectionParams(data.selection),
-      course: courseId,
-    });
+  protected cardQueryParams(selection: GradeSelection | null, courseId: string) {
+    return evaluationQueryParams('courses', { ...selectionParams(selection), course: courseId });
   }
 
-  protected cardContext(item: GradedEvaluation): string {
+  protected cardContext(item: GradeCard): string {
     return dayLabel(item.date, this.locale);
   }
 

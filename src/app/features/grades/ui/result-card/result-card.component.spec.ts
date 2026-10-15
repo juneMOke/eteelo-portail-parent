@@ -10,13 +10,13 @@ import {
   MATHS_HOMEWORK_PASSED,
   PHYSICS_PENDING,
 } from '../../../../../testing/grades-week.fixture';
-import { GradedEvaluation } from '../../../../core/api/grades.contract';
+import { GradeCard } from '../../../../core/api/grades.contract';
 import { ResultCardComponent } from './result-card.component';
 
 registerLocaleData(localeFr);
 
 describe('ResultCardComponent', () => {
-  async function render(evaluation: GradedEvaluation, showCode = false) {
+  async function render(evaluation: GradeCard, showCode = false) {
     TestBed.configureTestingModule({
       providers: [provideRouter([]), { provide: LOCALE_ID, useValue: 'fr' }],
     });

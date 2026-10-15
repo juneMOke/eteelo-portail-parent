@@ -1,10 +1,10 @@
 import { formatDate, formatNumber } from '@angular/common';
 import {
   Evolution,
-  GradeCounts,
+  GradePeriod,
+  GradeSelection,
+  GradeSummary,
   Rank,
-  TermSelection,
-  TermTree,
 } from '../../../core/api/grades.contract';
 import { CivilDate, civilToDate } from '../../../shared/date/civil-date';
 
@@ -40,7 +40,7 @@ function plural(count: number, one: string, many: string): string {
 }
 
 /** « 6 évaluations · 4 notées · 2 en attente » ; « Aucune évaluation ». */
-export function weekSummary({ total, graded, pending }: GradeCounts): string {
+export function weekSummary({ total, graded, pending }: GradeSummary): string {
   if (total === 0) return 'Aucune évaluation';
   const parts = [plural(total, 'évaluation', 'évaluations'), plural(graded, 'notée', 'notées')];
   if (pending > 0) parts.push(`${pending} en attente`);
@@ -60,27 +60,31 @@ export function spokenDay(day: CivilDate, locale: string): string {
 }
 
 /** « 8e sur 32 », « 1er sur 32 ». */
-export function rankLabel({ position, classSize }: Rank): string {
-  return `${position === 1 ? '1er' : `${position}e`} sur ${classSize}`;
+export function rankLabel({ position, of }: Rank): string {
+  return `${position === 1 ? '1er' : `${position}e`} sur ${of}`;
 }
 
-/** « +0,8 pt par rapport à la 1re période ». */
-export function evolutionLabel({ delta, comparedToLabel }: Evolution, locale: string): string {
-  const sign = delta > 0 ? '+' : delta < 0 ? '−' : '';
-  return `${sign}${formatNumber(Math.abs(delta), locale, '1.1-1')} pt par rapport à ${comparedToLabel}`;
+/** « +0,8 pt par rapport au 1er trimestre · 1re période ». */
+export function evolutionLabel({ points, versus }: Evolution, locale: string): string {
+  const sign = points > 0 ? '+' : points < 0 ? '−' : '';
+  return `${sign}${formatNumber(Math.abs(points), locale, '1.1-1')} pt par rapport au ${versus}`;
 }
 
 /** « la 2e période du 1er trimestre », « l’examen du 1er trimestre », « le 1er trimestre ». */
-export function selectionPhrase({ terms, selection }: TermTree): string {
-  const term = terms.find((candidate) => candidate.termId === selection.termId);
-  const period = term?.periods.find((candidate) => candidate.periodId === selection.periodId);
-  if (!term) return selection.label;
-  if (!period) return `le ${term.label}`;
-  const name = period.kind === 'EXAM' ? `l’${period.label.toLowerCase()}` : `la ${period.label}`;
-  return `${name} du ${term.label}`;
+export function selectionPhrase(
+  periods: readonly GradePeriod[],
+  selection: GradeSelection,
+): string {
+  const period = periods.find((candidate) => candidate.periodId === selection.periodId);
+  if (!period) return selection.label;
+  if (selection.part === 'ALL') return `le ${period.label}`;
+  const part = period.parts.find((candidate) => candidate.part === selection.part);
+  if (!part) return selection.label;
+  const name = part.part === 'EXAM' ? `l’${part.label.toLowerCase()}` : `la ${part.label}`;
+  return `${name} du ${period.label}`;
 }
 
 /** Annonce d'un changement de sélection : « 1er trimestre, 2e période, 5 cours. » */
-export function selectionAnnouncement(selection: TermSelection, courseCount: number): string {
+export function selectionAnnouncement(selection: GradeSelection, courseCount: number): string {
   return `${selection.label.replace(' · ', ', ')}, ${courseCount} cours.`;
 }

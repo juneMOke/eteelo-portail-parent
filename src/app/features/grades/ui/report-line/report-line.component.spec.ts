@@ -24,9 +24,12 @@ describe('ReportLineComponent', () => {
   it('résume le cours et ouvre Mes cours sur lui', async () => {
     const el = await render({
       courseId: 'k1',
-      label: 'Géographie',
-      teacherLabel: null,
-      average: { percent: 45, obtained: 9, max: 20 },
+      subjectLabel: 'Géographie',
+      subjectCode: 'GEO',
+      percent: 45,
+      obtained: 9,
+      max: 20,
+      state: 'FAILED',
     });
     const link = el.querySelector('a')!;
 
@@ -43,9 +46,12 @@ describe('ReportLineComponent', () => {
   it('garde un cours sans note, sans jauge', async () => {
     const el = await render({
       courseId: 'k2',
-      label: 'Éducation civique',
-      teacherLabel: null,
-      average: null,
+      subjectLabel: 'Éducation civique',
+      subjectCode: 'EDC',
+      percent: null,
+      obtained: null,
+      max: null,
+      state: null,
     });
 
     expect(el.querySelector('.fill')).toBeNull();

@@ -23,8 +23,8 @@ describe('WeekNavigatorComponent', () => {
   it('nomme la semaine et la résume', async () => {
     const { el } = await render('2026-09-16');
 
-    expect(el.querySelector('.date')?.textContent).toBe('Semaine du 14 au 18 septembre');
-    expect(el.querySelector('.meta')?.textContent).toBe('7 évaluations · 5 notées · 1 en attente');
+    expect(el.querySelector('.date')?.textContent).toBe('Semaine du 14 au 19 septembre');
+    expect(el.querySelector('.meta')?.textContent).toBe('7 évaluations · 6 notées · 1 en attente');
   });
 
   it('avance d’une semaine et revient à la semaine en cours', async () => {

@@ -8,7 +8,7 @@ import {
   input,
 } from '@angular/core';
 import { Params, RouterLink } from '@angular/router';
-import { GradedEvaluation } from '../../../../core/api/grades.contract';
+import { GradeCard } from '../../../../core/api/grades.contract';
 import { GradeComponent } from '../../../../shared/ui/grade/grade.component';
 import { IconComponent } from '../../../../shared/ui/icon/icon.component';
 import { pointsLabel, spokenDay } from '../../data-access/grade-formats';
@@ -28,7 +28,7 @@ import { displayedScore, gradeStateView } from '../../data-access/grade-state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResultCardComponent {
-  readonly evaluation = input.required<GradedEvaluation>();
+  readonly evaluation = input.required<GradeCard>();
   readonly link = input.required<readonly string[]>();
   readonly queryParams = input<Params>({});
   /** Ce qui précède les notions : la matière (Ma semaine) ou le jour (Mes cours). */
@@ -41,10 +41,10 @@ export class ResultCardComponent {
   protected readonly state = computed(() => gradeStateView(this.evaluation().state));
   protected readonly score = computed(() => displayedScore(this.evaluation()));
   protected readonly contextLine = computed(() =>
-    [this.context(), this.evaluation().notions.join(', ')].filter(Boolean).join(' · '),
+    [this.context(), this.evaluation().topics.join(', ')].filter(Boolean).join(' · '),
   );
   protected readonly revised = computed(() => {
-    const changedAt = this.evaluation().gradeChangedAt;
+    const changedAt = this.evaluation().revisedAt;
     return changedAt ? formatDate(changedAt, 'dd/MM', this.locale) : null;
   });
   /** « Lundi 22 septembre, Mathématiques, Interrogation fractions, 16,5 sur 20, réussie. » */

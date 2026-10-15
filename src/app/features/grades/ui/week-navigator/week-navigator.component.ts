@@ -33,12 +33,12 @@ export class WeekNavigatorComponent {
   private readonly navigator = viewChild.required(PeriodNavigatorComponent);
 
   protected readonly label = computed(() =>
-    weekLabel(this.week().from, this.week().to, this.locale),
+    weekLabel(this.week().weekStart, this.week().weekEnd, this.locale),
   );
-  protected readonly summary = computed(() => weekSummary(this.week().counts));
-  protected readonly hasPrevious = computed(() => this.week().from > this.week().firstWeekStart);
-  protected readonly hasNext = computed(() => this.week().from < this.week().currentWeekStart);
-  protected readonly lastDay = computed(() => addDays(this.week().currentWeekStart, 6));
+  protected readonly summary = computed(() => weekSummary(this.week().summary));
+  protected readonly hasPrevious = computed(() => this.week().weekStart > this.week().firstWeek);
+  protected readonly hasNext = computed(() => this.week().weekStart < this.week().currentWeek);
+  protected readonly lastDay = computed(() => addDays(this.week().currentWeek, 6));
 
   /** Rend le focus au libellé une fois la nouvelle semaine affichée. */
   focusLabel(): void {
@@ -47,9 +47,9 @@ export class WeekNavigatorComponent {
 
   /** À la borne, la flèche se désactive et perd le focus : on le rend au libellé. */
   protected step(direction: 1 | -1): void {
-    const target = addDays(this.week().from, 7 * direction);
+    const target = addDays(this.week().weekStart, 7 * direction);
     this.weekChange.emit(target);
-    const { firstWeekStart, currentWeekStart } = this.week();
-    if (target <= firstWeekStart || target >= currentWeekStart) this.focusLabel();
+    const { firstWeek, currentWeek } = this.week();
+    if (target <= firstWeek || target >= currentWeek) this.focusLabel();
   }
 }
