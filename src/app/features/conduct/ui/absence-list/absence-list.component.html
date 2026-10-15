@@ -1,0 +1,24 @@
+<section aria-labelledby="absence-list-title">
+  <h2 id="absence-list-title">Absences et retards du mois</h2>
+  @if (lines().length) {
+    <ul>
+      @for (line of lines(); track line.date) {
+        <li>
+          <button
+            type="button"
+            [style.--line-tone]="'var(--color-tone-' + line.tone + ')'"
+            (click)="open.emit(line.date)"
+          >
+            <span class="text">
+              <span class="day">{{ line.label }}</span>
+              <span class="detail">{{ line.detail }}</span>
+            </span>
+            <ui-icon name="chevron-right" [size]="18" />
+          </button>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="none">Aucune absence ni retard en {{ monthName() }}.</p>
+  }
+</section>

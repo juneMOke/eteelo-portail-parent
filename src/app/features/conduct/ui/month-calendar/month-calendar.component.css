@@ -1,0 +1,133 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: var(--space-1);
+  table-layout: fixed;
+}
+
+th {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+td {
+  padding: 0;
+}
+
+/* Une cellule fait au moins 44 px au téléphone : la cible tactile. */
+.cell {
+  --cell-bg: var(--color-surface);
+  --cell-fg: var(--color-text-muted);
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: var(--tap-target);
+  place-items: center;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-sm);
+  background: var(--cell-bg);
+  color: var(--cell-fg);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+button.cell {
+  cursor: pointer;
+  transition: background-color var(--duration-content) ease;
+}
+
+.today {
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.state-present {
+  --cell-bg: var(--color-tone-success-soft);
+  --cell-fg: var(--color-tone-success);
+}
+
+.state-late {
+  --cell-bg: var(--color-tone-pending-soft);
+  --cell-fg: var(--color-tone-pending);
+}
+
+.state-excused {
+  --cell-bg: var(--color-tone-info-soft);
+  --cell-fg: var(--color-tone-info);
+}
+
+.state-pending,
+.state-unknown {
+  --cell-bg: var(--color-tone-neutral-soft);
+  --cell-fg: var(--color-tone-neutral);
+}
+
+.state-unexcused {
+  --cell-bg: var(--color-tone-alert);
+  --cell-fg: var(--color-on-tone);
+}
+
+/* Le glyphe double la couleur : point pour un retard, trait pour une absence. */
+.glyph {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  translate: -50% 0;
+}
+
+.state-late .glyph {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.state-excused .glyph,
+.state-pending .glyph,
+.state-unexcused .glyph {
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.swatch {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: var(--cell-bg);
+  color: var(--cell-fg);
+}
+
+.swatch .glyph {
+  bottom: 3px;
+}
+
+@media (min-width: 600px) {
+  .cell {
+    min-height: 52px;
+    font-size: var(--text-md);
+  }
+}

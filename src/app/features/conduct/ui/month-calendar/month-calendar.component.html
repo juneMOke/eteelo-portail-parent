@@ -1,0 +1,60 @@
+<table>
+  <caption class="visually-hidden">
+    {{
+      caption()
+    }}
+  </caption>
+  <thead>
+    <tr>
+      @for (weekday of weekdays; track weekday.long) {
+        <th scope="col" [attr.abbr]="weekday.long">{{ weekday.short }}</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (week of rows(); track $index) {
+      <tr>
+        @for (cell of week; track $index) {
+          <td>
+            @if (cell) {
+              @if (cell.openable) {
+                <button
+                  type="button"
+                  [class]="'cell state-' + cell.state"
+                  [class.today]="cell.today"
+                  [attr.aria-label]="cell.name"
+                  (click)="open.emit(cell.date)"
+                >
+                  <span aria-hidden="true">{{ cell.dayOfMonth }}</span>
+                  <span class="glyph" aria-hidden="true"></span>
+                </button>
+              } @else {
+                <span
+                  [class]="'cell state-' + cell.state"
+                  [class.today]="cell.today"
+                  role="img"
+                  [attr.aria-label]="cell.name"
+                >
+                  <span aria-hidden="true">{{ cell.dayOfMonth }}</span>
+                </span>
+              }
+            }
+          </td>
+        }
+      </tr>
+    }
+  </tbody>
+</table>
+
+@if (legend().length) {
+  <ul class="legend" aria-label="Légende">
+    @for (state of legend(); track state) {
+      <li>
+        <span [class]="'swatch state-' + state" aria-hidden="true">
+          <span class="glyph"></span>
+        </span>
+        {{ states[state].label }}
+      </li>
+    }
+  </ul>
+}

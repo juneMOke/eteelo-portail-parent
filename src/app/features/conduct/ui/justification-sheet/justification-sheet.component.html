@@ -1,0 +1,49 @@
+<ui-sheet [heading]="heading()">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ui-pill-group
+      label="Motif"
+      [options]="reasons"
+      [checked]="reason()"
+      (pick)="pickReason($event)"
+    />
+
+    <label class="field">
+      <span class="label"> Précision{{ reason() === 'OTHER' ? '' : ' (facultative)' }} </span>
+      <textarea
+        formControlName="note"
+        rows="3"
+        [attr.maxlength]="noteMax"
+        aria-describedby="note-count"
+      ></textarea>
+      <span id="note-count" class="count">{{ form.controls.note.value.length }}/{{ noteMax }}</span>
+    </label>
+
+    <ui-attachment-picker
+      [accept]="attachmentTypes"
+      [maxBytes]="attachmentMaxBytes"
+      chooseLabel="Joindre un certificat"
+      hint="Photo ou PDF, facultatif · 5 Mo maximum"
+      formatMessage="Format accepté : photo ou PDF."
+      tooLargeMessage="Ce fichier dépasse 5 Mo."
+      [disabled]="sending()"
+      [(file)]="file"
+    />
+
+    @if (sending()) {
+      <ui-upload-progress [progress]="progress() ?? 0" />
+    } @else {
+      @if (failure(); as failure) {
+        <p class="failure" role="alert">{{ failure.message }}</p>
+      }
+      @if (!online()) {
+        <p class="offline" role="status">
+          Pas de connexion. Votre saisie reste ici : envoyez-la au retour du réseau.
+        </p>
+      }
+      <button type="submit" class="button attention" [disabled]="!canSend()">
+        {{ failure()?.retryable ? 'Réessayer' : 'Envoyer' }}
+      </button>
+      <p class="hint">L’école valide la justification ; vous verrez sa décision ici.</p>
+    }
+  </form>
+</ui-sheet>

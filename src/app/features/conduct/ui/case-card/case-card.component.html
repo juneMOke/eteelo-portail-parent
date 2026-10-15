@@ -1,0 +1,27 @@
+<article [attr.aria-label]="spoken()">
+  <header>
+    <h3>{{ item().title }}</h3>
+    @if (severity(); as severity) {
+      <ui-badge [tone]="severity.tone">{{ severity.label }}</ui-badge>
+    }
+  </header>
+  <p class="meta">{{ meta() }}</p>
+  @if (item().description; as description) {
+    <p class="description">{{ description }}</p>
+  }
+  @if (sanction()) {
+    <p class="follow-up"><span class="term">Suite donnée :</span> {{ sanction() }}</p>
+  }
+  @if (revised()) {
+    <p class="revised">{{ revised() }}</p>
+  }
+  @if (linkLabel(); as label) {
+    <a class="link" [routerLink]="link()" [queryParams]="linkParams()">
+      {{ label }}
+      <ui-icon name="chevron-right" [size]="16" />
+    </a>
+  }
+  @if (item().parentRequest === 'MEETING') {
+    <p class="request">L’école vous demande un entretien.</p>
+  }
+</article>

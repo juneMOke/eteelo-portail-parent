@@ -1,0 +1,14 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: var(--reading-max-width);
+  margin-inline: auto;
+}
+
+.cases,
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}

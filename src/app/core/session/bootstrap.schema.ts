@@ -35,6 +35,8 @@ const SchoolSchema = v.object({
   schoolId: Uuid,
   name: v.string(),
   logoFingerprint: v.nullish(v.string()),
+  /** Téléphone de la fiche école (secrétariat) ; null s'il n'est pas saisi. */
+  contactPhone: v.nullish(v.string()),
 });
 
 export const ChildSchema = v.object({

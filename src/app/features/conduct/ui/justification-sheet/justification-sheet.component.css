@@ -1,0 +1,47 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  color: var(--color-text-secondary);
+  font-family: var(--font-title);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+textarea {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-md);
+  resize: vertical;
+}
+
+.count {
+  align-self: flex-end;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.failure {
+  color: var(--color-tone-alert);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.offline,
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}

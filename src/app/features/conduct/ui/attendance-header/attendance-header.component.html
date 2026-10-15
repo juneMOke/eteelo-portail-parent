@@ -1,0 +1,17 @@
+<section aria-labelledby="attendance-header-title">
+  <h2 id="attendance-header-title" class="band">Présence depuis la rentrée</h2>
+  <div class="body">
+    <p class="rate">
+      <span class="value">{{ rate() }}</span>
+      <span class="days">{{ days() }}</span>
+    </p>
+    <dl class="counters">
+      @for (counter of counters(); track counter.label) {
+        <div class="counter">
+          <dt>{{ counter.label }}</dt>
+          <dd>{{ counter.value }}</dd>
+        </div>
+      }
+    </dl>
+  </div>
+</section>
