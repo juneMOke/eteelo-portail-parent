@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, ResourceRef, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
@@ -37,13 +36,4 @@ export class AssessmentsFacade {
       stream: ({ params }) => this.detail(params.childId, params.evaluationId),
     });
   }
-}
-
-/**
- * Épreuve invisible pour cet enfant, ou devoir demandé sous Mes évaluations. Une ressource
- * enveloppe l'erreur HTTP (qui n'est pas une `Error`) : on regarde aussi sa cause.
- */
-export function isNotFound(error: unknown): boolean {
-  const cause = error instanceof Error && error.cause !== undefined ? error.cause : error;
-  return cause instanceof HttpErrorResponse && cause.status === 404;
 }

@@ -29,6 +29,8 @@ export class ResultBlockComponent {
   /** Lien vers la présence du jour, montré pour une absence non justifiée. */
   readonly attendanceLink = input<readonly string[] | null>(null);
   readonly attendanceQueryParams = input<Params>({});
+  /** Phrase de fait d'une absence, selon le genre de l'évaluation. */
+  readonly absenceFact = input('Épreuve à rattraper.');
 
   private readonly locale = inject(LOCALE_ID);
 

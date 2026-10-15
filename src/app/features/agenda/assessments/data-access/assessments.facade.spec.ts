@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of } from 'rxjs';
 import {
@@ -8,7 +7,7 @@ import {
 } from '../../../../../testing/assessments.fixture';
 import { GRACE } from '../../../../../testing/bootstrap.fixture';
 import { ParentApi } from '../../../../core/api/parent-api';
-import { AssessmentsFacade, isNotFound } from './assessments.facade';
+import { AssessmentsFacade } from './assessments.facade';
 
 describe('AssessmentsFacade', () => {
   function setup() {
@@ -42,14 +41,5 @@ describe('AssessmentsFacade', () => {
     expect(detail.result?.classAverage).toBe(11.5);
     expect(evaluation).toHaveBeenCalledTimes(2);
     expect(evaluation).toHaveBeenCalledWith(GRACE.childId, CHEMISTRY_GRADED.evaluationId);
-  });
-
-  it('reconnaît une fiche introuvable, enveloppée ou non', () => {
-    const notFound = new HttpErrorResponse({ status: 404 });
-
-    expect(isNotFound(notFound)).toBe(true);
-    expect(isNotFound(new Error('ressource', { cause: notFound }))).toBe(true);
-    expect(isNotFound(new HttpErrorResponse({ status: 500 }))).toBe(false);
-    expect(isNotFound(undefined)).toBe(false);
   });
 });

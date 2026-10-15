@@ -23,7 +23,7 @@
 } @else {
   <h3 class="head">Ce qu’il reste à faire</h3>
   <div class="body">
-    <p class="fact">Épreuve à rattraper.</p>
+    <p class="fact">{{ absenceFact() }}</p>
     <!-- La phrase de l'enseignant tient lieu de résultat ; à défaut, la marche à suivre. -->
     @if (result().teacherComment; as comment) {
       <figure class="comment">

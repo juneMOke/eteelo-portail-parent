@@ -25,7 +25,8 @@ import {
   InstructionsBlockComponent,
 } from '../ui/instructions-block/instructions-block.component';
 import { ResultBlockComponent } from '../ui/result-block/result-block.component';
-import { AssessmentsFacade, isNotFound } from './data-access/assessments.facade';
+import { isNotFound } from '../data-access/not-found';
+import { AssessmentsFacade } from './data-access/assessments.facade';
 
 const TYPE_LABELS: Readonly<Record<string, string>> = {
   INTERRO: 'Interrogation',
