@@ -1,0 +1,133 @@
+/* Carte blanche, en-tête bleu brume (titre Lora) ; elle monte de 2 px au survol, comme chaque tuile. */
+.card {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  transition:
+    translate var(--duration-lift) var(--ease-out),
+    box-shadow var(--duration-lift) var(--ease-out);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-accent-line);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+h3 {
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-semibold);
+}
+
+/* 110 px au moins par tuile, retour à la ligne automatique. */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.tile {
+  --tile-bg: var(--color-surface);
+  --tile-border: var(--color-border-soft);
+  --tile-fg: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--tile-border);
+  border-radius: var(--radius-tile);
+  background: var(--tile-bg);
+  transition:
+    translate var(--duration-lift) var(--ease-out),
+    box-shadow var(--duration-lift) var(--ease-out);
+}
+
+.day {
+  color: var(--color-text-muted);
+  font-size: var(--text-caps);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.word {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--tile-fg);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  line-height: 1.35;
+}
+
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.state-present {
+  --tile-bg: var(--color-tone-success-soft);
+  --tile-border: color-mix(in srgb, var(--color-tone-success) 22%, var(--color-surface));
+  --tile-fg: var(--color-tone-success);
+}
+
+.state-late {
+  --tile-bg: var(--color-tone-pending-soft);
+  --tile-border: color-mix(in srgb, var(--color-tone-pending) 22%, var(--color-surface));
+  --tile-fg: var(--color-tone-pending);
+}
+
+.state-excused {
+  --tile-bg: var(--color-tone-info-soft);
+  --tile-border: color-mix(in srgb, var(--color-tone-info) 22%, var(--color-surface));
+  --tile-fg: var(--color-tone-info);
+}
+
+.state-pending,
+.state-unknown {
+  --tile-bg: var(--color-tone-neutral-soft);
+  --tile-border: color-mix(in srgb, var(--color-tone-neutral) 22%, var(--color-surface));
+  --tile-fg: var(--color-tone-neutral);
+}
+
+.state-unexcused {
+  --tile-bg: var(--color-tone-alert-soft);
+  --tile-border: color-mix(in srgb, var(--color-tone-alert) 22%, var(--color-surface));
+  --tile-fg: var(--color-tone-alert);
+}
+
+/* Pas d'école : Papier, hors du calcul. Appel pas fait, jour à venir : blanc cassé. */
+.state-off {
+  --tile-bg: var(--color-page);
+  --tile-fg: var(--color-border-strong);
+}
+
+.state-not-yet,
+.state-upcoming {
+  --tile-bg: var(--color-surface-soft);
+  --tile-fg: var(--color-border-strong);
+}
+
+@media (hover: hover) {
+  .card:hover {
+    translate: 0 -2px;
+    box-shadow: var(--shadow-lift);
+  }
+
+  .tile:hover {
+    translate: 0 -2px;
+    box-shadow: var(--shadow-lift);
+  }
+}

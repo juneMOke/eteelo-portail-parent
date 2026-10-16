@@ -31,6 +31,7 @@
     --palette-sable-clair: #eae6da;
     --palette-sable-fonce: #c9c3b0;
     --palette-bleu-brume: #eef2f5;
+    --palette-bleu-filet: #dce4ea;
     --palette-vert-savane: #3d6b4a;
     --palette-vert-pale: #e8f0ea;
     --palette-bronze: #7a5212;
@@ -55,6 +56,7 @@
     --color-heading: var(--palette-bleu-profond);
     --color-accent: var(--palette-bleu-ardoise);
     --color-accent-soft: var(--palette-bleu-brume);
+    --color-accent-line: var(--palette-bleu-filet);
     --color-attention: var(--palette-terre-cuite);
     --color-highlight: var(--palette-or-doux);
     --color-focus-ring: var(--palette-or-doux);
@@ -146,11 +148,15 @@
     --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
     --font-title: 'Lora', Georgia, serif;
     --text-2xs: 0.5625rem; /* 9px  surtitres de la pilule */
+    --text-caps: 0.625rem; /* 10px libellés en capitales (compteurs, tuiles de jour) */
     --text-xs: 0.75rem; /* 12px */
     --text-sm: 0.8125rem; /* 13px */
     --text-md: 0.875rem; /* 14px */
+    --text-card-title: 0.9375rem; /* 15px titres de carte (Lora) */
     --text-base: 1rem; /* 16px */
     --text-lg: 1.125rem; /* 18px */
+    --text-kpi: 1.25rem; /* 20px  chiffre d'un compteur */
+    --text-section: 1.1875rem; /* 19px  titres de section (Ma présence) */
     --text-xl: 1.375rem; /* 22px */
     --text-2xl: 1.75rem; /* 28px */
     /* Montants (Lora, chiffres tabulaires) : ligne de liste, chiffre qu'on cherche au bilan. */

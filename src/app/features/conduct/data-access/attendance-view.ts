@@ -1,21 +1,32 @@
 import { formatDate } from '@angular/common';
-import { AttendanceDay, ChildAttendance } from '../../../core/api/conduct.contract';
+import {
+  AttendanceDay,
+  AttendanceRange,
+  ChildAttendance,
+} from '../../../core/api/conduct.contract';
 import {
   CivilDate,
   CivilMonth,
+  addDays,
   civilToDate,
+  daysBetween,
   daysOf,
   firstDayOf,
   isCivilDate,
   isCivilMonth,
+  mondayOf,
   monthOf,
 } from '../../../shared/date/civil-date';
 import { monthLabel, spokenDay } from '../../../shared/format/day-labels';
-import { DayState, dayState } from './day-state';
+import { relativeWeek } from '../../../shared/format/relative-week';
+import { shortWeekLabel, weekLabel } from '../../../shared/format/week-labels';
+import { relativeMonth, tileDayLabel } from './attendance-formats';
+import { DAY_STATES, DayState, dayState, spokenState } from './day-state';
 
 /**
- * Ce que montre Ma présence pour un mois : la grille, la liste, le bandeau. Rangement et
- * filtrage des jours que rend le serveur ; aucun compte ni taux n'est calculé ici.
+ * Ce que montre Ma présence pour une semaine et pour un mois : les tuiles, la grille, la liste,
+ * le bandeau. Rangement et filtrage des jours que rend le serveur ; aucun compte ni taux n'est
+ * calculé ici.
  */
 
 /** Bornes du navigateur : du mois de la rentrée au mois en cours. */
@@ -148,8 +159,128 @@ export function monthView(
     legend: legendStates(days),
     list: absencesAndLates(days),
     pending: pendingAbsences(attendance),
+    relative: relativeMonth(monthsBetween(month, bounds.last)),
     /** « mardi 1 septembre » : premier jour de l'année, pour l'état vide. */
     firstDayLabel: spokenDay(attendance.from, locale).toLowerCase(),
     empty: attendance.days.length === 0,
+  };
+}
+
+/** Écart en mois, négatif dans le passé : « il y a 2 mois ». */
+function monthsBetween(month: CivilMonth, current: CivilMonth): number {
+  const index = (value: CivilMonth) => Number(value.slice(0, 4)) * 12 + Number(value.slice(5, 7));
+  return index(month) - index(current);
+}
+
+/** Bornes du bandeau de semaine, en lundis : de la semaine de la rentrée à la semaine en cours. */
+export interface WeekBounds {
+  readonly first: CivilDate;
+  readonly last: CivilDate;
+}
+
+export function weekBounds(attendance: ChildAttendance): WeekBounds {
+  return { first: mondayOf(attendance.from), last: mondayOf(attendance.to) };
+}
+
+/** Le lundi de la semaine affichée : celle de l'URL, sinon celle du jour ciblé, sinon l'actuelle. */
+export function selectedWeek(
+  bounds: WeekBounds,
+  week: string | undefined,
+  date: string | undefined,
+): CivilDate {
+  const wanted = isCivilDate(week)
+    ? mondayOf(week)
+    : isCivilDate(date)
+      ? mondayOf(date)
+      : bounds.last;
+  return wanted < bounds.first ? bounds.first : wanted > bounds.last ? bounds.last : wanted;
+}
+
+/**
+ * État d'une tuile de la semaine : un jour appelé ; sinon pas d'école (jour passé sans appel),
+ * appel pas encore fait (aujourd'hui) ou jour à venir, laissé blanc et sans mot.
+ */
+export type WeekTileState = DayState | 'off' | 'not-yet' | 'upcoming';
+
+export interface WeekTile {
+  readonly date: CivilDate;
+  readonly state: WeekTileState;
+  /** « lun 22 sept. », en petites capitales à l'écran. */
+  readonly label: string;
+  /** L'état en mot ; null pour un jour à venir. */
+  readonly word: string | null;
+  /** « Lundi 22 septembre, présent ». */
+  readonly name: string;
+}
+
+const TILE_WORDS: Readonly<Record<'off' | 'not-yet' | 'upcoming', string | null>> = {
+  off: 'Pas d’école',
+  'not-yet': 'Pas encore enregistrée',
+  upcoming: null,
+};
+
+/** Du lundi au vendredi ; le samedi et le dimanche seulement s'ils ont été appelés. */
+export function weekTiles(
+  monday: CivilDate,
+  byDate: ReadonlyMap<CivilDate, AttendanceDay>,
+  today: CivilDate,
+  locale: string,
+): WeekTile[] {
+  const tiles: WeekTile[] = [];
+  for (let offset = 0; offset < 7; offset++) {
+    const date = addDays(monday, offset);
+    const day = byDate.get(date);
+    if (offset >= 5 && !day) continue;
+    const state: WeekTileState = day
+      ? dayState(day)
+      : date > today
+        ? 'upcoming'
+        : date === today
+          ? 'not-yet'
+          : 'off';
+    const word = day
+      ? DAY_STATES[state as DayState].label
+      : TILE_WORDS[state as keyof typeof TILE_WORDS];
+    const spoken = day ? spokenState(state as DayState) : (word ?? 'à venir').toLowerCase();
+    tiles.push({
+      date,
+      state,
+      label: tileDayLabel(date, locale),
+      word,
+      name: `${spokenDay(date, locale)}, ${spoken}`,
+    });
+  }
+  return tiles;
+}
+
+/** La plage demandée au serveur pour le résumé de la semaine, ramenée dans l'année montrée. */
+export function weekRange(monday: CivilDate, attendance: ChildAttendance): AttendanceRange {
+  const sunday = addDays(monday, 6);
+  return {
+    from: monday < attendance.from ? attendance.from : monday,
+    to: sunday > attendance.to ? attendance.to : sunday,
+  };
+}
+
+/** Tout ce que la section « La semaine » montre, lu dans la réponse de l'année. */
+export function weekView(
+  attendance: ChildAttendance,
+  weekParam: string | undefined,
+  dateParam: string | undefined,
+  locale: string,
+) {
+  const bounds = weekBounds(attendance);
+  const monday = selectedWeek(bounds, weekParam, dateParam);
+  const tiles = weekTiles(monday, daysByDate(attendance.days), attendance.to, locale);
+  const last = tiles.at(-1)?.date ?? addDays(monday, 4);
+  return {
+    bounds,
+    monday,
+    tiles,
+    range: weekRange(monday, attendance),
+    /** « Semaine du 22 au 26 septembre », « 22 – 26 sept. ». */
+    label: weekLabel(monday, last, locale),
+    shortLabel: shortWeekLabel(monday, last, locale),
+    relative: relativeWeek(Math.round(daysBetween(bounds.last, monday) / 7)),
   };
 }

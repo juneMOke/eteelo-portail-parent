@@ -7,7 +7,11 @@ import {
   evaluationDetailFixture,
   evaluationListFixture,
 } from '../../src/testing/assessments.fixture';
-import { attendanceFixture, withPendingJustification } from '../../src/testing/attendance.fixture';
+import {
+  attendanceFixture,
+  attendanceRangeFixture,
+  withPendingJustification,
+} from '../../src/testing/attendance.fixture';
 import { bootstrapFixture } from '../../src/testing/bootstrap.fixture';
 import { disciplineFixture } from '../../src/testing/discipline.fixture';
 import {
@@ -121,9 +125,12 @@ export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promi
       return route.fulfill({ json: bodies[grades[1] as keyof typeof bodies]() });
     }
     if (method === 'GET' && pathname.endsWith('/attendance')) {
-      return typeof attendance === 'number'
-        ? route.fulfill({ status: attendance })
-        : route.fulfill({ json: attendance });
+      if (typeof attendance === 'number') return route.fulfill({ status: attendance });
+      const from = searchParams.get('from');
+      const to = searchParams.get('to');
+      return route.fulfill({
+        json: from && to ? attendanceRangeFixture(attendance, { from, to }) : attendance,
+      });
     }
     if (method === 'GET' && pathname.endsWith('/discipline')) {
       if (mock.discipline) return route.fulfill({ status: mock.discipline });

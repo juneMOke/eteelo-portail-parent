@@ -15,6 +15,11 @@ import {
   monthView,
   pendingAbsences,
   selectedMonth,
+  selectedWeek,
+  weekBounds,
+  weekRange,
+  weekTiles,
+  weekView,
 } from './attendance-view';
 
 registerLocaleData(localeFr);
@@ -115,5 +120,59 @@ describe('attendance-view', () => {
       empty: false,
     });
     expect(view.list).toHaveLength(6);
+  });
+
+  it('borne la semaine de la rentrée à la semaine en cours, en lundis', () => {
+    const weeks = weekBounds(attendance);
+
+    expect(weeks).toEqual({ first: '2026-08-31', last: '2026-10-05' });
+    expect(selectedWeek(weeks, undefined, undefined)).toBe('2026-10-05');
+    expect(selectedWeek(weeks, '2026-09-17', undefined)).toBe('2026-09-14');
+    expect(selectedWeek(weeks, undefined, '2026-09-16')).toBe('2026-09-14');
+    expect(selectedWeek(weeks, '2026-12-01', undefined)).toBe('2026-10-05');
+  });
+
+  it('montre les jours ouvrés, le week-end seulement s’il a été appelé', () => {
+    const byDate = daysByDate([...attendance.days, attendanceDay('2026-09-19')]);
+    const tiles = weekTiles('2026-09-14', byDate, ATTENDANCE_TODAY, 'fr');
+
+    expect(tiles.map((tile) => tile.state)).toEqual([
+      'late',
+      'present',
+      'unexcused',
+      'present',
+      'late',
+      'present',
+    ]);
+    expect(tiles[0]).toMatchObject({ label: 'lun 14 sept.', word: 'En retard' });
+  });
+
+  it('dit pas d’école, pas encore enregistrée, ou rien pour un jour à venir', () => {
+    const tiles = weekTiles('2026-10-05', daysByDate([]), ATTENDANCE_TODAY, 'fr');
+
+    expect(tiles.map((tile) => [tile.state, tile.word])).toEqual([
+      ['off', 'Pas d’école'],
+      ['not-yet', 'Pas encore enregistrée'],
+      ['upcoming', null],
+      ['upcoming', null],
+      ['upcoming', null],
+    ]);
+  });
+
+  it('demande au serveur la semaine, ramenée dans l’année montrée', () => {
+    expect(weekRange('2026-09-14', attendance)).toEqual({ from: '2026-09-14', to: '2026-09-20' });
+    expect(weekRange('2026-08-31', attendance)).toEqual({ from: '2026-09-01', to: '2026-09-06' });
+    expect(weekRange('2026-10-05', attendance)).toEqual({ from: '2026-10-05', to: '2026-10-06' });
+  });
+
+  it('nomme la semaine et sa position', () => {
+    const view = weekView(attendance, '2026-09-22', undefined, 'fr');
+
+    expect(view).toMatchObject({
+      monday: '2026-09-21',
+      label: 'Semaine du 21 au 25 septembre',
+      shortLabel: '21 – 25 sept.',
+      relative: { long: 'il y a 2 semaines' },
+    });
   });
 });

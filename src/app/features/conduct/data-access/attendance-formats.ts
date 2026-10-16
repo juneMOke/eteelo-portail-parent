@@ -7,9 +7,10 @@ import {
   AttendanceSummary,
   JustificationReason,
 } from '../../../core/api/conduct.contract';
-import { CivilDate } from '../../../shared/date/civil-date';
+import { CivilDate, civilToDate } from '../../../shared/date/civil-date';
 import { countLabel } from '../../../shared/format/count';
 import { shortDate } from '../../../shared/format/day-labels';
+import { RelativeWeek } from '../../../shared/format/relative-week';
 import { instantTime, timeLabel } from '../../../shared/format/time-labels';
 
 /** Mise en forme de Ma présence (spec 06 §6) ; tous les chiffres viennent du serveur. */
@@ -19,9 +20,14 @@ export function rateLabel(rate: number, locale: string): string {
   return formatPercent(rate, locale, '1.0-0');
 }
 
-/** « 58 jours sur 61 ». */
+/** « 58 jours présents sur 61 » (retards compris, comme le taux). */
 export function presenceDaysLabel({ presentDays, schoolDays }: AttendanceSummary): string {
-  return `${presentDays} ${presentDays > 1 ? 'jours' : 'jour'} sur ${schoolDays}`;
+  return `${presentDays} ${presentDays > 1 ? 'jours présents' : 'jour présent'} sur ${schoolDays}`;
+}
+
+/** « Depuis la rentrée · 61 jours d’école ». */
+export function sinceSchoolStartLabel({ schoolDays }: AttendanceSummary): string {
+  return `Depuis la rentrée · ${countLabel(schoolDays, 'jour d’école', 'jours d’école', 'aucun jour d’école')}`;
 }
 
 /** « 21 jours d’école · 1 absence · 2 retards ». */
@@ -32,6 +38,55 @@ export function monthSummary(month: AttendanceMonth | undefined): string {
     countLabel(month.absences, 'absence', 'absences', 'aucune absence'),
     countLabel(month.lates, 'retard', 'retards', 'aucun retard'),
   ].join(' · ');
+}
+
+/** Les indicateurs de la semaine (⑪) : « — » quand la semaine n'a aucun jour enregistré. */
+export interface WeekIndicator {
+  readonly label: string;
+  readonly value: string;
+  readonly tone: 'success' | 'info' | 'alert' | 'pending';
+}
+
+export function weekIndicators(
+  summary: AttendanceSummary | undefined,
+  locale: string,
+): WeekIndicator[] {
+  const known = summary?.schoolDays ? summary : null;
+  const value = (format: (known: AttendanceSummary) => string) => (known ? format(known) : '—');
+  return [
+    {
+      label: 'Présence de la semaine',
+      value: value(({ presenceRate }) => rateLabel(presenceRate, locale)),
+      tone: 'success',
+    },
+    { label: 'Justifiées', value: value((s) => String(s.justifiedAbsenceDays)), tone: 'info' },
+    { label: 'Non justifiées', value: value((s) => String(s.unjustifiedAbsenceDays)), tone: 'alert' },
+    { label: 'Retards', value: value((s) => String(s.lateDays)), tone: 'pending' },
+  ];
+}
+
+/** « 4 jours présents sur 5 · 1 retard » : le résumé en pastille, avec les comptes du serveur. */
+export function weekSummaryLabel(summary: AttendanceSummary | undefined): string {
+  if (!summary?.schoolDays) return 'Aucun jour d’école enregistré';
+  return [
+    presenceDaysLabel(summary),
+    countLabel(summary.lateDays, 'retard', 'retards', 'aucun retard'),
+  ].join(' · ');
+}
+
+/** « lun 22 sept. » : le jour d'une tuile de la semaine, mis en petites capitales à l'écran. */
+export function tileDayLabel(day: CivilDate, locale: string): string {
+  const date = civilToDate(day);
+  const weekday = formatDate(date, 'EEE', locale, 'UTC').replace('.', '');
+  return `${weekday} ${formatDate(date, 'd MMM', locale, 'UTC')}`;
+}
+
+/** Position d'un mois par rapport au mois en cours, comme celle d'une semaine au bandeau. */
+export function relativeMonth(offset: number): RelativeWeek {
+  if (offset === 0) return { long: 'ce mois-ci', short: 'ce mois-ci' };
+  if (offset === -1) return { long: 'mois passé', short: 'mois passé' };
+  if (offset > 0) return { long: `dans ${offset} mois`, short: `dans ${offset} mois` };
+  return { long: `il y a ${-offset} mois`, short: `il y a ${-offset} mois` };
 }
 
 /** Le moment du jour : l'heure d'arrivée d'un retard, sinon la journée (appel à la journée). */

@@ -1,0 +1,20 @@
+<section class="card" aria-labelledby="week-days-title">
+  <header class="head">
+    <ui-icon name="calendar" [size]="17" />
+    <h3 id="week-days-title">Les jours de la semaine</h3>
+  </header>
+  <ul class="tiles">
+    @for (tile of tiles(); track tile.date) {
+      <li [class]="'tile state-' + tile.state">
+        <span class="visually-hidden">{{ tile.name }}</span>
+        <span class="day" aria-hidden="true">{{ tile.label }}</span>
+        @if (tile.word) {
+          <span class="word" aria-hidden="true">
+            <span class="dot"></span>
+            {{ tile.word }}
+          </span>
+        }
+      </li>
+    }
+  </ul>
+</section>

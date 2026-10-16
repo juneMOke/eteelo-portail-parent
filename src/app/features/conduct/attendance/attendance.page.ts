@@ -13,17 +13,19 @@ import {
   viewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CivilDate, CivilMonth, addMonths } from '../../../shared/date/civil-date';
+import { CivilDate, CivilMonth, addDays, addMonths } from '../../../shared/date/civil-date';
+import { WIDE_SCREEN, mediaQuery } from '../../../shared/layout/media-query';
 import { latestValue } from '../../../shared/resource/latest-value';
 import { EmptyPeriodComponent } from '../../../shared/ui/empty-period/empty-period.component';
 import { LoadErrorComponent } from '../../../shared/ui/load-error/load-error.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { SwipePagerComponent } from '../../../shared/ui/swipe-pager/swipe-pager.component';
+import { WeekBannerComponent } from '../../../shared/ui/week-banner/week-banner.component';
 import {
   AbsenceJustificationStore,
   JustificationDraft,
 } from '../data-access/absence-justification.store';
-import { monthView } from '../data-access/attendance-view';
+import { monthView, weekView } from '../data-access/attendance-view';
 import { ConductFacade } from '../data-access/conduct.facade';
 import { AbsenceListComponent } from '../ui/absence-list/absence-list.component';
 import { AttendanceHeaderComponent } from '../ui/attendance-header/attendance-header.component';
@@ -32,12 +34,16 @@ import { JustificationSheetComponent } from '../ui/justification-sheet/justifica
 import { MonthCalendarComponent } from '../ui/month-calendar/month-calendar.component';
 import { MonthNavigatorComponent } from '../ui/month-navigator/month-navigator.component';
 import { PendingAbsencesComponent } from '../ui/pending-absences/pending-absences.component';
+import { WeekDaysComponent } from '../ui/week-days/week-days.component';
+import { WeekIndicatorsComponent } from '../ui/week-indicators/week-indicators.component';
 
 /**
  * Ma présence : « il était malade », « c'est fréquent ? ». Ce qui attend le parent en haut
- * (②), puis le taux depuis la rentrée (①), le mois (③) et ses absences et retards (⑤). Toute
- * l'année est lue en un appel ; le mois vit dans l'URL (`?month=`), le jour ciblé aussi
- * (`?date=`, depuis Ma discipline), sa fiche s'ouvre alors d'elle-même.
+ * (②), puis le taux depuis la rentrée (①), deux échelles titrées (spec 06 v2) : « La semaine »
+ * (⑪, ses jours et ses indicateurs) et « Le mois » (③ et ses absences et retards ⑤). Toute
+ * l'année est lue en un appel, seuls les indicateurs de la semaine ont le leur. La semaine
+ * (`?week=`) et le mois (`?month=`) vivent dans l'URL, le jour ciblé aussi (`?date=`, depuis
+ * Ma discipline) : sa fiche s'ouvre alors d'elle-même.
  */
 @Component({
   selector: 'app-attendance-page',
@@ -53,6 +59,9 @@ import { PendingAbsencesComponent } from '../ui/pending-absences/pending-absence
     PendingAbsencesComponent,
     SkeletonComponent,
     SwipePagerComponent,
+    WeekBannerComponent,
+    WeekDaysComponent,
+    WeekIndicatorsComponent,
   ],
   templateUrl: './attendance.page.html',
   styleUrl: './attendance.page.css',
@@ -63,6 +72,8 @@ export default class AttendancePage {
   readonly childId = input.required<string>();
   /** Mois affiché (`?month=YYYY-MM`) ; absent, le mois du jour ciblé ou le mois en cours. */
   readonly month = input<string>();
+  /** Un jour de la semaine affichée (`?week=YYYY-MM-DD`) ; absent, celle du jour ciblé ou l'actuelle. */
+  readonly week = input<string>();
   /** Jour dont la fiche s'ouvre à l'arrivée (`?date=YYYY-MM-DD`). */
   readonly date = input<string>();
 
@@ -77,6 +88,23 @@ export default class AttendancePage {
   protected readonly justification = inject(AbsenceJustificationStore);
   protected readonly resource = this.facade.attendanceResource(this.childId);
   protected readonly attendance = latestValue(this.resource);
+
+  protected readonly wide = mediaQuery(WIDE_SCREEN);
+  protected readonly weekView = computed(() => {
+    const attendance = this.attendance();
+    return attendance ? weekView(attendance, this.week(), this.date(), this.locale) : null;
+  });
+  /** Une nouvelle requête seulement quand la plage change, pas à chaque relecture de l'année. */
+  private readonly weekRequest = computed(
+    () => {
+      const range = this.weekView()?.range;
+      return range ? { childId: this.childId(), ...range } : undefined;
+    },
+    { equal: (a, b) => a?.childId === b?.childId && a?.from === b?.from && a?.to === b?.to },
+  );
+  protected readonly weekResource = this.facade.attendanceWeekResource(this.weekRequest);
+  private readonly weekAttendance = latestValue(this.weekResource);
+  protected readonly weekSummary = computed(() => this.weekAttendance()?.summary);
 
   protected readonly view = computed(() => {
     const attendance = this.attendance();
@@ -109,6 +137,23 @@ export default class AttendancePage {
       queryParamsHandling: 'merge',
       replaceUrl: true,
     });
+  }
+
+  protected selectWeek(week: CivilDate): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { week, date: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  /** Flèche ou balayage : la semaine voisine, dans les bornes. */
+  protected stepWeek(direction: 1 | -1): void {
+    const view = this.weekView();
+    if (!view) return;
+    const target = addDays(view.monday, 7 * direction);
+    if (target >= view.bounds.first && target <= view.bounds.last) this.selectWeek(target);
   }
 
   /** Balayage : même effet que les flèches, dans les bornes. */

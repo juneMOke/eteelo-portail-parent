@@ -25,7 +25,7 @@
   <button
     type="button"
     class="arrow previous"
-    aria-label="Semaine précédente"
+    [attr.aria-label]="previousLabel()"
     [attr.aria-disabled]="!hasPrevious()"
     (click)="go(-1)"
   >
@@ -46,7 +46,7 @@
   <button
     type="button"
     class="arrow next"
-    aria-label="Semaine suivante"
+    [attr.aria-label]="nextLabel()"
     [attr.aria-disabled]="!hasNext()"
     (click)="go(1)"
   >

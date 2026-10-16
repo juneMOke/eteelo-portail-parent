@@ -1,0 +1,17 @@
+<section class="card" aria-labelledby="week-indicators-title">
+  <header class="head">
+    <div class="title">
+      <ui-icon name="chart" [size]="17" />
+      <h3 id="week-indicators-title">Les indicateurs de la semaine</h3>
+    </div>
+    <p class="pill">{{ pill() }}</p>
+  </header>
+  <dl class="indicators">
+    @for (indicator of indicators(); track indicator.label) {
+      <div [class]="'indicator tone-' + indicator.tone">
+        <dt>{{ indicator.label }}</dt>
+        <dd>{{ indicator.value }}</dd>
+      </div>
+    }
+  </dl>
+</section>

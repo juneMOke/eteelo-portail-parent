@@ -7,11 +7,16 @@ import {
   input,
 } from '@angular/core';
 import { AttendanceSummary } from '../../../../core/api/conduct.contract';
-import { presenceDaysLabel, rateLabel } from '../../data-access/attendance-formats';
+import {
+  presenceDaysLabel,
+  rateLabel,
+  sinceSchoolStartLabel,
+} from '../../data-access/attendance-formats';
 
 /**
- * ① L'ordre de grandeur, une fois : le taux depuis la rentrée et les jours qui le font, puis
- * trois compteurs. Tout vient du serveur ; le taux reste vert savane, sans seuil d'alerte
+ * ① L'ordre de grandeur, une fois : « Taux de présence » depuis la rentrée, les jours qui le
+ * font, puis trois compteurs au liseré de leur état (sans « Jours présents » ni « % d'absence »,
+ * écarts du prototype relevés par la spec). Tout vient du serveur ; le taux reste vert savane, sans seuil d'alerte
  * (l'école n'en a donné aucun).
  */
 @Component({
@@ -27,9 +32,10 @@ export class AttendanceHeaderComponent {
 
   protected readonly rate = computed(() => rateLabel(this.summary().presenceRate, this.locale));
   protected readonly days = computed(() => presenceDaysLabel(this.summary()));
+  protected readonly since = computed(() => sinceSchoolStartLabel(this.summary()));
   protected readonly counters = computed(() => [
-    { label: 'Absences justifiées', value: this.summary().justifiedAbsenceDays },
-    { label: 'Non justifiées', value: this.summary().unjustifiedAbsenceDays },
-    { label: 'Retards', value: this.summary().lateDays },
+    { label: 'Absences justifiées', value: this.summary().justifiedAbsenceDays, tone: 'info' },
+    { label: 'Non justifiées', value: this.summary().unjustifiedAbsenceDays, tone: 'alert' },
+    { label: 'Retards', value: this.summary().lateDays, tone: 'pending' },
   ]);
 }

@@ -12,6 +12,7 @@ import {
 } from './assignments.contract';
 import {
   AbsenceJustification,
+  AttendanceRange,
   ChildAttendance,
   ChildDiscipline,
   JustificationRequest,
@@ -107,9 +108,14 @@ export class ParentApi {
     });
   }
 
-  /** Présence de toute l'année scolaire, jusqu'à aujourd'hui (Ma présence). */
-  attendance(childId: string): Observable<ChildAttendance> {
-    return this.http.get<ChildAttendance>(`${PARENT_CHILDREN_API}/${childId}/attendance`);
+  /**
+   * Présence de toute l'année scolaire, jusqu'à aujourd'hui (Ma présence) ; avec une plage, les
+   * jours et le résumé de cette plage seulement (la semaine affichée).
+   */
+  attendance(childId: string, range?: AttendanceRange): Observable<ChildAttendance> {
+    return this.http.get<ChildAttendance>(`${PARENT_CHILDREN_API}/${childId}/attendance`, {
+      params: range ? { from: range.from, to: range.to } : {},
+    });
   }
 
   /** Faits consignés d'un trimestre (Ma discipline) ; sans trimestre, celui en cours. */
