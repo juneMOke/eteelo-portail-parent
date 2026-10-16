@@ -44,7 +44,12 @@ npm run api:types       # régénère api-types.ts depuis l'OpenAPI de staging
 ```
 src/app/
   core/       api (types générés, ParentApi, intercepteur), session (SessionStore, gardes), shell
-  shared/     ui (card, badge, status-dot, amount, skeleton, empty-state, file-upload), pipes (amount)
+  shared/     ui (attachment-picker, avatar, badge, card, copy-button, empty-period, empty-state, file-row,
+                  file-upload, grade, icon, load-error, period-navigator, pill-group, sheet, skeleton,
+                  swipe-pager, upload-progress, tone), a11y (radio-focus), date (civil-date),
+              files (document-actions, downscale-image, file-type), format (amount, count, day-labels,
+                  file-size, time-labels), navigation (query-param-sheet), network (online),
+              resource (latest-value), pipes (amount)
   features/   auth, home, agenda, grades, conduct, finance, communication
 src/styles/   tokens.css, base.css
 ```

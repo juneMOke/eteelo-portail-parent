@@ -41,12 +41,15 @@ export class SheetComponent {
 
   readonly headingId = `sheet-title-${nextId++}`;
 
+  /** Sans effet sur une feuille déjà ouverte. */
   open(): void {
-    this.dialog().nativeElement.showModal();
+    const dialog = this.dialog().nativeElement;
+    if (!dialog.open) dialog.showModal();
   }
 
   close(): void {
-    this.dialog().nativeElement.close();
+    const dialog = this.dialog().nativeElement;
+    if (dialog.open) dialog.close();
   }
 
   /** Un clic sur le voile (hors du contenu) ferme la feuille. */

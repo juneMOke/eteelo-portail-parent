@@ -25,6 +25,7 @@ describe('SessionStore', () => {
     await expect(store.ensureLoaded()).resolves.toBe('loaded');
     expect(store.parent()?.lastName).toBe('Kabila');
     expect(store.school()?.name).toBe('Complexe Scolaire La Fontaine');
+    expect(store.academicYear()?.name).toBe('2026-2027');
     expect(store.childById(GRACE.childId)?.firstName).toBe('Grâce');
     expect(store.childById('inconnu')).toBeUndefined();
   });

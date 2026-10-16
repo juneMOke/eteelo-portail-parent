@@ -1,0 +1,16 @@
+<h2 class="heading">À payer maintenant</h2>
+<p class="headline">{{ headline() }}</p>
+@if (rows().length > 1) {
+  <details>
+    <summary>Voir les frais en retard</summary>
+    <ul>
+      @for (row of rows(); track row.id) {
+        <li>
+          <span>{{ row.label }}</span>
+          <span class="amount">{{ row.remaining | amount }}</span>
+        </li>
+      }
+    </ul>
+  </details>
+}
+<button type="button" class="button attention" (click)="pay.emit()">Comment payer</button>

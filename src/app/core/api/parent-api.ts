@@ -16,6 +16,7 @@ import {
   ChildDiscipline,
   JustificationRequest,
 } from './conduct.contract';
+import { AcademicYear, ChildFees, Payment } from './finance.contract';
 import { GradeCourses, GradePeriod, GradeQuery, GradeWeek, ReportCard } from './grades.contract';
 
 type Schemas = components['schemas'];
@@ -118,6 +119,41 @@ export class ParentApi {
     });
   }
 
+  /** Frais d'une année de l'enfant, avec leurs totaux par devise ; sans année, l'année courante. */
+  fees(childId: string, academicYearId?: string): Observable<ChildFees> {
+    return this.http.get<ChildFees>(`${PARENT_CHILDREN_API}/${childId}/fees`, {
+      params: yearParams(academicYearId),
+    });
+  }
+
+  /** Versements d'une année, du plus récent au plus ancien ; sans année, l'année courante. */
+  payments(childId: string, academicYearId?: string): Observable<Payment[]> {
+    return this.http.get<Payment[]>(`${PARENT_CHILDREN_API}/${childId}/payments`, {
+      params: yearParams(academicYearId),
+    });
+  }
+
+  /** Années où l'enfant a été inscrit, la plus récente en tête (choix d'année de Mes reçus). */
+  academicYears(childId: string): Observable<AcademicYear[]> {
+    return this.http.get<AcademicYear[]>(`${PARENT_CHILDREN_API}/${childId}/academic-years`);
+  }
+
+  /** Le PDF scellé du reçu d'un versement, pour le partager. */
+  receipt(childId: string, paymentId: string): Observable<Blob> {
+    return this.http.get(receiptUrl(childId, paymentId), { responseType: 'blob' });
+  }
+
+  /**
+   * Relevé de l'année (PDF), généré à chaque appel : chaque génération prend un numéro de pièce
+   * de l'école. D'où un POST, sous CSRF et sous le plafond d'écriture du portail (429).
+   */
+  statement(childId: string, academicYearId?: string): Observable<Blob> {
+    return this.http.post(`${PARENT_CHILDREN_API}/${childId}/statement`, null, {
+      params: yearParams(academicYearId),
+      responseType: 'blob',
+    });
+  }
+
   /**
    * Justifie l'absence d'un jour : une demande que l'école valide. Rend les événements pour
    * suivre l'envoi de la pièce jointe ; un renvoi du même `id` est sans effet.
@@ -161,6 +197,15 @@ export class ParentApi {
 /** Une portion sans sa période ne veut rien dire : le serveur l'appliquerait à la période en cours. */
 function gradeParams({ periodId, part }: GradeQuery): Record<string, string> {
   return periodId ? { periodId, ...(part ? { part } : {}) } : {};
+}
+
+function yearParams(academicYearId: string | undefined): Record<string, string> {
+  return academicYearId ? { academicYearId } : {};
+}
+
+/** Reçu scellé d'un versement (PDF inline), ouvrable tel quel dans un nouvel onglet. */
+export function receiptUrl(childId: string, paymentId: string): string {
+  return `${PARENT_CHILDREN_API}/${childId}/payments/${paymentId}/receipt`;
 }
 
 /**

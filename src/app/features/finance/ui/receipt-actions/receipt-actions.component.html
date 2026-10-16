@@ -1,0 +1,21 @@
+<a
+  class="action"
+  [href]="href()"
+  target="_blank"
+  rel="noopener"
+  [attr.aria-label]="'Ouvrir le ' + name()"
+  [title]="'Ouvrir le ' + name()"
+>
+  <ui-icon name="external-link" [size]="18" />
+</a>
+<button
+  type="button"
+  class="action"
+  [attr.aria-label]="'Partager le ' + name()"
+  [title]="'Partager le ' + name()"
+  [attr.aria-busy]="sharing()"
+  [disabled]="sharing()"
+  (click)="share.emit()"
+>
+  <ui-icon name="share" [size]="18" />
+</button>

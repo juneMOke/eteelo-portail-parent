@@ -33,9 +33,9 @@ test.describe('Accueil', () => {
     await mockParentApi(page);
     await page.goto('/');
 
-    await page.locator('app-tile').getByRole('link', { name: 'Mes frais' }).click();
-    await expect(page).toHaveURL(`/c/${GRACE.childId}/finance/fees`);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mes frais');
+    await page.locator('app-tile').getByRole('link', { name: 'Mon emploi du temps' }).click();
+    await expect(page).toHaveURL(`/c/${GRACE.childId}/timetable`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mon emploi du temps');
     await expect(page.getByText('Bientôt disponible')).toBeVisible();
 
     await page.locator('app-top-bar').getByRole('link', { name: 'Accueil' }).click();

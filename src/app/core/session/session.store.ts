@@ -24,6 +24,7 @@ export const SessionStore = signalStore(
   withComputed(({ bootstrap }) => ({
     parent: computed(() => bootstrap()?.parent ?? null),
     school: computed(() => bootstrap()?.school ?? null),
+    academicYear: computed(() => bootstrap()?.academicYear ?? null),
     children: computed(() => bootstrap()?.children ?? []),
   })),
   withMethods((store, api = inject(ParentApi)) => {

@@ -1,0 +1,31 @@
+<ui-sheet heading="Comment payer">
+  @if (fee(); as fee) {
+    <p class="context">
+      {{ fee.label }} · <span class="amount">{{ remaining()! | amount }}</span> restant
+    </p>
+  }
+
+  <section class="method" aria-label="Au secrétariat de l’école">
+    <span class="icon"><ui-icon name="wallet" [size]="18" /></span>
+    <div class="text">
+      <h3>Au secrétariat de l’école</h3>
+      <p>En espèces. Le reçu vous est remis sur place.</p>
+      @if (phone(); as phone) {
+        <a class="call" [href]="'tel:' + phone">
+          <ui-icon name="phone" [size]="16" />
+          Appeler le secrétariat
+        </a>
+      }
+    </div>
+  </section>
+
+  @for (method of upcoming; track method.label) {
+    <section class="method upcoming" [attr.aria-label]="method.label + ', bientôt disponible'">
+      <span class="icon"><ui-icon [name]="method.icon" [size]="18" /></span>
+      <div class="text">
+        <h3>{{ method.label }}</h3>
+        <ui-badge tone="neutral">Bientôt disponible</ui-badge>
+      </div>
+    </section>
+  }
+</ui-sheet>

@@ -1,6 +1,7 @@
 import { Page } from '@playwright/test';
 import type { EvaluationList, HomeworkList } from '../../src/app/core/api/assignments.contract';
 import type { ChildAttendance } from '../../src/app/core/api/conduct.contract';
+import type { ChildFees, Payment } from '../../src/app/core/api/finance.contract';
 import type { Bootstrap } from '../../src/app/core/session/bootstrap.schema';
 import {
   evaluationDetailFixture,
@@ -9,6 +10,12 @@ import {
 import { attendanceFixture, withPendingJustification } from '../../src/testing/attendance.fixture';
 import { bootstrapFixture } from '../../src/testing/bootstrap.fixture';
 import { disciplineFixture } from '../../src/testing/discipline.fixture';
+import {
+  ACADEMIC_YEARS,
+  PDF_BODY,
+  feesFixture,
+  paymentsFixture,
+} from '../../src/testing/finance.fixture';
 import { gradeCoursesFixture } from '../../src/testing/grade-courses.fixture';
 import { GRADE_PERIODS } from '../../src/testing/grades-terms.fixture';
 import { gradeWeekFixture } from '../../src/testing/grades-week.fixture';
@@ -41,6 +48,10 @@ interface ParentApiMock {
   justification?: number | number[];
   /** Code HTTP d'erreur de Ma discipline ; par défaut, les données factices. */
   discipline?: number;
+  /** Frais de l'année, ou un code HTTP d'erreur. */
+  fees?: ChildFees | number;
+  /** Versements de toute année demandée, ou un code HTTP d'erreur ; par défaut, ceux de l'année. */
+  payments?: Payment[] | number;
 }
 
 const EVALUATION_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/evaluations(?:\/([^/]+))?$/;
@@ -50,11 +61,13 @@ const GRADES_ROUTE =
   /^\/api\/v1\/parent\/children\/[^/]+\/grades\/(week|periods|courses|report-card)$/;
 const JUSTIFICATION_ROUTE =
   /^\/api\/v1\/parent\/children\/[^/]+\/attendance\/[^/]+\/justification$/;
+const FINANCE_DOCUMENT =
+  /^\/api\/v1\/parent\/children\/[^/]+\/(payments\/[^/]+\/receipt|statement)$/;
 const REPORT_CARD_PDF = /^\/api\/v1\/parent\/children\/[^/]+\/grades\/report-card\/[^/]+\/pdf$/;
 
 /**
  * Simule l'API du portail parent : bootstrap, authentification, Mes évaluations, Mes devoirs, le
- * dépôt de copie, Mes notes et Ma conduite ; tout le reste répond 404.
+ * dépôt de copie, Mes notes, Ma conduite et Mes finances ; tout le reste répond 404.
  */
 export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promise<void> {
   const bootstrap = mock.bootstrap ?? bootstrapFixture();
@@ -131,6 +144,25 @@ export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promi
           decisionNote: null,
         },
       });
+    }
+    if (method === 'GET' && pathname.endsWith('/fees')) {
+      const fees = mock.fees ?? feesFixture();
+      return typeof fees === 'number'
+        ? route.fulfill({ status: fees })
+        : route.fulfill({ json: fees });
+    }
+    if (method === 'GET' && pathname.endsWith('/payments')) {
+      const payments =
+        mock.payments ?? paymentsFixture(searchParams.get('academicYearId') ?? undefined);
+      return typeof payments === 'number'
+        ? route.fulfill({ status: payments })
+        : route.fulfill({ json: payments });
+    }
+    if (method === 'GET' && pathname.endsWith('/academic-years')) {
+      return route.fulfill({ json: ACADEMIC_YEARS });
+    }
+    if (FINANCE_DOCUMENT.test(pathname)) {
+      return route.fulfill({ contentType: 'application/pdf', body: PDF_BODY });
     }
     if (method === 'GET' && REPORT_CARD_PDF.test(pathname)) {
       return route.fulfill({ contentType: 'application/pdf', body: '%PDF-1.4\n' });

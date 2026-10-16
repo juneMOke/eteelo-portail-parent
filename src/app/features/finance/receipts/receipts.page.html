@@ -1,0 +1,52 @@
+@if (yearOptions().length) {
+  <ui-pill-group
+    label="Année scolaire"
+    [options]="yearOptions()"
+    [checked]="checkedYear()"
+    (pick)="pickYear($event)"
+  />
+}
+
+@if (data(); as data) {
+  <section class="list" aria-label="Reçus de l’année" [attr.aria-busy]="resource.isLoading()">
+    @for (payment of receipts(); track payment.paymentId) {
+      <app-receipt-row
+        [payment]="payment"
+        [href]="receiptHref(payment)"
+        [sharing]="isSharing(payment)"
+        (share)="share(payment)"
+      />
+      @if (receiptFailure(payment); as failure) {
+        <p class="failure" role="alert">{{ failure }}</p>
+      }
+    } @empty {
+      <ui-empty-period
+        [heading]="emptyHeading()"
+        [linkLabel]="feesLinkLabel()"
+        [link]="feesLink()"
+      />
+    }
+  </section>
+
+  @if (data.length) {
+    <app-statement-footer
+      [yearLabel]="yearLabel()"
+      [opening]="statementOpening()"
+      [failure]="statementFailure()"
+      (open)="openStatement()"
+    />
+  }
+} @else if (resource.error()) {
+  <ui-load-error
+    heading="Impossible d’afficher les reçus"
+    message="Mes reçus nécessite une connexion. Vérifiez-la, puis réessayez."
+    (retry)="resource.reload()"
+  />
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement des reçus…</span>
+    <ui-skeleton height="64px" />
+    <ui-skeleton height="64px" />
+    <ui-skeleton height="64px" />
+  </div>
+}

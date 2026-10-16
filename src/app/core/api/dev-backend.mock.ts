@@ -7,6 +7,12 @@ import {
 import { attendanceFixture, withPendingJustification } from '../../../testing/attendance.fixture';
 import { bootstrapFixture } from '../../../testing/bootstrap.fixture';
 import { disciplineFixture } from '../../../testing/discipline.fixture';
+import {
+  ACADEMIC_YEARS,
+  PDF_BODY,
+  feesFixture,
+  paymentsFixture,
+} from '../../../testing/finance.fixture';
 import { gradeCoursesFixture } from '../../../testing/grade-courses.fixture';
 import { GRADE_PERIODS } from '../../../testing/grades-terms.fixture';
 import { gradeWeekFixture } from '../../../testing/grades-week.fixture';
@@ -28,6 +34,10 @@ const GRADES_ROUTE = new RegExp(
 /** Présence servie, mise à jour par les justifications reçues pendant la session de développement. */
 let attendance = attendanceFixture();
 const CONDUCT_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/(attendance|discipline)$`);
+const FINANCE_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/(fees|payments|academic-years)$`);
+const DOCUMENT_ROUTE = new RegExp(
+  `^${PARENT_CHILDREN_API}/[^/]+/(payments/[^/]+/receipt|statement)$`,
+);
 const JUSTIFICATION_ROUTE = new RegExp(
   `^${PARENT_CHILDREN_API}/[^/]+/attendance/[^/]+/justification$`,
 );
@@ -83,6 +93,15 @@ const mockBackend: HttpInterceptorFn = (req, next) => {
         },
       }),
     );
+  }
+  const finance = req.method === 'GET' ? FINANCE_ROUTE.exec(req.url) : null;
+  if (finance) {
+    const year = req.params.get('academicYearId') ?? undefined;
+    if (finance[1] === 'fees') return ok(feesFixture());
+    return ok(finance[1] === 'payments' ? paymentsFixture(year) : ACADEMIC_YEARS);
+  }
+  if (DOCUMENT_ROUTE.test(req.url)) {
+    return ok(new Blob([PDF_BODY], { type: 'application/pdf' }));
   }
   const submission = req.method === 'POST' ? SUBMISSION_ROUTE.exec(req.url) : null;
   if (submission && req.body instanceof FormData) {
