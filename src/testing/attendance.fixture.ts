@@ -1,6 +1,8 @@
 import type {
   AttendanceDay,
   AttendanceMonth,
+  AttendanceRange,
+  AttendanceSummary,
   ChildAttendance,
 } from '../app/core/api/conduct.contract';
 import { addDays, civilToDate, monthOf } from '../app/shared/date/civil-date';
@@ -112,22 +114,27 @@ function monthsOf(days: readonly AttendanceDay[]): AttendanceMonth[] {
   return [...months.values()];
 }
 
-export function attendanceFixture(
-  days = calledDays('2026-09-01', ATTENDANCE_TODAY),
-): ChildAttendance {
+/** Le résumé que calcule le serveur ; ici recompté sur les jours factices. */
+function summaryOf(days: readonly AttendanceDay[]): AttendanceSummary {
   const count = (test: (day: AttendanceDay) => boolean) => days.filter(test).length;
   const presentDays = count((day) => day.status !== 'ABSENT');
   return {
+    schoolDays: days.length,
+    presentDays,
+    lateDays: count((day) => day.status === 'LATE'),
+    justifiedAbsenceDays: count((day) => day.status === 'ABSENT' && !!day.justified),
+    unjustifiedAbsenceDays: count((day) => day.status === 'ABSENT' && !day.justified),
+    presenceRate: days.length ? presentDays / days.length : 0,
+  };
+}
+
+export function attendanceFixture(
+  days = calledDays('2026-09-01', ATTENDANCE_TODAY),
+): ChildAttendance {
+  return {
     from: '2026-09-01',
     to: ATTENDANCE_TODAY,
-    summary: {
-      schoolDays: days.length,
-      presentDays,
-      lateDays: count((day) => day.status === 'LATE'),
-      justifiedAbsenceDays: count((day) => day.status === 'ABSENT' && !!day.justified),
-      unjustifiedAbsenceDays: count((day) => day.status === 'ABSENT' && !day.justified),
-      presenceRate: days.length ? presentDays / days.length : 0,
-    },
+    summary: summaryOf(days),
     months: monthsOf(days),
     toJustify: days
       .filter((day) => day.justifyUntil && day.justification?.status !== 'PENDING')
@@ -166,4 +173,13 @@ export function withPendingJustification(
     days,
     toJustify: attendance.toJustify.filter((entry) => entry.date !== date),
   };
+}
+
+/** Ce que rend `GET attendance?from&to` : les jours et le résumé de la plage seulement. */
+export function attendanceRangeFixture(
+  attendance: ChildAttendance,
+  { from, to }: AttendanceRange,
+): ChildAttendance {
+  const days = attendance.days.filter((day) => day.date >= from && day.date <= to);
+  return { ...attendance, from, to, summary: summaryOf(days), months: monthsOf(days), days };
 }

@@ -10,6 +10,10 @@ import {
   rateLabel,
   reasonLabel,
   recordedLabel,
+  relativeMonth,
+  tileDayLabel,
+  weekIndicators,
+  weekSummaryLabel,
 } from './attendance-formats';
 
 registerLocaleData(localeFr);
@@ -26,7 +30,7 @@ describe('attendance-formats', () => {
 
   it('écrit le taux une fois, et les jours qui le font', () => {
     expect(rateLabel(summary.presenceRate, 'fr')).toBe('95 %');
-    expect(presenceDaysLabel(summary)).toBe('58 jours sur 61');
+    expect(presenceDaysLabel(summary)).toBe('58 jours présents sur 61');
   });
 
   it('résume un mois', () => {
@@ -80,5 +84,33 @@ describe('attendance-formats', () => {
         'fr',
       ),
     ).toBe('Justification non retenue le 25/09');
+  });
+
+  it('donne les indicateurs de la semaine, ou des tirets sans jour enregistré', () => {
+    expect(weekIndicators(summary, 'fr').map(({ label, value }) => [label, value])).toEqual([
+      ['Présence de la semaine', '95 %'],
+      ['Justifiées', '1'],
+      ['Non justifiées', '2'],
+      ['Retards', '7'],
+    ]);
+    expect(weekIndicators({ ...summary, schoolDays: 0 }, 'fr').map((i) => i.value)).toEqual([
+      '—',
+      '—',
+      '—',
+      '—',
+    ]);
+    expect(weekIndicators(undefined, 'fr')[0].value).toBe('—');
+  });
+
+  it('résume la semaine en pastille', () => {
+    expect(weekSummaryLabel(summary)).toBe('58 jours présents sur 61 · 7 retards');
+    expect(weekSummaryLabel({ ...summary, schoolDays: 0 })).toBe('Aucun jour d’école enregistré');
+  });
+
+  it('écrit le jour d’une tuile et la position d’un mois', () => {
+    expect(tileDayLabel('2026-09-22', 'fr')).toBe('mar 22 sept.');
+    expect(relativeMonth(0).long).toBe('ce mois-ci');
+    expect(relativeMonth(-1).short).toBe('mois passé');
+    expect(relativeMonth(-3).long).toBe('il y a 3 mois');
   });
 });

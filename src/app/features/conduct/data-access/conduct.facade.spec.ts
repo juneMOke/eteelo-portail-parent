@@ -34,6 +34,25 @@ describe('ConductFacade', () => {
     expect(resource.value()?.to).toBe('2026-10-06');
   });
 
+  it('lit le résumé de la semaine, borné à ses jours', async () => {
+    const { api, facade } = setup();
+
+    TestBed.runInInjectionContext(() =>
+      facade.attendanceWeekResource(() => ({
+        childId: GRACE.childId,
+        from: '2026-09-14',
+        to: '2026-09-20',
+      })),
+    );
+    TestBed.inject(ApplicationRef).tick();
+    await settle();
+
+    expect(api.attendance).toHaveBeenCalledExactlyOnceWith(GRACE.childId, {
+      from: '2026-09-14',
+      to: '2026-09-20',
+    });
+  });
+
   it('lit le trimestre demandé, ou celui en cours', async () => {
     const { api, facade } = setup();
 

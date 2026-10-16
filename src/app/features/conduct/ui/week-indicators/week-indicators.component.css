@@ -1,0 +1,127 @@
+/* Carte blanche, en-tête bleu brume (titre Lora) ; elle monte de 2 px au survol, comme chaque indicateur. */
+.card {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  transition:
+    translate var(--duration-lift) var(--ease-out),
+    box-shadow var(--duration-lift) var(--ease-out);
+}
+
+/* Téléphone : titre et pastille sur deux lignes, pastille à gauche. */
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-accent-line);
+  background: var(--color-accent-soft);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-accent);
+}
+
+h3 {
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-semibold);
+}
+
+.pill {
+  padding: 6px var(--space-3);
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-accent);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+.indicators {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+/* Liseré coloré à gauche, chiffre Lora 22 px. */
+.indicator {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-soft);
+  border-left: 3px solid var(--indicator-edge);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-soft);
+  transition:
+    translate var(--duration-lift) var(--ease-out),
+    box-shadow var(--duration-lift) var(--ease-out);
+}
+
+dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-caps);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+dd {
+  color: var(--indicator-ink);
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-title);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+}
+
+.tone-success {
+  --indicator-edge: var(--color-tone-success);
+  --indicator-ink: var(--color-tone-success);
+}
+
+.tone-info {
+  --indicator-edge: var(--color-accent);
+  --indicator-ink: var(--color-accent);
+}
+
+.tone-alert {
+  --indicator-edge: var(--color-attention);
+  --indicator-ink: var(--color-tone-alert);
+}
+
+.tone-pending {
+  --indicator-edge: var(--color-highlight);
+  --indicator-ink: var(--color-tone-pending);
+}
+
+@media (min-width: 600px) {
+  .head {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+}
+
+@media (hover: hover) {
+  .card:hover {
+    translate: 0 -2px;
+    box-shadow: var(--shadow-lift);
+  }
+
+  .indicator:hover {
+    translate: 0 -2px;
+    box-shadow: var(--shadow-lift);
+  }
+}

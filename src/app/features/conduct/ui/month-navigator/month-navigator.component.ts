@@ -6,72 +6,70 @@ import {
   inject,
   input,
   output,
-  viewChild,
 } from '@angular/core';
 import { AttendanceMonth } from '../../../../core/api/conduct.contract';
-import {
-  CivilDate,
-  CivilMonth,
-  addMonths,
-  firstDayOf,
-  monthOf,
-} from '../../../../shared/date/civil-date';
+import { CivilMonth, addMonths } from '../../../../shared/date/civil-date';
+import { RelativeWeek } from '../../../../shared/format/relative-week';
 import { monthLabel } from '../../../../shared/format/day-labels';
-import { PeriodNavigatorComponent } from '../../../../shared/ui/period-navigator/period-navigator.component';
+import { WIDE_SCREEN, mediaQuery } from '../../../../shared/layout/media-query';
+import { WeekBannerComponent } from '../../../../shared/ui/week-banner/week-banner.component';
 import { MonthBounds } from '../../data-access/attendance-view';
 import { monthSummary } from '../../data-access/attendance-formats';
 
 /**
- * ③ Le seul curseur de temps de Ma présence, au pas d'un mois : « Septembre 2026 » et ses
- * comptes. Du mois de la rentrée au mois en cours ; « Ce mois-ci » est masqué quand on y est.
+ * ③ Le curseur du mois : le bandeau bleu de la semaine, au pas d'un mois, puis les comptes du
+ * mois servis par le serveur. Du mois de la rentrée au mois en cours ; la pilule de retour est
+ * masquée quand on y est.
  */
 @Component({
   selector: 'app-month-navigator',
-  imports: [PeriodNavigatorComponent],
+  imports: [WeekBannerComponent],
   template: `
-    <ui-period-navigator
+    <ui-week-banner
       [label]="label()"
-      [meta]="meta()"
-      previousLabel="Mois précédent"
-      nextLabel="Mois suivant"
+      [shortLabel]="label()"
+      [relative]="relative()"
       [hasPrevious]="month() > bounds().first"
       [hasNext]="month() < bounds().last"
-      [value]="value()"
-      [min]="min()"
-      [max]="today()"
-      currentLabel="Ce mois-ci"
-      [showCurrent]="month() !== bounds().last"
+      [isCurrent]="month() === bounds().last"
+      [wide]="wide()"
+      previousLabel="Mois précédent"
+      nextLabel="Mois suivant"
+      currentLabel="Revenir à ce mois-ci"
       [announcement]="label() + ', ' + meta()"
-      (step)="step($event)"
-      (pick)="monthChange.emit(monthOf($event))"
+      (step)="monthChange.emit(addMonths(month(), $event))"
       (current)="monthChange.emit(bounds().last)"
     />
+    <p class="meta">{{ meta() }}</p>
+  `,
+  styles: `
+    :host {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    /* « 21 jours d'école · 1 absence · 2 retards », sous le bandeau. */
+    .meta {
+      color: var(--color-text-secondary);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MonthNavigatorComponent {
   readonly month = input.required<CivilMonth>();
   readonly bounds = input.required<MonthBounds>();
-  /** Jour de l'école : borne du saut de date. */
-  readonly today = input.required<CivilDate>();
+  /** « ce mois-ci », « mois passé ». */
+  readonly relative = input.required<RelativeWeek>();
   /** Comptes du mois, servis par le serveur. */
   readonly counts = input<AttendanceMonth | undefined>(undefined);
   readonly monthChange = output<CivilMonth>();
 
   private readonly locale = inject(LOCALE_ID);
-  private readonly navigator = viewChild.required(PeriodNavigatorComponent);
 
-  protected readonly monthOf = monthOf;
+  protected readonly wide = mediaQuery(WIDE_SCREEN);
+  protected readonly addMonths = addMonths;
   protected readonly label = computed(() => monthLabel(this.month(), this.locale));
   protected readonly meta = computed(() => monthSummary(this.counts()));
-  protected readonly value = computed(() => firstDayOf(this.month()));
-  protected readonly min = computed(() => firstDayOf(this.bounds().first));
-
-  /** À la borne, la flèche se désactive et perd le focus : on le rend au libellé. */
-  protected step(direction: 1 | -1): void {
-    const target = addMonths(this.month(), direction);
-    this.monthChange.emit(target);
-    const { first, last } = this.bounds();
-    if (target <= first || target >= last) this.navigator().focusLabel();
-  }
 }

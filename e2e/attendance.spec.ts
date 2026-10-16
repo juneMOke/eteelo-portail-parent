@@ -20,9 +20,34 @@ test.describe('Ma présence', () => {
       'Mardi 29/09',
       'Vendredi 02/10',
     ]);
-    await expect(page.locator('app-attendance-header .days')).toHaveText('20 jours sur 25');
-    await expect(page.locator('app-month-navigator .date')).toHaveText('Octobre 2026');
-    await expect(page.getByRole('button', { name: 'Mois suivant' })).toBeDisabled();
+    await expect(page.locator('app-attendance-header .days')).toHaveText('20 jours présents sur 25');
+    await expect(page.locator('app-month-navigator .title')).toHaveText('Octobre 2026');
+    await expect(page.getByRole('button', { name: 'Mois suivant' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+  });
+
+  test('montre la semaine jour par jour, puis le mois', async ({ page }) => {
+    await mockParentApi(page);
+    await page.goto(ATTENDANCE);
+
+    await expect(page.locator('.scale-title')).toHaveText([
+      'La semaine jour par jour',
+      'Le mois vue calendrier',
+    ]);
+    await expect(page.locator('app-week-days .word').first()).toHaveText(
+      'Absent · justification envoyée',
+    );
+
+    await page.getByRole('button', { name: 'Semaine précédente' }).click();
+    await page.getByRole('button', { name: 'Semaine précédente' }).click();
+    await page.getByRole('button', { name: 'Semaine précédente' }).click();
+
+    await expect(page).toHaveURL(`${ATTENDANCE}?week=2026-09-14`);
+    await expect(page.locator('app-week-indicators dd')).toHaveText(['80 %', '0', '1', '2']);
+    await expect(page.locator('app-week-indicators .pill')).toHaveText('4 jours présents sur 5 · 2 retards');
+    await expect(page.locator('app-month-navigator .title')).toHaveText('Octobre 2026');
   });
 
   test('montre un mois, ses retards et la fiche d’un jour', async ({ page }) => {
@@ -91,5 +116,6 @@ test.describe('Ma présence', () => {
       page.getByText('La présence est enregistrée à partir du mardi 1 septembre.'),
     ).toBeVisible();
     await expect(page.locator('app-month-calendar')).toHaveCount(0);
+    await expect(page.locator('app-week-days')).toHaveCount(0);
   });
 });

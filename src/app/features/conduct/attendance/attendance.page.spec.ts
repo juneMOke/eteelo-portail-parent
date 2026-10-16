@@ -8,12 +8,17 @@ import { Observable, of, throwError } from 'rxjs';
 import { settle } from '../../../../testing/async';
 import {
   attendanceFixture,
+  attendanceRangeFixture,
   emptyAttendanceFixture,
   withPendingJustification,
 } from '../../../../testing/attendance.fixture';
 import { GRACE } from '../../../../testing/bootstrap.fixture';
 import { stubDialog } from '../../../../testing/dialog';
-import { AbsenceJustification, ChildAttendance } from '../../../core/api/conduct.contract';
+import {
+  AbsenceJustification,
+  AttendanceRange,
+  ChildAttendance,
+} from '../../../core/api/conduct.contract';
 import { ParentApi } from '../../../core/api/parent-api';
 import AttendancePage from './attendance.page';
 
@@ -23,13 +28,19 @@ describe('AttendancePage', () => {
   beforeAll(stubDialog);
 
   async function render(
-    params: { month?: string; date?: string } = {},
+    params: { month?: string; week?: string; date?: string } = {},
     attendance: () => Observable<ChildAttendance> = () => of(attendanceFixture()),
   ) {
     const justifyAbsence = vi.fn((): Observable<HttpEvent<AbsenceJustification>> =>
       of(new HttpResponse({ status: 201, body: {} as AbsenceJustification })),
     );
-    const api = { attendance: vi.fn(attendance), justifyAbsence };
+    // Avec une plage : le résumé de la semaine, comme le serveur.
+    const api = {
+      attendance: vi.fn((_: string, range?: AttendanceRange) =>
+        range ? of(attendanceRangeFixture(attendanceFixture(), range)) : attendance(),
+      ),
+      justifyAbsence,
+    };
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
@@ -53,17 +64,73 @@ describe('AttendancePage', () => {
 
     expect(texts(el, 'app-pending-absences .day')).toEqual(['Mardi 29/09', 'Vendredi 02/10']);
     expect(el.querySelector('app-pending-absences .more')?.textContent).toContain('et 1 autre');
-    expect(el.querySelector('app-attendance-header .days')?.textContent).toBe('20 jours sur 25');
-    expect(el.querySelector('app-month-navigator .date')?.textContent).toBe('Octobre 2026');
+    expect(el.querySelector('app-attendance-header .days')?.textContent).toBe('20 jours présents sur 25');
+    expect(el.querySelector('app-month-navigator .title')?.textContent).toBe('Octobre 2026');
     expect(el.querySelector('app-month-navigator .meta')?.textContent).toBe(
       '3 jours d’école · 2 absences · aucun retard',
+    );
+  });
+
+  it('montre la semaine en cours, jour par jour, avec le résumé que le serveur en fait', async () => {
+    const { el, api } = await render();
+
+    expect(texts(el, '.scale-title')).toEqual([
+      'La semaine jour par jour',
+      'Le mois vue calendrier',
+    ]);
+    expect(el.querySelector('.scale ui-week-banner .relative')?.textContent).toBe('cette sem.');
+    expect(texts(el, 'app-week-days .visually-hidden')).toEqual([
+      'Lundi 5 octobre, absent, justification envoyée',
+      'Mardi 6 octobre, pas encore enregistrée',
+      'Mercredi 7 octobre, à venir',
+      'Jeudi 8 octobre, à venir',
+      'Vendredi 9 octobre, à venir',
+    ]);
+    expect(api.attendance).toHaveBeenCalledWith(GRACE.childId, {
+      from: '2026-10-05',
+      to: '2026-10-06',
+    });
+    expect(el.querySelector('app-week-indicators .pill')?.textContent).toBe(
+      '0 jour présent sur 1 · aucun retard',
+    );
+  });
+
+  it('montre la semaine de l’URL et ses quatre indicateurs', async () => {
+    const { el } = await render({ week: '2026-09-16' });
+
+    expect(el.querySelector('.scale ui-week-banner .title')?.textContent).toBe('14 – 18 sept.');
+    expect(texts(el, 'app-week-days .word')).toEqual([
+      'En retard',
+      'Présent',
+      'Absent · non justifié',
+      'Présent',
+      'En retard',
+    ]);
+    expect(texts(el, 'app-week-indicators dd')).toEqual(['80 %', '0', '1', '2']);
+    expect(el.querySelector('app-week-indicators .pill')?.textContent).toBe(
+      '4 jours présents sur 5 · 2 retards',
+    );
+  });
+
+  it('change de semaine par l’URL, sans toucher au mois', async () => {
+    const { el } = await render();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    el.querySelector<HTMLButtonElement>('[aria-label="Semaine précédente"]')!.click();
+
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({
+        queryParams: { week: '2026-09-28', date: null },
+        queryParamsHandling: 'merge',
+      }),
     );
   });
 
   it('montre le mois de l’URL, sa grille et ses absences et retards', async () => {
     const { el } = await render({ month: '2026-09' });
 
-    expect(el.querySelector('app-month-navigator .date')?.textContent).toBe('Septembre 2026');
+    expect(el.querySelector('app-month-navigator .title')?.textContent).toBe('Septembre 2026');
     expect(
       el.querySelector('[aria-label="Mercredi 16 septembre, absent, non justifié."]'),
     ).not.toBeNull();
@@ -117,7 +184,7 @@ describe('AttendancePage', () => {
       '2026-10-02',
       expect.objectContaining({ reason: 'SICKNESS', note: '' }),
     );
-    expect(api.attendance).toHaveBeenCalledTimes(2);
+    expect(api.attendance.mock.calls.filter(([, range]) => !range)).toHaveLength(2);
     expect(texts(el, 'app-pending-absences .detail')).toEqual([
       'À justifier jusqu’au 06/10',
       'Justification envoyée · en attente de l’école',

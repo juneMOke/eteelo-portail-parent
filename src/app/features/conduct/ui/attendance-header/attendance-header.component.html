@@ -1,5 +1,8 @@
 <section aria-labelledby="attendance-header-title">
-  <h2 id="attendance-header-title" class="band">Présence depuis la rentrée</h2>
+  <div class="band">
+    <h2 id="attendance-header-title">Taux de présence</h2>
+    <p class="since">{{ since() }}</p>
+  </div>
   <div class="body">
     <p class="rate">
       <span class="value">{{ rate() }}</span>
@@ -7,7 +10,7 @@
     </p>
     <dl class="counters">
       @for (counter of counters(); track counter.label) {
-        <div class="counter">
+        <div [class]="'counter tone-' + counter.tone">
           <dt>{{ counter.label }}</dt>
           <dd>{{ counter.value }}</dd>
         </div>

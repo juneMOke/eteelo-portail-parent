@@ -107,6 +107,12 @@ export interface ChildAttendance {
   readonly days: readonly AttendanceDay[];
 }
 
+/** Plage demandée à `GET attendance`, bornes comprises, dans l'année scolaire. */
+export interface AttendanceRange {
+  readonly from: CivilDate;
+  readonly to: CivilDate;
+}
+
 /** Justification envoyée par le parent (`POST attendance/{date}/justification`). */
 export interface JustificationRequest {
   /** Uuid choisi par le client : un renvoi du même id est sans effet. */

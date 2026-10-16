@@ -4,7 +4,11 @@ import {
   evaluationDetailFixture,
   evaluationListFixture,
 } from '../../../testing/assessments.fixture';
-import { attendanceFixture, withPendingJustification } from '../../../testing/attendance.fixture';
+import {
+  attendanceFixture,
+  attendanceRangeFixture,
+  withPendingJustification,
+} from '../../../testing/attendance.fixture';
 import { bootstrapFixture } from '../../../testing/bootstrap.fixture';
 import { disciplineFixture } from '../../../testing/discipline.fixture';
 import {
@@ -42,6 +46,11 @@ const JUSTIFICATION_ROUTE = new RegExp(
   `^${PARENT_CHILDREN_API}/[^/]+/attendance/[^/]+/justification$`,
 );
 
+/** Toute l'année, ou la plage demandée (la semaine de Ma présence). */
+function attendanceOrRange(from: string | null, to: string | null) {
+  return from && to ? attendanceRangeFixture(attendance, { from, to }) : attendance;
+}
+
 /** Serveur factice : répond aux routes du portail parent sans quitter le navigateur. */
 const mockBackend: HttpInterceptorFn = (req, next) => {
   const ok = (body: unknown = null) => of(new HttpResponse({ status: 200, body }));
@@ -75,7 +84,7 @@ const mockBackend: HttpInterceptorFn = (req, next) => {
   if (conduct) {
     return ok(
       conduct[1] === 'attendance'
-        ? attendance
+        ? attendanceOrRange(req.params.get('from'), req.params.get('to'))
         : disciplineFixture(req.params.get('periodId') ?? undefined),
     );
   }

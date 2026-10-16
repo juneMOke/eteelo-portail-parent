@@ -13,34 +13,70 @@
       <app-attendance-header [summary]="attendance.summary" />
     }
 
-    <app-month-navigator
-      [month]="view.month"
-      [bounds]="view.bounds"
-      [today]="view.today"
-      [counts]="view.counts"
-      (monthChange)="selectMonth($event)"
-    />
+    @if (weekView(); as week) {
+      <section class="scale" aria-labelledby="week-scale-title">
+        <h2 id="week-scale-title" class="scale-title">
+          La semaine <span class="scale-kicker">jour par jour</span>
+        </h2>
+        <ui-week-banner
+          [label]="week.label"
+          [shortLabel]="week.shortLabel"
+          [relative]="week.relative"
+          [hasPrevious]="week.monday > week.bounds.first"
+          [hasNext]="week.monday < week.bounds.last"
+          [isCurrent]="week.monday === week.bounds.last"
+          [wide]="wide()"
+          [announcement]="week.label"
+          (step)="stepWeek($event)"
+          (current)="selectWeek(week.bounds.last)"
+        />
+        <ui-swipe-pager
+          [position]="week.monday"
+          label="Présence de la semaine"
+          [attr.aria-busy]="weekResource.isLoading()"
+          (swipe)="stepWeek($event)"
+        >
+          <div class="cards">
+            <app-week-days [tiles]="week.tiles" />
+            <app-week-indicators [summary]="weekSummary()" [failed]="!!weekResource.error()" />
+          </div>
+        </ui-swipe-pager>
+      </section>
+    }
 
-    <ui-swipe-pager
-      [position]="view.month"
-      label="Présence du mois"
-      [attr.aria-busy]="resource.isLoading()"
-      (swipe)="onSwipe($event)"
-    >
-      <div class="month">
-        <app-month-calendar
-          [weeks]="view.weeks"
-          [legend]="view.legend"
-          [caption]="view.caption"
-          (open)="showDay($event)"
-        />
-        <app-absence-list
-          [days]="view.list"
-          [monthName]="view.monthName"
-          (open)="showDay($event)"
-        />
-      </div>
-    </ui-swipe-pager>
+    <section class="scale" aria-labelledby="month-scale-title">
+      <h2 id="month-scale-title" class="scale-title">
+        Le mois <span class="scale-kicker">vue calendrier</span>
+      </h2>
+      <app-month-navigator
+        [month]="view.month"
+        [bounds]="view.bounds"
+        [relative]="view.relative"
+        [counts]="view.counts"
+        (monthChange)="selectMonth($event)"
+      />
+
+      <ui-swipe-pager
+        [position]="view.month"
+        label="Présence du mois"
+        [attr.aria-busy]="resource.isLoading()"
+        (swipe)="onSwipe($event)"
+      >
+        <div class="month">
+          <app-month-calendar
+            [weeks]="view.weeks"
+            [legend]="view.legend"
+            [caption]="view.caption"
+            (open)="showDay($event)"
+          />
+          <app-absence-list
+            [days]="view.list"
+            [monthName]="view.monthName"
+            (open)="showDay($event)"
+          />
+        </div>
+      </ui-swipe-pager>
+    </section>
   }
 
   <app-day-sheet
@@ -64,7 +100,8 @@
   <div class="loading" role="status" aria-busy="true">
     <span class="visually-hidden">Chargement de la présence…</span>
     <ui-skeleton height="150px" />
-    <ui-skeleton height="74px" />
+    <ui-skeleton height="56px" />
+    <ui-skeleton height="200px" />
     <ui-skeleton height="260px" />
   </div>
 }
