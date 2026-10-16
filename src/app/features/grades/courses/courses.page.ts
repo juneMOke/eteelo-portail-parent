@@ -13,17 +13,17 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { GradeCard, GradeSelection } from '../../../core/api/grades.contract';
-import { dayLabel } from '../../../shared/format/day-labels';
 import { latestValue } from '../../../shared/resource/latest-value';
+import { AssignmentCardComponent } from '../../../shared/ui/assignment-card/assignment-card.component';
 import { EmptyPeriodComponent } from '../../../shared/ui/empty-period/empty-period.component';
 import { LoadErrorComponent } from '../../../shared/ui/load-error/load-error.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+import { evaluationCard } from '../data-access/evaluation-card';
 import { selectionAnnouncement, selectionPhrase } from '../data-access/grade-formats';
 import { evaluationLink, evaluationQueryParams, gradesLink } from '../data-access/grade-links';
 import { GradesFacade } from '../data-access/grades.facade';
 import { injectTermSelection, selectionParams } from '../data-access/term-selection';
 import { CourseRowComponent } from '../ui/course-row/course-row.component';
-import { ResultCardComponent } from '../ui/result-card/result-card.component';
 import { TermPickerComponent } from '../ui/term-picker/term-picker.component';
 
 /**
@@ -35,10 +35,10 @@ import { TermPickerComponent } from '../ui/term-picker/term-picker.component';
 @Component({
   selector: 'app-courses-page',
   imports: [
+    AssignmentCardComponent,
     CourseRowComponent,
     EmptyPeriodComponent,
     LoadErrorComponent,
-    ResultCardComponent,
     RouterLink,
     SkeletonComponent,
     TermPickerComponent,
@@ -128,8 +128,9 @@ export default class CoursesPage {
     return evaluationQueryParams('courses', { ...selectionParams(selection), course: courseId });
   }
 
-  protected cardContext(item: GradeCard): string {
-    return dayLabel(item.date, this.locale);
+  /** ⑤ La carte de Mes évaluations, note en plus. */
+  protected card(item: GradeCard) {
+    return evaluationCard(item, this.locale);
   }
 
   protected reportCardLink(): string[] {

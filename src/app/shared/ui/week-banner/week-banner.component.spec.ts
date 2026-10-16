@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { WeekBannerComponent } from './week-banner.component';
 
 describe('WeekBannerComponent', () => {
-  async function render(inputs: { wide?: boolean; isCurrent?: boolean } = {}) {
+  async function render(inputs: { wide?: boolean; isCurrent?: boolean; view?: boolean } = {}) {
     const fixture = TestBed.createComponent(WeekBannerComponent);
     const set = (name: string, value: unknown) => fixture.componentRef.setInput(name, value);
     set('label', 'Semaine du 28 septembre au 2 octobre 2026');
@@ -12,6 +12,7 @@ describe('WeekBannerComponent', () => {
     set('hasNext', false);
     set('isCurrent', inputs.isCurrent ?? false);
     set('wide', inputs.wide ?? false);
+    set('view', inputs.view === false ? null : 'grid');
     const events: unknown[] = [];
     fixture.componentInstance.step.subscribe((d) => events.push(d));
     fixture.componentInstance.current.subscribe(() => events.push('current'));
@@ -61,5 +62,14 @@ describe('WeekBannerComponent', () => {
     expect(grid.getAttribute('aria-checked')).toBe('true');
     list.click();
     expect(events).toEqual(['list']);
+  });
+
+  it('se passe de bascule quand la page n’a qu’une vue, et nomme sa pilule de retour', async () => {
+    const { fixture, el } = await render({ wide: true, view: false });
+    fixture.componentRef.setInput('currentLabel', 'Revenir à aujourd’hui');
+    await fixture.whenStable();
+
+    expect(el.querySelector('.views')).toBeNull();
+    expect(el.querySelector('.current')?.textContent?.trim()).toBe('Revenir à aujourd’hui');
   });
 });

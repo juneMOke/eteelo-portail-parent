@@ -33,7 +33,9 @@ describe('ReportLineComponent', () => {
     });
     const link = el.querySelector('a')!;
 
+    expect(el.querySelector('.code')?.textContent).toBe('GEO');
     expect(el.querySelector('.label')?.textContent).toBe('Géographie');
+    expect(el.querySelector('.points')?.textContent).toBe('9 pts sur 20');
     expect(el.querySelector('app-average')?.textContent).toBe('45,0 %');
     expect(el.querySelector<HTMLElement>('.fill')?.style.width).toBe('45%');
     expect(el.querySelector<HTMLElement>('.fill')?.style.background).toBe('var(--color-grade-low)');
@@ -55,6 +57,7 @@ describe('ReportLineComponent', () => {
     });
 
     expect(el.querySelector('.fill')).toBeNull();
+    expect(el.querySelector('.points')).toBeNull();
     expect(el.querySelector('app-average')?.textContent).toBe('—');
   });
 });

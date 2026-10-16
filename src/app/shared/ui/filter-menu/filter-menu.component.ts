@@ -11,20 +11,32 @@ import {
   output,
   viewChild,
 } from '@angular/core';
-import { IconComponent } from '../../../../shared/ui/icon/icon.component';
-import { FilterOption } from '../../data-access/week-board';
+import { IconComponent } from '../icon/icon.component';
+import { Tone } from '../tone';
+
+/** Une option du menu : son libellé, son compteur, son ton éventuel. */
+export interface FilterOption {
+  /** Null vaut « tout » (« Toute la semaine », « Tous »). */
+  readonly id: string | null;
+  readonly label: string;
+  /** Null : pas de compteur pour cette option. */
+  readonly count: number | null;
+  /** Unité ajoutée au compteur du déclencheur : « éval. » donne « · 12 éval. ». */
+  readonly unit?: string;
+  readonly tone: Tone | null;
+}
 
 let nextId = 0;
 
 /**
- * ③ Un filtre en menu déroulant, sous le bandeau : un déclencheur de 48 px (petit
+ * Un filtre en menu déroulant, sous un bandeau : un déclencheur de 48 px (petit
  * intitulé, valeur active, compteur), puis une liste sur mesure ancrée sous lui. Pas de
  * sélecteur natif : il ne porte ni couleur, ni compteur, ni séparateur. L'option active est en
  * bleu clair avec une coche, jamais à la couleur du statut. La page garantit qu'un seul menu
  * est ouvert à la fois (`open`).
  */
 @Component({
-  selector: 'app-filter-menu',
+  selector: 'ui-filter-menu',
   imports: [IconComponent],
   templateUrl: './filter-menu.component.html',
   styleUrl: './filter-menu.component.css',

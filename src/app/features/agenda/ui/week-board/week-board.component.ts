@@ -18,7 +18,6 @@ import { EmptyPeriodComponent } from '../../../../shared/ui/empty-period/empty-p
 import {
   nearDay,
   openingWeek,
-  relativeWeek,
   schoolWeekOf,
   shortWeekLabel,
   weekDays,
@@ -26,10 +25,17 @@ import {
   weekOffset,
   weekRange,
 } from '../../data-access/school-week';
-import { FilterOption, WeekBoardLabels, WeekCard, WeekView } from '../../data-access/week-board';
-import { AssignmentCardComponent } from '../assignment-card/assignment-card.component';
-import { FilterMenuComponent } from '../filter-menu/filter-menu.component';
-import { WeekBannerComponent } from '../week-banner/week-banner.component';
+import { relativeWeek } from '../../../../shared/format/relative-week';
+import { AssignmentCardComponent } from '../../../../shared/ui/assignment-card/assignment-card.component';
+import {
+  FilterMenuComponent,
+  FilterOption,
+} from '../../../../shared/ui/filter-menu/filter-menu.component';
+import {
+  WeekBannerComponent,
+  WeekView,
+} from '../../../../shared/ui/week-banner/week-banner.component';
+import { WeekBoardLabels, WeekCard } from '../../data-access/week-board';
 
 type Menu = 'day' | 'status';
 

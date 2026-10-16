@@ -53,15 +53,15 @@ describe('HomeworkPage', () => {
   it('s’ouvre sur la semaine en cours, un jour par carte, les jours vides omis', async () => {
     const { el } = await render();
 
-    expect(el.querySelector('app-week-banner .title')?.textContent).toBe('21 – 25 sept.');
-    expect(el.querySelector('app-week-banner .relative')?.textContent).toBe('cette sem.');
+    expect(el.querySelector('ui-week-banner .title')?.textContent).toBe('21 – 25 sept.');
+    expect(el.querySelector('ui-week-banner .relative')?.textContent).toBe('cette sem.');
     expect(texts(el, '.day-head')).toEqual(['Lundi 21/09 · hier', 'Mercredi 23/09 · demain']);
-    expect(texts(el, 'app-assignment-card .heading')).toEqual([
+    expect(texts(el, 'ui-assignment-card .heading')).toEqual([
       'Devoir d’Histoire — frise chronologique.',
       'Devoir d’Anglais — se présenter.',
       'Devoir de Physique — la vitesse.',
     ]);
-    expect(texts(el, 'app-assignment-card .when')).toEqual([
+    expect(texts(el, 'ui-assignment-card .when')).toEqual([
       'Lundi 21/09.',
       'Mercredi 23/09 avant 8 h.',
       'Mercredi 23/09 avant 18 h.',
@@ -80,7 +80,7 @@ describe('HomeworkPage', () => {
   it('signale en rouge un devoir à rendre demain, avec son heure limite', async () => {
     const { el } = await render();
 
-    expect(texts(el, 'app-assignment-card .urgent')).toEqual([
+    expect(texts(el, 'ui-assignment-card .urgent')).toEqual([
       'À rendre demain avant 8 h.',
       'À rendre demain avant 18 h.',
     ]);
@@ -88,7 +88,7 @@ describe('HomeworkPage', () => {
 
   it('compte chaque option, l’autre filtre restant tel quel', async () => {
     const { el } = await render({ day: '2026-09-23' });
-    const [day, status] = [...el.querySelectorAll<HTMLElement>('app-filter-menu .trigger')];
+    const [day, status] = [...el.querySelectorAll<HTMLElement>('ui-filter-menu .trigger')];
 
     expect(day.textContent).toContain('Mercredi 23');
     status.click();
@@ -114,9 +114,9 @@ describe('HomeworkPage', () => {
 
   it('filtre par statut et mène à la fiche en gardant semaine et filtres', async () => {
     const { el } = await render({ week: '2026-09-14', status: 'GRADED' });
-    const card = el.querySelector('app-assignment-card a');
+    const card = el.querySelector('ui-assignment-card a');
 
-    expect(el.querySelectorAll('app-assignment-card')).toHaveLength(1);
+    expect(el.querySelectorAll('ui-assignment-card')).toHaveLength(1);
     expect(card?.querySelector('ui-grade')?.textContent).toContain('15/20');
     expect(card?.getAttribute('href')).toBe(
       `/c/${GRACE.childId}/homework/${MATHS_GRADED.evaluationId}?week=2026-09-14&status=GRADED`,
@@ -159,7 +159,7 @@ describe('HomeworkPage', () => {
     fixture.componentRef.setInput('week', '2026-09-28');
     fixture.componentRef.setInput('day', undefined);
     await fixture.whenStable();
-    expect(texts(el, 'app-assignment-card .heading')).toEqual([
+    expect(texts(el, 'ui-assignment-card .heading')).toEqual([
       'Devoir de Géographie — carte du relief.',
     ]);
     expect(homework).toHaveBeenCalledOnce();
@@ -168,22 +168,22 @@ describe('HomeworkPage', () => {
   it('ouvre la semaine d’un jour venu d’ailleurs (`?date=`)', async () => {
     const { el } = await render({ date: '2026-09-16' });
 
-    expect(el.querySelector('app-week-banner .title')?.textContent).toBe('14 – 18 sept.');
-    expect(el.querySelector('app-week-banner .relative')?.textContent).toBe('sem. passée');
+    expect(el.querySelector('ui-week-banner .title')?.textContent).toBe('14 – 18 sept.');
+    expect(el.querySelector('ui-week-banner .relative')?.textContent).toBe('sem. passée');
   });
 
   it('montre la grille au grand écran : cinq colonnes, aujourd’hui cerné', async () => {
     wideScreen();
     const { el } = await render();
 
-    expect(el.querySelector('app-week-banner .title')?.textContent).toBe(
+    expect(el.querySelector('ui-week-banner .title')?.textContent).toBe(
       'Semaine du 21 au 25 septembre 2026',
     );
     expect(el.querySelectorAll('.column')).toHaveLength(5);
     expect(el.querySelector('.column.today .column-date')?.textContent).toBe('22/09');
     expect(el.querySelector('.column.today .today-pill')).not.toBeNull();
     expect(texts(el, '.column-empty')).toEqual(['Rien à rendre', 'Rien à rendre', 'Rien à rendre']);
-    expect(el.querySelectorAll('app-assignment-card.compact')).toHaveLength(3);
+    expect(el.querySelectorAll('ui-assignment-card.compact')).toHaveLength(3);
   });
 
   it('bascule en liste au grand écran, et le garde dans l’URL', async () => {
@@ -214,6 +214,6 @@ describe('HomeworkPage', () => {
     el.querySelector<HTMLButtonElement>('ui-empty-state button')?.click();
     await settle();
     await fixture.whenStable();
-    expect(el.querySelectorAll('app-assignment-card')).toHaveLength(3);
+    expect(el.querySelectorAll('ui-assignment-card')).toHaveLength(3);
   });
 });

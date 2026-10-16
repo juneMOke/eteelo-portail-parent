@@ -35,6 +35,25 @@ export function weekLabel(from: CivilDate, to: CivilDate, locale: string): strin
   return `Semaine du ${start} au ${dayOfMonth(to)} ${month(to)}`;
 }
 
+/** « 21 – 26 sept. », « 28 sept. – 3 oct. » : l'intitulé court du téléphone. */
+export function shortWeekLabel(from: CivilDate, to: CivilDate, locale: string): string {
+  const month = (day: CivilDate) => formatDate(civilToDate(day), 'MMM', locale, 'UTC');
+  const end = `${dayOfMonth(to)} ${month(to)}`;
+  if (from.slice(0, 7) === to.slice(0, 7)) return `${dayOfMonth(from)} – ${end}`;
+  return `${dayOfMonth(from)} ${month(from)} – ${end}`;
+}
+
+/** « Lun. 22 sept. » : une date de la frise d'une carte de résultat. */
+export function shortDayLabel(day: CivilDate, locale: string): string {
+  const label = formatDate(civilToDate(day), 'EEE d MMM', locale, 'UTC');
+  return `${label.charAt(0).toUpperCase()}${label.slice(1)}`;
+}
+
+/** Initiale capitale : « les acides » devient « Les acides ». */
+export function capitalized(text: string): string {
+  return `${text.charAt(0).toUpperCase()}${text.slice(1)}`;
+}
+
 function plural(count: number, one: string, many: string): string {
   return `${count} ${count > 1 ? many : one}`;
 }
@@ -70,6 +89,11 @@ export function selectionPhrase(
   if (!part) return selection.label;
   const name = part.part === 'EXAM' ? `l’${part.label.toLowerCase()}` : `la ${part.label}`;
   return `${name} du ${period.label}`;
+}
+
+/** « trimestre » ou « semestre », dernier mot du libellé du serveur (« 1er trimestre »). */
+export function periodUnit(periods: readonly GradePeriod[]): string {
+  return periods[0]?.label.split(' ').at(-1) ?? 'trimestre';
 }
 
 /** Annonce d'un changement de sélection : « 1er trimestre, 2e période, 5 cours. » */

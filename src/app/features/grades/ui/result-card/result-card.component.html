@@ -1,27 +1,59 @@
+@let item = evaluation();
 <a class="card" [routerLink]="link()" [queryParams]="queryParams()" [attr.aria-label]="spoken()">
-  @if (showCode()) {
-    <span class="code" aria-hidden="true">{{ evaluation().subjectCode }}</span>
+  <span class="head">
+    <span class="subject">
+      <span class="code" aria-hidden="true">{{ item.subjectCode }}</span
+      >{{ item.subjectLabel }}
+    </span>
+    <span class="topic">{{ topic() }}</span>
+  </span>
+
+  <span class="score">
+    @if (score(); as score) {
+      <span class="value"
+        >{{ score.value }}<span class="max">/{{ score.max }}</span></span
+      >
+      <span class="gauge" aria-hidden="true"
+        ><span class="fill" [style.width]="score.gauge"></span
+      ></span>
+    } @else {
+      <span class="pill">{{ state().pill }}</span>
+    }
+  </span>
+
+  <span class="timeline">
+    <span class="dot start" aria-hidden="true"></span>
+    <span class="step">
+      <span class="step-label">Évaluée le</span>
+      <span class="step-date">{{ day() }}</span>
+    </span>
+    @if (pending()) {
+      <span class="track" aria-hidden="true"></span>
+      <span class="step end">
+        <span class="step-label">Résultat</span>
+        <span class="step-date">Copies non encore remises</span>
+      </span>
+      <span class="dot" aria-hidden="true"></span>
+    }
+  </span>
+
+  @if (item.topics.length) {
+    <span class="topics">
+      @for (topic of item.topics; track $index) {
+        <span class="tag">{{ topic }}</span>
+      }
+    </span>
   }
 
-  <span class="body">
-    <span class="title">{{ evaluation().title }}</span>
-    <span class="context">{{ contextLine() }}</span>
+  <span class="foot">
+    <ui-badge class="status" [tone]="state().tone"
+      ><span class="status-dot" aria-hidden="true"></span>{{ state().word }}</ui-badge
+    >
     @if (revised(); as revised) {
       <span class="revised">Note modifiée le {{ revised }}</span>
     }
+    <span class="more" aria-hidden="true"
+      >Voir le détail<ui-icon name="chevron-right" [size]="16" [strokeWidth]="2"
+    /></span>
   </span>
-
-  <span class="aside">
-    @if (score(); as score) {
-      <ui-grade class="score" [points]="score.points" [maxPoints]="score.maxPoints" />
-    } @else {
-      <span class="placeholder">{{ state().placeholder }}</span>
-    }
-    <!-- « En attente » tient lieu de note et d'état : il n'est écrit qu'une fois. -->
-    @if (score() || state().word !== state().placeholder) {
-      <span class="word">{{ state().word }}</span>
-    }
-  </span>
-
-  <ui-icon class="chevron" name="chevron-right" [size]="18" [strokeWidth]="2" />
 </a>

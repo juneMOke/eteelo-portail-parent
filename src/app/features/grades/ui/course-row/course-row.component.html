@@ -13,7 +13,9 @@
       <span class="summary">{{ summary() }}</span>
     </span>
     <app-average [average]="course().average" size="md" />
-    <ui-icon class="chevron" name="chevron-down" [size]="18" [strokeWidth]="2" />
+    <span class="chevron" aria-hidden="true">
+      <ui-icon name="chevron-down" [size]="16" [strokeWidth]="2" />
+    </span>
   </button>
 </h2>
 

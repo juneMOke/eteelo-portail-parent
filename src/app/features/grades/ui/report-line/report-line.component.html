@@ -1,4 +1,5 @@
 <a class="line" [routerLink]="link()" [queryParams]="queryParams()" [attr.aria-label]="spoken()">
+  <span class="code" aria-hidden="true">{{ line().subjectCode }}</span>
   <span class="label">{{ line().subjectLabel }}</span>
   <span class="track" aria-hidden="true">
     @if (gauge(); as gauge) {
@@ -6,5 +7,10 @@
     }
   </span>
   <app-average [average]="average()" size="lg" />
-  <ui-icon class="chevron" name="chevron-right" [size]="18" [strokeWidth]="2" />
+  @if (points(); as points) {
+    <span class="points">{{ points }}</span>
+  }
+  <span class="chevron" aria-hidden="true">
+    <ui-icon name="chevron-right" [size]="16" [strokeWidth]="2" />
+  </span>
 </a>

@@ -2,80 +2,241 @@
   display: block;
 }
 
+/*
+ * En-tête et note sur la première ligne, puis frise, notions et pied sur toute la largeur.
+ * Filet gauche de 4 px au ton de l'état.
+ */
 .card {
-  position: relative;
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-areas:
+    'head score'
+    'timeline timeline'
+    'topics topics'
+    'foot foot';
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--space-3);
-  min-height: var(--tap-target);
-  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  padding: var(--space-4) var(--space-4) var(--space-3) var(--space-5);
   overflow: hidden;
-  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-tile);
+  background: var(--color-surface);
+  box-shadow:
+    inset 4px 0 var(--tone),
+    var(--shadow-tile);
   color: var(--color-text);
+  transition:
+    transform var(--duration-lift) var(--ease-out),
+    box-shadow var(--duration-lift),
+    border-color var(--duration-lift);
 }
 
-/* Filet de 3 px au ton de l'état. */
-.card::before {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 3px;
-  background: var(--tone);
-  content: '';
+/* Survol : la carte monte de 3 px, l'ombre se creuse, la bordure prend le ton de l'état. */
+.card:hover {
+  border-color: var(--tone);
+  box-shadow:
+    inset 4px 0 var(--tone),
+    var(--shadow-lift);
+  transform: translateY(-3px);
 }
 
-/* Survol : voile bleu ardoise de 6 %. */
-.card:hover::after {
-  position: absolute;
-  inset: 0;
-  background: var(--color-accent);
-  content: '';
-  opacity: 0.06;
-  pointer-events: none;
+.card:active {
+  transform: translateY(-1px);
+}
+
+.head {
+  display: flex;
+  grid-area: head;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+/* Pastille de matière : sigle en rond et nom, aux tons de la matière. */
+.subject {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 100%;
+  padding: 2px var(--space-3) 2px 2px;
+  border-radius: var(--radius-pill);
+  background: var(--subject-soft);
+  color: var(--color-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
 }
 
 .code {
   display: grid;
   flex: none;
-  min-width: 40px;
-  height: 32px;
-  padding: 0 var(--space-1);
+  min-width: 28px;
+  height: 28px;
+  padding: 0 3px;
   place-items: center;
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-soft);
-  color: var(--color-text-secondary);
-  font-size: var(--text-xs);
+  border-radius: var(--radius-pill);
+  background: var(--subject);
+  color: var(--color-on-tone);
+  font-size: var(--text-2xs);
   font-weight: var(--weight-bold);
-  letter-spacing: 0.02em;
 }
 
-.body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.title,
-.context {
+/* Sujet : Lora 17 px, deux lignes au plus. */
+.topic {
   display: -webkit-box;
   overflow: hidden;
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-amount);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
 
-.title {
-  color: var(--color-heading);
-  font-size: var(--text-md);
-  font-weight: var(--weight-bold);
-  line-height: 1.35;
+/* Note à droite : chiffre Lora 28 px au ton de l'état, « /20 » en petit, jauge de 76 × 5 px. */
+.score {
+  display: flex;
+  grid-area: score;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
 }
 
-.context {
+.value {
+  color: var(--tone);
+  font-family: var(--font-title);
+  font-feature-settings: 'tnum';
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.max {
+  color: var(--color-text-muted);
+  font-size: var(--text-md);
+}
+
+.gauge {
+  width: 76px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: var(--color-border-soft);
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--tone);
+}
+
+.pill {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-page);
   color: var(--color-text-secondary);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+/* Frise des dates : bande Papier, point de départ Bleu Ardoise, arrivée grise tant que rien n'est rendu. */
+.timeline {
+  display: flex;
+  grid-area: timeline;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-page);
+}
+
+/* Libellé au-dessus de la date au téléphone, à côté au grand écran. */
+.step {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: var(--text-xs);
+}
+
+.end {
+  text-align: right;
+}
+
+.end .step-date {
+  white-space: normal;
+}
+
+@media (min-width: 600px) {
+  .step {
+    flex-direction: row;
+    gap: var(--space-2);
+  }
+}
+
+.step-label {
+  color: var(--color-text-muted);
+}
+
+.step-date {
+  color: var(--color-heading);
+  white-space: nowrap;
+  font-weight: var(--weight-semibold);
+}
+
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+}
+
+.dot.start {
+  background: var(--color-accent);
+}
+
+.track {
+  flex: 1;
+  min-width: var(--space-4);
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--color-border-strong);
+}
+
+/* Notions en étiquettes Papier. */
+.topics {
+  display: flex;
+  flex-wrap: wrap;
+  grid-area: topics;
+  gap: var(--space-1) var(--space-2);
+}
+
+.tag {
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-page);
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+}
+
+/* Pied, sous un filet : statut en pastille, mention de correction, « Voir le détail ». */
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  grid-area: foot;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.status-dot {
+  margin-right: var(--space-1);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 .revised {
@@ -84,36 +245,11 @@
   font-style: italic;
 }
 
-.aside {
-  display: flex;
-  flex: none;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-  max-width: 40%;
-  text-align: right;
-}
-
-.score {
-  font-family: var(--font-title);
-  font-size: 1.25rem;
+.more {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
-}
-
-.placeholder {
-  color: var(--tone);
-  font-family: var(--font-title);
-  font-size: var(--text-base);
-  font-weight: var(--weight-semibold);
-}
-
-.word {
-  color: var(--tone);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-semibold);
-}
-
-.chevron {
-  flex: none;
-  color: var(--color-text-muted);
 }

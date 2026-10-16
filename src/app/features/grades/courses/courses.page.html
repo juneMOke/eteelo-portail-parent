@@ -23,11 +23,11 @@
               <ul class="evaluations">
                 @for (item of course.evaluations; track item.evaluationId) {
                   <li>
-                    <app-result-card
-                      [evaluation]="item"
+                    <ui-assignment-card
+                      [card]="card(item)"
+                      [scored]="true"
                       [link]="cardLink(item)"
                       [queryParams]="cardQueryParams(data.selection, course.courseId)"
-                      [context]="cardContext(item)"
                     />
                   </li>
                 }

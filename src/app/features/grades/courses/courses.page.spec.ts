@@ -1,6 +1,6 @@
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
-import { LOCALE_ID } from '@angular/core';
+import { ApplicationRef, LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -65,11 +65,12 @@ describe('CoursesPage', () => {
     const maths = rows(el)[0];
 
     expect(maths.querySelector('.header')?.getAttribute('aria-expanded')).toBe('true');
-    expect(maths.querySelectorAll('app-result-card')).toHaveLength(2);
-    expect(maths.querySelector('app-result-card .context')?.textContent).toBe(
-      'Lundi 21/09 · Fractions, Simplification',
+    expect(maths.querySelectorAll('ui-assignment-card.scored')).toHaveLength(2);
+    expect(maths.querySelector('ui-assignment-card .when')?.textContent).toContain('Lundi 21/09');
+    expect(maths.querySelector('ui-assignment-card .detail')?.textContent).toContain(
+      'Fractions, Simplification',
     );
-    expect(maths.querySelector('app-result-card a')?.getAttribute('href')).toContain(
+    expect(maths.querySelector('ui-assignment-card a')?.getAttribute('href')).toContain(
       `?from=courses&term=${TERM.first}&part=FIRST&course=${COURSE.maths}`,
     );
   });
@@ -98,12 +99,11 @@ describe('CoursesPage', () => {
   it('retient la sélection choisie et l’inscrit dans l’URL', async () => {
     const { el } = await render();
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    const inline = el.querySelector('app-term-picker .inline')!;
+    const periodMenu = el.querySelectorAll('app-term-picker ui-filter-menu')[1];
 
-    inline
-      .querySelectorAll<HTMLButtonElement>('[role="radiogroup"]')[1]
-      .querySelectorAll<HTMLButtonElement>('[role="radio"]')[0]
-      .click();
+    periodMenu.querySelector<HTMLButtonElement>('.trigger')!.click();
+    await TestBed.inject(ApplicationRef).whenStable();
+    periodMenu.querySelector<HTMLElement>('[role="option"]')!.click();
 
     expect(navigate).toHaveBeenCalledWith(
       [],

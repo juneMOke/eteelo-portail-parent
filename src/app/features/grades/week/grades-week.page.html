@@ -1,11 +1,24 @@
 @if (week(); as week) {
-  <app-week-navigator [week]="week" (weekChange)="selectWeek($event)" />
+  <ui-week-banner
+    [label]="label()"
+    [shortLabel]="shortLabel()"
+    [relative]="relative()"
+    [hasPrevious]="week.weekStart > week.firstWeek"
+    [hasNext]="week.weekStart < week.currentWeek"
+    [isCurrent]="week.weekStart === week.currentWeek"
+    [wide]="wide()"
+    currentLabel="Revenir à aujourd’hui"
+    [announcement]="label() + ', ' + summary()"
+    (step)="step($event, week)"
+    (current)="selectWeek(week.currentWeek)"
+  />
+  <p class="summary">{{ summary() }}</p>
 
   <ui-swipe-pager
     [position]="week.weekStart"
     label="Évaluations de la semaine"
     [attr.aria-busy]="loading()"
-    (swipe)="onSwipe($event, week)"
+    (swipe)="step($event, week)"
   >
     @for (day of days(); track day.date) {
       <section class="day" [attr.aria-labelledby]="'day-' + day.date">
@@ -17,8 +30,6 @@
                 [evaluation]="item"
                 [link]="cardLink(item)"
                 [queryParams]="cardQueryParams(week)"
-                [context]="item.subjectLabel"
-                [showCode]="true"
               />
             </li>
           }
@@ -30,7 +41,7 @@
         [linkLabel]="lastEvaluationLabel()"
         [queryParams]="{ date: week.lastEvaluationDate }"
         message="Les notes apparaîtront ici dès que l’école les publiera."
-        (linkClick)="focusNavigator()"
+        (linkClick)="focusBanner()"
       />
     }
   </ui-swipe-pager>
@@ -43,9 +54,9 @@
 } @else {
   <div class="loading" role="status" aria-busy="true">
     <span class="visually-hidden">Chargement des notes…</span>
-    <ui-skeleton height="74px" />
+    <ui-skeleton height="56px" />
     <ui-skeleton width="40%" height="16px" />
-    <ui-skeleton height="72px" />
-    <ui-skeleton height="72px" />
+    <ui-skeleton height="180px" />
+    <ui-skeleton height="180px" />
   </div>
 }

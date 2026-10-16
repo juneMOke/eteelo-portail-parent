@@ -19,9 +19,9 @@ test.describe('Mes évaluations', () => {
 
     await expect(page).toHaveURL(LIST);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mes évaluations');
-    await expect(page.locator('app-week-banner .relative')).toHaveText(/cette sem/i);
-    await expect(page.locator('app-assignment-card')).toHaveCount(3);
-    await expect(page.locator('app-assignment-card').last()).toContainText('À venir');
+    await expect(page.locator('ui-week-banner .relative')).toHaveText(/cette sem/i);
+    await expect(page.locator('ui-assignment-card')).toHaveCount(3);
+    await expect(page.locator('ui-assignment-card').last()).toContainText('À venir');
   });
 
   test('change de semaine et revient à cette semaine', async ({ page }) => {
@@ -30,12 +30,12 @@ test.describe('Mes évaluations', () => {
 
     await page.getByRole('button', { name: 'Semaine suivante' }).click();
     await expect(page).toHaveURL(`${LIST}?week=2026-09-28`);
-    await expect(page.locator('app-assignment-card')).toHaveCount(1);
-    await expect(page.locator('app-assignment-card')).toContainText('Anglais');
+    await expect(page.locator('ui-assignment-card')).toHaveCount(1);
+    await expect(page.locator('ui-assignment-card')).toContainText('Anglais');
 
     await page.getByRole('button', { name: /^Revenir/ }).click();
     await expect(page).toHaveURL(LIST);
-    await expect(page.locator('app-assignment-card')).toHaveCount(3);
+    await expect(page.locator('ui-assignment-card')).toHaveCount(3);
   });
 
   test('filtre les absences de la semaine', async ({ page }) => {
@@ -45,8 +45,8 @@ test.describe('Mes évaluations', () => {
     await chooseFilter(page, 'Filtrer par statut', /^Absences/);
 
     await expect(page).toHaveURL(`${LIST}?week=2026-09-14&status=ABSENT`);
-    await expect(page.locator('app-assignment-card')).toHaveCount(1);
-    await expect(page.locator('app-assignment-card')).toContainText('Absent à l’épreuve');
+    await expect(page.locator('ui-assignment-card')).toHaveCount(1);
+    await expect(page.locator('ui-assignment-card')).toContainText('Absent à l’épreuve');
   });
 
   test('ouvre une épreuve corrigée et revient à la même semaine, au même filtre', async ({
@@ -55,7 +55,7 @@ test.describe('Mes évaluations', () => {
     await mockParentApi(page);
     await page.goto(`${LIST}?week=2026-09-14&status=GRADED`);
 
-    await page.locator('app-assignment-card a').filter({ hasText: 'Chimie' }).click();
+    await page.locator('ui-assignment-card a').filter({ hasText: 'Chimie' }).click();
 
     await expect(page).toHaveURL(
       `${LIST}/${CHEMISTRY_GRADED.evaluationId}?week=2026-09-14&status=GRADED`,
@@ -73,7 +73,7 @@ test.describe('Mes évaluations', () => {
 
     await page.locator('app-top-bar').getByRole('link', { name: 'Mes évaluations' }).click();
     await expect(page).toHaveURL(`${LIST}?week=2026-09-14&status=GRADED`);
-    await expect(page.locator('app-assignment-card')).toHaveCount(2);
+    await expect(page.locator('ui-assignment-card')).toHaveCount(2);
   });
 
   test('donne la marche à suivre après une absence', async ({ page }) => {
@@ -105,7 +105,7 @@ test.describe('Mes évaluations', () => {
       route.fulfill({ json: evaluationListFixture() }),
     );
     await page.getByRole('button', { name: 'Réessayer' }).click();
-    await expect(page.locator('app-assignment-card')).toHaveCount(3);
+    await expect(page.locator('ui-assignment-card')).toHaveCount(3);
   });
 
   test("dit une semaine vide quand l'enfant n'a aucune épreuve", async ({ page }) => {

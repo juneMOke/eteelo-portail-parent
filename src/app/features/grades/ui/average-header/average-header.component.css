@@ -1,21 +1,30 @@
 :host {
   display: block;
   overflow: hidden;
-  background: var(--color-surface);
+  background: var(--color-accent-soft);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
+  transition:
+    transform var(--duration-lift) var(--ease-out),
+    box-shadow var(--duration-lift);
 }
 
-/* Bandeau bleu ardoise : le titre, la sélection, et le statut à droite. */
+/* Survol : la carte monte de 2 px et l'ombre se creuse. */
+:host(:hover) {
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-2px);
+}
+
+/* Bandeau Bleu Ardoise au motif kuba : le titre, la sélection, et le statut à droite. */
 .band {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-4);
-  background: var(--color-accent);
-  color: var(--color-on-tone);
+  background: var(--color-bar-bg) var(--texture-banner);
+  color: var(--color-bar-text);
 }
 
 .title {
@@ -60,8 +69,9 @@
   gap: var(--space-3);
   margin-top: var(--space-2);
   padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-md);
-  background: var(--color-surface-soft);
+  background: var(--color-surface);
 }
 
 .rank-label {

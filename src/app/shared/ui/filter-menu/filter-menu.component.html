@@ -14,7 +14,11 @@
       <span class="dot" [style.background]="'var(--color-tone-' + tone + ')'"></span>
     }
     <span class="value-label">{{ selected().label }}</span>
-    <span class="value-count">· {{ selected().count }}</span>
+    @if (selected().count !== null) {
+      <span class="value-count"
+        >· {{ selected().count }}{{ selected().unit ? ' ' + selected().unit : '' }}</span
+      >
+    }
   </span>
   <span class="chevron"><ui-icon name="chevron-down" [size]="16" [strokeWidth]="2" /></span>
 </button>
@@ -52,11 +56,13 @@
           ></span>
         </span>
         <span class="option-label">{{ option.label }}</span>
-        <span
-          class="option-count"
-          [style.color]="option.tone ? 'var(--color-tone-' + option.tone + ')' : null"
-          ><span class="visually-hidden">, </span>{{ option.count }}</span
-        >
+        @if (option.count !== null) {
+          <span
+            class="option-count"
+            [style.color]="option.tone ? 'var(--color-tone-' + option.tone + ')' : null"
+            ><span class="visually-hidden">, </span>{{ option.count }}</span
+          >
+        }
         @if (option.id === checked()) {
           <ui-icon class="check" name="check" [size]="18" [strokeWidth]="2.5" />
         }

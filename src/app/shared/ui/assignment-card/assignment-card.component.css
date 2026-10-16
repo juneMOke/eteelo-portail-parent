@@ -236,3 +236,41 @@
 :host(.compact) .end {
   justify-self: start;
 }
+
+/* Mes cours : la note en Lora 18 px, avant le chevron rond. */
+:host(.scored) .end {
+  gap: var(--space-2);
+}
+
+:host(.scored) .score {
+  font-family: var(--font-title);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+
+/* Grand écran : la note (20 px) passe au-dessus du statut, le chevron reste en bas à droite. */
+@media (min-width: 905px) {
+  :host(.scored) .card {
+    grid-template-areas:
+      'icon heading score'
+      'icon when status'
+      'icon urgent end'
+      'icon detail end';
+  }
+
+  :host(.scored) .end {
+    display: contents;
+  }
+
+  :host(.scored) .score {
+    grid-area: score;
+    justify-self: end;
+    font-size: 1.25rem;
+  }
+
+  :host(.scored) .chevron {
+    grid-area: end;
+    align-self: end;
+    justify-self: end;
+  }
+}

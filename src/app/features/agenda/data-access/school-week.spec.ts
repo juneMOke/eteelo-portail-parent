@@ -4,7 +4,6 @@ import { AssignmentWindow } from '../../../core/api/assignments.contract';
 import {
   nearDay,
   openingWeek,
-  relativeWeek,
   schoolWeekOf,
   shortWeekLabel,
   weekDays,
@@ -51,11 +50,8 @@ describe('school-week', () => {
     expect(openingWeek(WINDOW, 'n’importe quoi', undefined)).toBe('2026-09-21');
   });
 
-  it('dit la position de la semaine, en entier et abrégée', () => {
+  it('compte l’écart avec la semaine en cours', () => {
     expect(weekOffset('2026-10-05', '2026-09-22')).toBe(2);
-    expect(relativeWeek(0)).toEqual({ long: 'cette semaine', short: 'cette sem.' });
-    expect(relativeWeek(1).short).toBe('sem. prochaine');
-    expect(relativeWeek(-2)).toEqual({ long: 'il y a 2 semaines', short: 'il y a 2 sem.' });
   });
 
   it('intitule la semaine, y compris à cheval sur deux mois ou deux ans', () => {

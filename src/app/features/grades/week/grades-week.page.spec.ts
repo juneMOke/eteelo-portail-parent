@@ -51,6 +51,18 @@ describe('GradesWeekPage', () => {
     expect(el.textContent).not.toContain('%');
   });
 
+  it('dit la semaine dans le bandeau bleu, et son résumé dessous', async () => {
+    const { el } = await render('2026-09-16');
+
+    expect(el.querySelector('ui-week-banner .title')?.textContent).toBe('14 – 19 sept.');
+    expect(el.querySelector('ui-week-banner .relative')?.textContent).toBe('sem. passée');
+    expect(el.querySelector('ui-week-banner .current')?.textContent?.trim()).toBe('Revenir');
+    expect(el.querySelector('ui-week-banner .views')).toBeNull();
+    expect(el.querySelector('.summary')?.textContent).toBe(
+      '7 évaluations · 6 notées · 1 en attente',
+    );
+  });
+
   it('ouvre la fiche en gardant la semaine pour le retour', async () => {
     const { el } = await render('2026-09-16');
     const link = el.querySelector('app-result-card a');

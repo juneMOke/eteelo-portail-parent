@@ -43,34 +43,31 @@ describe('AssessmentsPage', () => {
     const { el } = await render();
 
     expect(texts(el, '.day-head')).toEqual(['Lundi 21/09 · hier', 'Jeudi 24/09']);
-    expect(texts(el, 'app-assignment-card .when')).toEqual([
+    expect(texts(el, 'ui-assignment-card .when')).toEqual([
       'Lundi 21/09 · 50 min.',
       'Jeudi 24/09 · 45 min.',
       'Jeudi 24/09 · 2 h.',
     ]);
-    expect(el.querySelector('app-assignment-card .urgent')).toBeNull();
+    expect(el.querySelector('ui-assignment-card .urgent')).toBeNull();
   });
 
   it('signale une épreuve de demain', async () => {
     const { el } = await render({}, () => of({ ...evaluationListFixture(), today: '2026-09-23' }));
 
-    expect(texts(el, 'app-assignment-card .urgent')).toEqual([
-      'Épreuve demain.',
-      'Épreuve demain.',
-    ]);
+    expect(texts(el, 'ui-assignment-card .urgent')).toEqual(['Épreuve demain.', 'Épreuve demain.']);
   });
 
   it('filtre les absences et donne leurs options propres', async () => {
     const { el } = await render({ week: '2026-09-14', status: 'ABSENT' });
 
-    expect(texts(el, 'app-assignment-card .heading')).toEqual(['Examen de Français — rédaction.']);
-    expect(texts(el, 'app-assignment-card .status')).toEqual(['Absent à l’épreuve.']);
-    expect(el.querySelectorAll('app-filter-menu .trigger')[1].textContent).toContain('Absences');
+    expect(texts(el, 'ui-assignment-card .heading')).toEqual(['Examen de Français — rédaction.']);
+    expect(texts(el, 'ui-assignment-card .status')).toEqual(['Absent à l’épreuve.']);
+    expect(el.querySelectorAll('ui-filter-menu .trigger')[1].textContent).toContain('Absences');
   });
 
   it('remplace le chevron par la note, à la couleur de son niveau', async () => {
     const { el } = await render({ week: '2026-09-14', status: 'GRADED' });
-    const low = [...el.querySelectorAll('app-assignment-card a')].find((card) =>
+    const low = [...el.querySelectorAll('ui-assignment-card a')].find((card) =>
       card.getAttribute('href')?.includes(GEOGRAPHY_LOW.evaluationId),
     );
 
@@ -112,6 +109,6 @@ describe('AssessmentsPage', () => {
     el.querySelector<HTMLButtonElement>('ui-empty-state button')?.click();
     await settle();
     await fixture.whenStable();
-    expect(el.querySelectorAll('app-assignment-card')).toHaveLength(3);
+    expect(el.querySelectorAll('ui-assignment-card')).toHaveLength(3);
   });
 });

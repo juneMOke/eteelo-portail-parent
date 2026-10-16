@@ -44,11 +44,11 @@ npm run api:types       # régénère api-types.ts depuis l'OpenAPI de staging
 ```
 src/app/
   core/       api (types générés, ParentApi, intercepteur), session (SessionStore, gardes), shell
-  shared/     ui (attachment-picker, avatar, badge, card, copy-button, empty-period, empty-state, file-row,
-                  file-upload, grade, icon, load-error, period-navigator, pill-group, sheet, skeleton,
-                  swipe-pager, upload-progress, tone), a11y (radio-focus), date (civil-date),
-              files (document-actions, downscale-image, file-type), format (amount, count, day-labels,
-                  file-size, time-labels), layout (media-query), navigation (query-param-sheet), network (online),
+  shared/     ui (assignment-card, attachment-picker, avatar, badge, card, copy-button, empty-period,
+                  empty-state, file-row, file-upload, filter-menu, grade, icon, load-error, period-navigator,
+                  pill-group, sheet, skeleton, swipe-pager, upload-progress, week-banner, tone), a11y (radio-focus),
+              date (civil-date), files (document-actions, downscale-image, file-type), format (amount, count,
+                  day-labels, file-size, relative-week, time-labels), layout (media-query), navigation (query-param-sheet), network (online),
               resource (latest-value), pipes (amount)
   features/   auth, home, agenda, grades, conduct, finance, communication
 src/styles/   tokens.css, base.css

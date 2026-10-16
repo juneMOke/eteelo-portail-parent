@@ -46,7 +46,9 @@ describe('ReportCardPage', () => {
     const el = await render();
 
     expect(el.querySelector('app-average-header .status')?.textContent?.trim()).toBe('Provisoire');
-    expect(el.querySelector('app-term-picker .compact-label')?.textContent).toBe('1er trimestre');
+    expect(el.querySelector('app-term-picker ui-filter-menu .value-label')?.textContent).toBe(
+      '1er trimestre',
+    );
     expect(el.querySelector('.rank')).toBeNull();
     expect(el.querySelectorAll('app-report-line')).toHaveLength(8);
     expect(el.querySelector('app-report-document a')).toBeNull();

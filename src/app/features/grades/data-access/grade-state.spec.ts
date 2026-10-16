@@ -6,14 +6,17 @@ describe('grade-state', () => {
       word: 'Réussie',
       tone: 'success',
       placeholder: null,
+      pill: null,
     });
     expect(gradeStateView('AVERAGE').tone).toBe('info');
     expect(gradeStateView('FAILED').word).toBe('En échec');
     expect(gradeStateView('PENDING').placeholder).toBe('En attente');
+    expect(gradeStateView('PENDING').pill).toBe('Pas encore noté');
     expect(gradeStateView('ABSENT_EXCUSED')).toEqual({
       word: 'Absent · justifié',
       tone: 'pending',
       placeholder: 'Pas de note',
+      pill: 'Pas de note',
     });
     expect(gradeStateView('ABSENT_UNEXCUSED').tone).toBe('alert');
   });
@@ -23,6 +26,7 @@ describe('grade-state', () => {
       word: 'État non précisé',
       tone: 'neutral',
       placeholder: '—',
+      pill: 'Pas de note',
     });
   });
 
