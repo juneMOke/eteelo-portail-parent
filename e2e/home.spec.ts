@@ -9,7 +9,8 @@ test.describe('Accueil', () => {
 
     await expect(page).toHaveURL(`/c/${GRACE.childId}`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Accueil');
-    await expect(page.getByText('Mbote, Mme Kabila')).toBeVisible();
+    await expect(page.getByText('Mbote, Mme Léonie Kabila Mwamba')).toBeVisible();
+    await expect(page.getByText('Grâce Mbala Nsimba · 5e B', { exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2 })).toHaveText([
       'Préparer ma semaine',
       'Mes notes',
@@ -54,7 +55,7 @@ test.describe('Accueil', () => {
 
     await expect(page).toHaveURL(`/c/${DAVID.childId}`);
     await expect(sheet).toBeHidden();
-    await expect(page.getByText(/· David$/)).toBeVisible();
+    await expect(page.getByText('David Mbala Kalala', { exact: true })).toBeVisible();
     expect(await topBar?.evaluate((el) => el.isConnected)).toBe(true);
   });
 

@@ -1,2 +1,8 @@
-<p class="hello">{{ greeting() }}</p>
-<p class="meta">{{ today() | date: 'EEEE d MMMM y' }} · {{ childLabel() }}</p>
+<p class="hello">
+  Mbote{{ parentName() ? ',' : '' }}
+  @if (parentName(); as name) {
+    <span class="parent">{{ name }}</span>
+  }
+</p>
+<span class="child">{{ childLabel() }}</span>
+<p class="meta">{{ today() | date: 'EEEE d MMMM y' }}</p>

@@ -97,8 +97,12 @@
     /* Pastille d'icône des tuiles de l'Accueil : décorative, distincte de --color-attention. */
     --color-tile-icon: var(--palette-terre-cuite);
     --color-tile-icon-bg: var(--palette-terre-pale);
-    /* Salutation « Mbote » de l'Accueil : terre cuite foncée, la teinte de marque tient 4,4:1 sur texte courant. */
+    /*
+     * Accueil : nom du parent après « Mbote » et pastille de l'élève. Terre cuite foncée :
+     * la teinte de marque ne tient que 4,4:1 sur texte courant (5,1:1 sur la pastille).
+     */
     --color-greeting: var(--palette-terre-cuite-fonce);
+    --color-greeting-pill-bg: var(--palette-terre-pale);
 
     --color-avatar-bg: var(--palette-bleu-ardoise);
     --color-avatar-text: var(--palette-blanc-casse);

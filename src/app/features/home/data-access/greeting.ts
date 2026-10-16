@@ -1,17 +1,21 @@
-import { RelationshipType } from '../../../core/session/bootstrap.schema';
+import { Parent, RelationshipType } from '../../../core/session/bootstrap.schema';
 
 /** Aucune civilité n'est stockée : elle se déduit du lien de parenté avec l'enfant affiché. */
 const CIVILITY: Partial<Record<RelationshipType, string>> = { MOTHER: 'Mme', FATHER: 'M.' };
 
 /**
- * « Mbote, Mme Kabila » ; « Mbote » seul quand la civilité ou le nom manque.
- * Jamais le prénom du parent, jamais de variante horaire (spec Accueil, § 5).
+ * Le nom qui suit « Mbote, » : civilité (mère, père), prénom, nom, postnom, soit
+ * « Mme Léonie Kabila Mwamba ». Prénom et postnom sont omis quand ils manquent ;
+ * null sans nom (« Mbote » seul). Écart assumé à la spec Accueil § 5 (qui excluait
+ * le prénom), décidé le 16/10/2026.
  */
-export function greeting(
-  parentLastName: string | null | undefined,
+export function greetingName(
+  parent: Pick<Parent, 'firstName' | 'lastName' | 'surname'> | null | undefined,
   relation?: RelationshipType,
-): string {
+): string | null {
+  const lastName = parent?.lastName.trim();
+  if (!lastName) return null;
   const civility = relation ? CIVILITY[relation] : undefined;
-  const name = parentLastName?.trim();
-  return civility && name ? `Mbote, ${civility} ${name}` : 'Mbote';
+  const words = [civility, parent?.firstName?.trim(), lastName, parent?.surname?.trim()];
+  return words.filter(Boolean).join(' ');
 }

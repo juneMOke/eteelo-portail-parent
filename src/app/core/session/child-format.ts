@@ -9,6 +9,11 @@ export function childName(child: Child): string {
   return child.firstName?.trim() || child.lastName;
 }
 
+/** Nom complet : prénom, nom, postnom (« Grâce Mbala Nsimba ») ; les parties absentes sont omises. */
+export function childFullName(child: Child): string {
+  return [child.firstName?.trim(), child.lastName, child.surname?.trim()].filter(Boolean).join(' ');
+}
+
 export function childClass(child: Child): string | null {
   return child.classroom?.name ?? null;
 }

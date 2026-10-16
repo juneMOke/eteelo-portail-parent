@@ -1,14 +1,25 @@
-import { greeting } from './greeting';
+import { greetingName } from './greeting';
 
-describe('greeting', () => {
-  it('salue une mère et un père avec leur civilité', () => {
-    expect(greeting('Kabila', 'MOTHER')).toBe('Mbote, Mme Kabila');
-    expect(greeting('Kabila', 'FATHER')).toBe('Mbote, M. Kabila');
+const LEONIE = { firstName: 'Léonie', lastName: 'Kabila', surname: 'Mwamba' };
+
+describe('greetingName', () => {
+  it('nomme une mère et un père par leur civilité et leur nom complet', () => {
+    expect(greetingName(LEONIE, 'MOTHER')).toBe('Mme Léonie Kabila Mwamba');
+    expect(greetingName(LEONIE, 'FATHER')).toBe('M. Léonie Kabila Mwamba');
   });
 
-  it('dit « Mbote » seul pour un autre lien ou un nom inconnu', () => {
-    expect(greeting('Kabila', 'GUARDIAN')).toBe('Mbote');
-    expect(greeting('  ', 'MOTHER')).toBe('Mbote');
-    expect(greeting(null)).toBe('Mbote');
+  it('nomme un autre lien par son nom complet, sans civilité', () => {
+    expect(greetingName(LEONIE, 'GUARDIAN')).toBe('Léonie Kabila Mwamba');
+  });
+
+  it('omet le prénom et le postnom absents', () => {
+    expect(greetingName({ firstName: null, lastName: 'Kabila', surname: ' ' }, 'MOTHER')).toBe(
+      'Mme Kabila',
+    );
+  });
+
+  it('ne nomme personne sans nom', () => {
+    expect(greetingName({ ...LEONIE, lastName: '  ' }, 'MOTHER')).toBeNull();
+    expect(greetingName(undefined)).toBeNull();
   });
 });
