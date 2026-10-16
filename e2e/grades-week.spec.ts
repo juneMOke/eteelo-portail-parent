@@ -14,14 +14,17 @@ test.describe('Ma semaine', () => {
 
     await expect(page).toHaveURL(WEEK);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Ma semaine');
-    await expect(page.locator('app-week-navigator .date')).toHaveText(
-      'Semaine du 21 au 26 septembre',
+    // Intitulé long au grand écran, abrégé au téléphone et à la tablette.
+    await expect(page.locator('ui-week-banner .title')).toHaveText(
+      /^(Semaine du 21 au 26 septembre|21 – 26 sept\.)$/,
     );
-    await expect(page.locator('app-week-navigator .meta')).toHaveText(
-      '1 évaluation · 0 notée · 1 en attente',
-    );
+    await expect(page.locator('.summary')).toHaveText('1 évaluation · 0 notée · 1 en attente');
     await expect(page.locator('app-result-card')).toHaveCount(1);
-    await expect(page.getByRole('button', { name: 'Semaine suivante' })).toBeDisabled();
+    await expect(page.locator('app-result-card')).toContainText('Copies non encore remises');
+    await expect(page.getByRole('button', { name: 'Semaine suivante' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
 
   test('montre une semaine avec les six états, groupée par jour', async ({ page }) => {
@@ -49,7 +52,9 @@ test.describe('Ma semaine', () => {
     await expect(cards.nth(5)).toContainText('0/20');
     await expect(cards.nth(5)).toContainText('Absent · non justifié');
     await expect(cards.nth(6)).toContainText('En attente');
-    await expect(page.getByRole('button', { name: 'Cette semaine' })).toBeVisible();
+    await expect(page.locator('ui-week-banner .current')).toHaveText(
+      /^\s*(Revenir à aujourd’hui|Revenir)\s*$/,
+    );
   });
 
   test('ouvre une fiche et revient à la même semaine', async ({ page }) => {
@@ -65,8 +70,8 @@ test.describe('Ma semaine', () => {
 
     await page.locator('app-top-bar').getByRole('link', { name: 'Ma semaine' }).click();
     await expect(page).toHaveURL(`${WEEK}?date=2026-09-14`);
-    await expect(page.locator('app-week-navigator .date')).toHaveText(
-      'Semaine du 14 au 19 septembre',
+    await expect(page.locator('ui-week-banner .title')).toHaveText(
+      /^(Semaine du 14 au 19 septembre|14 – 19 sept\.)$/,
     );
   });
 
@@ -77,7 +82,10 @@ test.describe('Ma semaine', () => {
     await expect(
       page.getByRole('heading', { name: 'Aucune évaluation cette semaine' }),
     ).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Semaine précédente' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Semaine précédente' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
 
   test('propose de réessayer quand le réseau a manqué, et y parvient', async ({ page }) => {

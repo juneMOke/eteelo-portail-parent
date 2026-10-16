@@ -2,12 +2,17 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { GRADE_PERIODS, TERM } from '../../../../testing/grades-terms.fixture';
 import {
+  capitalized,
   evolutionLabel,
+  kindLabel,
   percentLabel,
+  periodUnit,
   pointsLabel,
   rankLabel,
   selectionAnnouncement,
   selectionPhrase,
+  shortDayLabel,
+  shortWeekLabel,
   weekLabel,
   weekSummary,
 } from './grade-formats';
@@ -32,6 +37,20 @@ describe('grade-formats', () => {
       'Semaine du 28 septembre au 2 octobre',
     );
     expect(weekLabel('2026-05-25', '2026-06-01', 'fr')).toBe('Semaine du 25 mai au 1er juin');
+  });
+
+  it('abrège la semaine pour le téléphone', () => {
+    expect(shortWeekLabel('2026-09-21', '2026-09-26', 'fr')).toBe('21 – 26 sept.');
+    expect(shortWeekLabel('2026-09-28', '2026-10-03', 'fr')).toBe('28 sept. – 3 oct.');
+  });
+
+  it('écrit le type d’épreuve, une date de frise et un sujet à initiale capitale', () => {
+    expect(kindLabel('TEST')).toBe('Interrogation');
+    expect(kindLabel('EXAM')).toBe('Examen');
+    expect(kindLabel('HOMEWORK')).toBe('Devoir');
+    expect(kindLabel('ORAL')).toBe('Évaluation');
+    expect(shortDayLabel('2026-09-22', 'fr')).toBe('Mar. 22 sept.');
+    expect(capitalized('les acides')).toBe('Les acides');
   });
 
   it('résume la semaine', () => {
@@ -60,6 +79,12 @@ describe('grade-formats', () => {
     expect(phrase('SECOND')).toBe('la 2e période du 1er trimestre');
     expect(phrase('EXAM')).toBe('l’examen du 1er trimestre');
     expect(phrase('ALL')).toBe('le 1er trimestre');
+  });
+
+  it('nomme l’unité de l’année d’après le serveur', () => {
+    expect(periodUnit(GRADE_PERIODS)).toBe('trimestre');
+    expect(periodUnit([{ ...GRADE_PERIODS[0], label: '1er semestre' }])).toBe('semestre');
+    expect(periodUnit([])).toBe('trimestre');
   });
 
   it('annonce la sélection et le nombre de cours', () => {

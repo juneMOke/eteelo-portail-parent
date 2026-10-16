@@ -16,7 +16,7 @@ import { ResultCardComponent } from './result-card.component';
 registerLocaleData(localeFr);
 
 describe('ResultCardComponent', () => {
-  async function render(evaluation: GradeCard, showCode = false) {
+  async function render(evaluation: GradeCard) {
     TestBed.configureTestingModule({
       providers: [provideRouter([]), { provide: LOCALE_ID, useValue: 'fr' }],
     });
@@ -24,60 +24,68 @@ describe('ResultCardComponent', () => {
     fixture.componentRef.setInput('evaluation', evaluation);
     fixture.componentRef.setInput('link', ['/c', 'c1', 'homework', evaluation.evaluationId]);
     fixture.componentRef.setInput('queryParams', { from: 'grades-week', date: evaluation.date });
-    fixture.componentRef.setInput('context', evaluation.subjectLabel);
-    fixture.componentRef.setInput('showCode', showCode);
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
     return {
       el,
       link: el.querySelector('a')!,
-      text: (s: string) => el.querySelector(s)?.textContent,
+      text: (s: string) => el.querySelector(s)?.textContent?.trim(),
+      texts: (s: string) => [...el.querySelectorAll(s)].map((node) => node.textContent?.trim()),
     };
   }
 
-  it('dit ce qui a été évalué, la note, l’état, et mène à la fiche', async () => {
-    const { el, link, text } = await render(MATHS_HOMEWORK_PASSED, true);
+  it('dit la matière, le type d’épreuve, le sujet, la note sur sa jauge, et mène à la fiche', async () => {
+    const { el, link, text, texts } = await render(MATHS_HOMEWORK_PASSED);
 
-    expect(text('.code')).toBe('MATH');
-    expect(text('.title')).toBe('Devoir de Mathématiques — les fractions');
-    expect(text('.context')).toBe('Mathématiques · Fractions équivalentes, PPCM');
-    expect(el.querySelector('ui-grade')?.textContent).toContain('15/20');
-    expect(text('.word')).toBe('Réussie');
+    expect(text('.subject')).toBe('MATHMathématiques');
+    expect(text('.kind')).toBe('Devoir');
+    expect(text('.topic')).toBe('Devoir de Mathématiques — les fractions');
+    expect(text('.value')).toBe('15/20');
+    expect(el.querySelector<HTMLElement>('.fill')?.style.width).toBe('75%');
+    expect(texts('.tag')).toEqual(['Fractions équivalentes', 'PPCM']);
+    expect(text('.status')).toBe('Réussie');
     expect(link.getAttribute('href')).toBe(
       `/c/c1/homework/${MATHS_HOMEWORK_PASSED.evaluationId}?from=grades-week&date=2026-09-14`,
     );
     expect(link.getAttribute('aria-label')).toBe(
-      'Lundi 14 septembre, Mathématiques, Devoir de Mathématiques — les fractions, 15 sur 20, réussie.',
+      'Lundi 14 septembre, Mathématiques, Devoir Devoir de Mathématiques — les fractions, 15 sur 20, réussie.',
     );
   });
 
-  it('masque le sigle hors de Ma semaine', async () => {
-    const { el } = await render(MATHS_HOMEWORK_PASSED);
+  it('date l’épreuve sur la frise, sans arrivée tant qu’une note est rendue', async () => {
+    const { el, text } = await render(MATHS_HOMEWORK_PASSED);
 
-    expect(el.querySelector('.code')).toBeNull();
+    expect(text('.step-label')).toBe('Évaluée le');
+    expect(text('.step-date')).toBe('Lun. 14 sept.');
+    expect(el.querySelector('.step.end')).toBeNull();
   });
 
-  it('distingue l’attente, l’absence justifiée et le zéro d’une absence non justifiée', async () => {
-    const pending = await render(PHYSICS_PENDING);
-    expect(pending.text('.placeholder')).toBe('En attente');
-    expect(pending.el.querySelector('.word')).toBeNull();
-    expect(pending.link.getAttribute('aria-label')).toMatch(/les forces, en attente\.$/);
+  it('dit que les copies ne sont pas rendues, sans chiffre ni jauge', async () => {
+    const { el, text, link } = await render(PHYSICS_PENDING);
 
-    TestBed.resetTestingModule();
+    expect(el.querySelector('.value')).toBeNull();
+    expect(el.querySelector('.gauge')).toBeNull();
+    expect(text('.pill')).toBe('Pas encore noté');
+    expect(text('.status')).toBe('En attente');
+    expect(text('.step.end .step-date')).toBe('Copies non encore remises');
+    expect(link.getAttribute('aria-label')).toMatch(/les forces, en attente\.$/);
+  });
+
+  it('distingue l’absence justifiée du zéro d’une absence non justifiée', async () => {
     const excused = await render(FRENCH_EXCUSED);
-    expect(excused.text('.placeholder')).toBe('Pas de note');
-    expect(excused.text('.word')).toBe('Absent · justifié');
+    expect(excused.text('.pill')).toBe('Pas de note');
+    expect(excused.text('.status')).toBe('Absent · justifié');
 
     TestBed.resetTestingModule();
     const unexcused = await render(HISTORY_UNEXCUSED);
-    expect(unexcused.el.querySelector('ui-grade')?.textContent).toContain('0/20');
-    expect(unexcused.text('.word')).toBe('Absent · non justifié');
+    expect(unexcused.text('.value')).toBe('0/20');
+    expect(unexcused.text('.status')).toBe('Absent · non justifié');
   });
 
   it('signale une note modifiée après coup', async () => {
     const { text } = await render(GEOGRAPHY_FAILED);
 
     expect(text('.revised')).toBe('Note modifiée le 29/09');
-    expect(text('.word')).toBe('En échec');
+    expect(text('.status')).toBe('En échec');
   });
 });

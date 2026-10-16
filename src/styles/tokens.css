@@ -84,6 +84,24 @@
     --color-grade-fair: var(--palette-bleu-ardoise);
     --color-grade-low: var(--palette-terre-cuite);
 
+    /*
+     * Tons de matière (Mes notes) : un filet et un sigle qui font reconnaître un cours d'une
+     * page à l'autre. Décoratifs, ils ne portent aucun sens ; l'ordre alterne bleus et chauds
+     * pour que deux cours voisins se distinguent.
+     */
+    --color-subject-1: var(--palette-bleu-ardoise);
+    --color-subject-1-soft: var(--palette-bleu-brume);
+    --color-subject-2: var(--palette-terre-cuite);
+    --color-subject-2-soft: var(--palette-terre-pale);
+    --color-subject-3: var(--palette-vert-savane);
+    --color-subject-3-soft: var(--palette-vert-pale);
+    --color-subject-4: var(--palette-bronze);
+    --color-subject-4-soft: var(--palette-or-pale);
+    --color-subject-5: var(--palette-bleu-profond);
+    --color-subject-5-soft: var(--palette-sable-clair);
+    --color-subject-6: var(--palette-gris-texte);
+    --color-subject-6-soft: var(--palette-sable-clair);
+
     --color-nav-bg: var(--palette-bleu-profond);
     --color-nav-text: var(--palette-blanc-casse);
     --color-nav-text-muted: rgb(250 250 247 / 0.55);
@@ -169,6 +187,8 @@
     --shadow-tile: 0 1px 3px rgb(44 42 38 / 0.05);
     --shadow-bar: 0 2px 10px rgb(14 45 66 / 0.16);
     --shadow-sheet: 0 -8px 32px rgb(14 45 66 / 0.24);
+    /* Carte survolée : ombre bleutée, « ceci s'ouvre ». */
+    --shadow-lift: 0 6px 16px rgb(14 45 66 / 0.1);
 
     /* Tailles */
     --tap-target: 44px;
@@ -187,7 +207,16 @@
     --duration-content: 180ms;
     --duration-day-change: 220ms;
     --duration-page-in: 260ms;
+    /* Survol d'une carte de Mes notes : montée, ombre, bordure. */
+    --duration-lift: 220ms;
+    /* Dépliage d'un cours : hauteur et chevron. */
+    --duration-expand: 260ms;
+    /* Couleur d'une moyenne qui change avec la sélection. */
+    --duration-tint: 300ms;
+    /* Jauge qui glisse vers sa nouvelle longueur. */
+    --duration-gauge: 700ms;
     --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -198,6 +227,10 @@
       --duration-content: 0ms;
       --duration-day-change: 0ms;
       --duration-page-in: 0ms;
+      --duration-lift: 0ms;
+      --duration-expand: 0ms;
+      --duration-tint: 0ms;
+      --duration-gauge: 0ms;
     }
   }
 }

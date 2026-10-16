@@ -25,8 +25,9 @@
 
   <span class="end">
     @if (item.grade; as grade) {
-      <ui-grade [points]="grade.points" [maxPoints]="grade.maxPoints" />
-    } @else {
+      <ui-grade class="score" [points]="grade.points" [maxPoints]="grade.maxPoints" />
+    }
+    @if (!item.grade || scored()) {
       <span class="chevron" aria-hidden="true">
         <ui-icon name="chevron-right" [size]="16" [strokeWidth]="2" />
       </span>

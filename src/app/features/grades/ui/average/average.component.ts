@@ -11,8 +11,9 @@ import { percentLabel } from '../../data-access/grade-formats';
 import { averageColor } from '../../data-access/grade-state';
 
 /**
- * Une moyenne en pourcentage (« 64,5 % »), en Lora, à la couleur du ton que le serveur lui
- * donne. « — » quand le cours n'a pas encore de note.
+ * Une moyenne en pourcentage (« 64,5 % »), en Lora à chiffres tabulaires, à la couleur du ton
+ * que le serveur lui donne ; la couleur change en fondu avec la sélection. « — » quand le cours
+ * n'a pas encore de note.
  */
 @Component({
   selector: 'app-average',
@@ -20,6 +21,7 @@ import { averageColor } from '../../data-access/grade-state';
   styles: `
     :host {
       color: var(--average-color);
+      transition: color var(--duration-tint) var(--ease-out);
       font-family: var(--font-title);
       font-feature-settings: 'tnum';
       font-weight: var(--weight-semibold);

@@ -53,6 +53,11 @@ export class WeekBannerComponent {
   private readonly injector = inject(Injector);
   private readonly titleRef = viewChild.required<ElementRef<HTMLElement>>('titleRef');
 
+  /** Rend le focus à l'intitulé, quand ce qui l'avait disparaît avec la semaine. */
+  focusTitle(): void {
+    this.titleRef().nativeElement.focus();
+  }
+
   protected go(direction: 1 | -1): void {
     if (direction === 1 ? this.hasNext() : this.hasPrevious()) this.step.emit(direction);
   }
@@ -60,6 +65,6 @@ export class WeekBannerComponent {
   /** La pilule disparaît avec la semaine en cours : le focus passe à l'intitulé. */
   protected goCurrent(): void {
     this.current.emit();
-    afterNextRender(() => this.titleRef().nativeElement.focus(), { injector: this.injector });
+    afterNextRender(() => this.focusTitle(), { injector: this.injector });
   }
 }

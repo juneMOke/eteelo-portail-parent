@@ -34,7 +34,8 @@ export interface AssignmentCardView {
  * mène à la fiche. Au grand écran : filet au ton du statut, pastille d'icône, statut et chevron
  * à droite. Au téléphone, recomposée : statut (et urgence) en haut, puis titre, échéance,
  * enseignant, et un chevron dans un rond. Compacte dans une colonne de la grille. Une note
- * publiée remplace le chevron.
+ * publiée remplace le chevron ; dans Mes cours (`scored`), elle s'y ajoute, en Lora : au-dessus
+ * du statut au grand écran, avant le chevron au téléphone.
  */
 @Component({
   selector: 'ui-assignment-card',
@@ -43,6 +44,7 @@ export interface AssignmentCardView {
   styleUrl: './assignment-card.component.css',
   host: {
     '[class.compact]': 'compact()',
+    '[class.scored]': 'scored()',
     '[style.--tone]': "'var(--color-tone-' + card().view.tone + ')'",
     '[style.--tone-soft]': "'var(--color-tone-' + card().view.tone + '-soft)'",
   },
@@ -54,4 +56,6 @@ export class AssignmentCardComponent {
   readonly queryParams = input<Params>({});
   /** Dans une colonne de la grille : titre, heure, statut ; ni icône, ni enseignant. */
   readonly compact = input(false);
+  /** La note s'ajoute au chevron au lieu de le remplacer (Mes cours, spec 05 v2 ⑤). */
+  readonly scored = input(false);
 }

@@ -4,6 +4,7 @@ import {
   PillGroupComponent,
   PillOption,
 } from '../../../../shared/ui/pill-group/pill-group.component';
+import { capitalized, periodUnit } from '../../data-access/grade-formats';
 
 /**
  * Les deux rangées de pilules de ③ : « Trimestre » puis « Période » (« Tout le trimestre », les
@@ -45,11 +46,8 @@ export class TermOptionsComponent {
   readonly termPick = output<string>();
   readonly partPick = output<GradePart>();
 
-  /** « trimestre » ou « semestre », dernier mot du libellé du serveur (« 1er trimestre »). */
-  private readonly unit = computed(() => this.periods()[0]?.label.split(' ').at(-1) ?? 'trimestre');
-  protected readonly unitLabel = computed(
-    () => `${this.unit().charAt(0).toUpperCase()}${this.unit().slice(1)}`,
-  );
+  private readonly unit = computed(() => periodUnit(this.periods()));
+  protected readonly unitLabel = computed(() => capitalized(this.unit()));
 
   protected readonly termOptions = computed(() =>
     this.periods().map((period) => option(period.periodId, period.label)),

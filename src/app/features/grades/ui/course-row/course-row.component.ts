@@ -12,21 +12,27 @@ import { GradeCourse } from '../../../../core/api/grades.contract';
 import { civilToDate } from '../../../../shared/date/civil-date';
 import { IconComponent } from '../../../../shared/ui/icon/icon.component';
 import { percentLabel, pointsLabel } from '../../data-access/grade-formats';
+import { subjectTone } from '../../data-access/subject-tone';
 import { AverageComponent } from '../average/average.component';
 
 let nextId = 0;
 
 /**
- * ④ Ligne de cours de Mes cours : moyenne du cours et, déplié, ce qui la compose (les lignes ⑤,
- * projetées par la page). La mention de la dernière note dit la tendance sans déplier. Un cours
- * sans évaluation reste listé : un cours qui disparaît inquiète plus qu'un tiret.
+ * ④ Carte de cours de Mes cours : moyenne du cours et, déplié, ce qui la compose (les cartes ⑤,
+ * projetées par la page). Filet et sigle au ton de la matière, moyenne au ton de l'état. La
+ * mention de la dernière note dit la tendance sans déplier. Un cours sans évaluation reste
+ * listé : un cours qui disparaît inquiète plus qu'un tiret.
  */
 @Component({
   selector: 'app-course-row',
   imports: [AverageComponent, IconComponent],
   templateUrl: './course-row.component.html',
   styleUrl: './course-row.component.css',
-  host: { '[class.expanded]': 'expanded()' },
+  host: {
+    '[class.expanded]': 'expanded()',
+    '[style.--subject]': 'subject().color',
+    '[style.--subject-soft]': 'subject().soft',
+  },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseRowComponent {
@@ -37,6 +43,7 @@ export class CourseRowComponent {
   private readonly locale = inject(LOCALE_ID);
 
   protected readonly panelId = `course-panel-${nextId++}`;
+  protected readonly subject = computed(() => subjectTone(this.course().subjectCode));
 
   /** « M. Ilunga · 4 évaluations, dernière 16,5/20 le 22/09 » ou « Pas encore d'évaluation ». */
   protected readonly summary = computed(() => {
