@@ -29,12 +29,6 @@ export function middleEllipsis(name: string, max = 40): string {
   return `${name.slice(0, head)}…${name.slice(-tail)}`;
 }
 
-/** Libellé d'un nombre d'éléments : « Aucune épreuve », « 1 épreuve », « 3 épreuves ». */
-export function countLabel(count: number, one: string, many: string, none: string): string {
-  if (count === 0) return none;
-  return `${count} ${count === 1 ? one : many}`;
-}
-
 const DELIVERY_MODES: Readonly<Record<string, string>> = {
   ONLINE: 'En ligne',
   IN_CLASS: 'En classe',

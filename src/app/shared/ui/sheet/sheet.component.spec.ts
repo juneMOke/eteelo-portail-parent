@@ -1,5 +1,6 @@
 import { Component, viewChild } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { stubDialog } from '../../../../testing/dialog';
 import { SheetComponent } from './sheet.component';
 
 @Component({
@@ -14,15 +15,7 @@ class HostComponent {
 }
 
 describe('SheetComponent', () => {
-  beforeAll(() => {
-    // jsdom n'implémente pas showModal/close.
-    HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
-      this.setAttribute('open', '');
-    };
-    HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
-      this.removeAttribute('open');
-    };
-  });
+  beforeAll(stubDialog);
 
   async function render() {
     const fixture = TestBed.createComponent(HostComponent);

@@ -13,11 +13,12 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { GradeCard, GradeSelection } from '../../../core/api/grades.contract';
+import { dayLabel } from '../../../shared/format/day-labels';
 import { latestValue } from '../../../shared/resource/latest-value';
 import { EmptyPeriodComponent } from '../../../shared/ui/empty-period/empty-period.component';
 import { LoadErrorComponent } from '../../../shared/ui/load-error/load-error.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
-import { dayLabel, selectionAnnouncement, selectionPhrase } from '../data-access/grade-formats';
+import { selectionAnnouncement, selectionPhrase } from '../data-access/grade-formats';
 import { evaluationLink, evaluationQueryParams, gradesLink } from '../data-access/grade-links';
 import { GradesFacade } from '../data-access/grades.facade';
 import { injectTermSelection, selectionParams } from '../data-access/term-selection';

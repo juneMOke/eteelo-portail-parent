@@ -1,0 +1,58 @@
+section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+h2 {
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.02em;
+}
+
+ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Filet au ton de l'état, à gauche de la ligne. */
+button {
+  display: flex;
+  width: 100%;
+  min-height: var(--tap-target);
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--line-tone);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.day {
+  color: var(--color-text);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.detail {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.none {
+  color: var(--color-text-secondary);
+  font-size: var(--text-md);
+}

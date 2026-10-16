@@ -13,7 +13,7 @@ import { AssignmentWindow, CivilDate } from '../../../../core/api/assignments.co
 import { civilToDate } from '../../../../shared/date/civil-date';
 import { EmptyPeriodComponent } from '../../../../shared/ui/empty-period/empty-period.component';
 import { SwipePagerComponent } from '../../../../shared/ui/swipe-pager/swipe-pager.component';
-import { countLabel } from '../../data-access/formats';
+import { countLabel } from '../../../../shared/format/count';
 import { isSchoolDay, nextBusyDay, stepSchoolDay } from '../../data-access/school-days';
 import { DayNavigatorComponent } from '../day-navigator/day-navigator.component';
 

@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   ElementRef,
   LOCALE_ID,
   computed,
@@ -12,8 +11,12 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { FileRefusal, fileRefusal } from '../../files/file-type';
 import { fileSizeLabel } from '../../format/file-size';
+import { injectOnline } from '../../network/online';
+import { FileRowComponent } from '../file-row/file-row.component';
 import { IconComponent } from '../icon/icon.component';
+import { UploadProgressComponent } from '../upload-progress/upload-progress.component';
 
 /** Pourquoi le dernier envoi n'a pas abouti, et s'il vaut la peine de le relancer tel quel. */
 export interface UploadFailure {
@@ -21,22 +24,8 @@ export interface UploadFailure {
   readonly retryable: boolean;
 }
 
-/** Extensions reconnues quand le téléphone ne donne pas le type du fichier. */
-const EXTENSION_TYPES: Readonly<Record<string, string>> = {
-  pdf: 'application/pdf',
-  jpg: 'image/jpeg',
-  jpeg: 'image/jpeg',
-  png: 'image/png',
-};
-
 /** Délai pendant lequel un second appui sur « Envoyer » est ignoré. */
 const DOUBLE_TAP_MS = 600;
-
-function typeOf(file: File): string {
-  if (file.type) return file.type.toLowerCase();
-  const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
-  return EXTENSION_TYPES[extension] ?? '';
-}
 
 /**
  * Choix puis envoi d'un ou plusieurs fichiers, en un seul dépôt. Choisir n'est pas envoyer :
@@ -47,7 +36,7 @@ function typeOf(file: File): string {
  */
 @Component({
   selector: 'ui-file-upload',
-  imports: [IconComponent],
+  imports: [FileRowComponent, IconComponent, UploadProgressComponent],
   templateUrl: './file-upload.component.html',
   styleUrl: './file-upload.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,7 +64,7 @@ export class FileUploadComponent {
   private readonly locale = inject(LOCALE_ID);
   private readonly picker = viewChild.required<ElementRef<HTMLInputElement>>('picker');
 
-  protected readonly online = signal(navigator.onLine);
+  protected readonly online = injectOnline();
   /** Refus avant l'envoi : format ou poids. */
   protected readonly refusal = signal<string | null>(null);
   private appending = false;
@@ -85,30 +74,12 @@ export class FileUploadComponent {
   protected readonly sending = computed(() => this.progress() !== null);
   /** Un refus terminal ne propose pas de renvoyer les mêmes fichiers. */
   protected readonly canSend = computed(() => this.failure()?.retryable ?? true);
-  protected readonly percent = computed(() => Math.round((this.progress() ?? 0) * 100));
-  protected readonly selection = computed(() =>
-    this.files().map((file) => ({
-      file,
-      isPdf: typeOf(file) === 'application/pdf',
-      size: fileSizeLabel(file.size, this.locale),
-    })),
-  );
   protected readonly totalSize = computed(() =>
     fileSizeLabel(
       this.files().reduce((total, file) => total + file.size, 0),
       this.locale,
     ),
   );
-
-  constructor() {
-    const update = () => this.online.set(navigator.onLine);
-    window.addEventListener('online', update);
-    window.addEventListener('offline', update);
-    inject(DestroyRef).onDestroy(() => {
-      window.removeEventListener('online', update);
-      window.removeEventListener('offline', update);
-    });
-  }
 
   protected choose(append: boolean): void {
     this.appending = append;
@@ -141,10 +112,19 @@ export class FileUploadComponent {
   }
 
   private check(files: readonly File[]): string | null {
-    const accepted = this.accept();
-    if (files.some((file) => !accepted.includes(typeOf(file)))) return this.formatMessage();
-    if (files.length > this.maxFiles()) return this.tooManyMessage();
-    const total = files.reduce((sum, file) => sum + file.size, 0);
-    return total > this.maxTotalBytes() ? this.tooLargeMessage() : null;
+    const refusal = fileRefusal(files, {
+      accept: this.accept(),
+      maxTotalBytes: this.maxTotalBytes(),
+      maxFiles: this.maxFiles(),
+    });
+    return refusal ? this.messages()[refusal] : null;
+  }
+
+  private messages(): Record<FileRefusal, string> {
+    return {
+      format: this.formatMessage(),
+      count: this.tooManyMessage(),
+      size: this.tooLargeMessage(),
+    };
   }
 }

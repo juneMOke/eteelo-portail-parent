@@ -1,12 +1,12 @@
-import { Injectable, Signal, computed, inject } from '@angular/core';
+import { Signal, computed, inject } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { GradePart, GradeQuery } from '../../../core/api/grades.contract';
+import { TermMemory } from '../../../core/navigation/term-memory';
 
 /**
  * Choix trimestre · période de Mes cours et Mon bulletin. Il vit dans l'URL (`?term=&part=`)
  * pour que le retour d'une fiche et le changement d'enfant le gardent. Il suit aussi le parent
- * d'une page à l'autre pendant la session (spec 05 ③) : la mémoire ci-dessous, en mémoire vive
- * seulement, rien sur le téléphone.
+ * d'une page à l'autre pendant la session (spec 05 ③), par `TermMemory`.
  */
 
 /** Une portion choisie : la période scolaire (`term` dans l'URL) et sa partie. */
@@ -26,20 +26,6 @@ export function termQuery(term?: string | null, part?: string | null): GradeQuer
   return part ? { periodId: term, part } : { periodId: term };
 }
 
-@Injectable({ providedIn: 'root' })
-export class TermSelectionMemory {
-  private readonly selections = new Map<string, GradeQuery>();
-
-  remember(childId: string, choice: TermChoice): void {
-    this.selections.set(childId, termQuery(choice.periodId, choice.part));
-  }
-
-  /** La dernière sélection choisie pour cet enfant pendant la session. */
-  recall(childId: string): GradeQuery | undefined {
-    return this.selections.get(childId);
-  }
-}
-
 export interface TermSelectionControl {
   /** Ce qu'on demande au serveur : l'URL, sinon la sélection de la session, sinon son défaut. */
   readonly query: Signal<GradeQuery>;
@@ -56,7 +42,7 @@ export function injectTermSelection(params: {
   term: () => string | undefined;
   part: () => string | undefined;
 }): TermSelectionControl {
-  const memory = inject(TermSelectionMemory);
+  const memory = inject(TermMemory);
   const router = inject(Router);
   const route = inject(ActivatedRoute);
   return {

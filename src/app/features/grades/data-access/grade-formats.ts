@@ -47,18 +47,6 @@ export function weekSummary({ total, graded, pending }: GradeSummary): string {
   return parts.join(' · ');
 }
 
-/** « Lundi 22/09 » : en-tête de jour et date d'une évaluation. */
-export function dayLabel(day: CivilDate, locale: string): string {
-  const label = formatDate(civilToDate(day), 'EEEE dd/MM', locale, 'UTC');
-  return `${label.charAt(0).toUpperCase()}${label.slice(1)}`;
-}
-
-/** « Lundi 22 septembre » : la même date, pour un lecteur d'écran. */
-export function spokenDay(day: CivilDate, locale: string): string {
-  const label = formatDate(civilToDate(day), 'EEEE d MMMM', locale, 'UTC');
-  return `${label.charAt(0).toUpperCase()}${label.slice(1)}`;
-}
-
 /** « 8e sur 32 », « 1er sur 32 ». */
 export function rankLabel({ position, of }: Rank): string {
   return `${position === 1 ? '1er' : `${position}e`} sur ${of}`;

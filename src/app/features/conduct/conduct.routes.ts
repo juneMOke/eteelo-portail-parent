@@ -1,8 +1,17 @@
 import { Routes } from '@angular/router';
-import { comingSoonRoute } from '../../core/navigation/coming-soon.route';
+import { navEntry } from '../../core/navigation/nav';
 
+/** Ma conduite : deux pages, deux registres, des faits datés (spec 06). */
 export default [
   { path: '', pathMatch: 'full', redirectTo: 'attendance' },
-  comingSoonRoute('attendance', 'attendance'),
-  comingSoonRoute('discipline', 'discipline'),
+  {
+    path: 'attendance',
+    title: navEntry('attendance').title,
+    loadComponent: () => import('./attendance/attendance.page'),
+  },
+  {
+    path: 'discipline',
+    title: navEntry('discipline').title,
+    loadComponent: () => import('./discipline/discipline.page'),
+  },
 ] satisfies Routes;

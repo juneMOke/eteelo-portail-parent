@@ -1,7 +1,6 @@
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import {
-  countLabel,
   deliveryLabel,
   durationLabel,
   fileSizeLabel,
@@ -42,12 +41,6 @@ describe('formats', () => {
     expect(short.endsWith('-2026.pdf')).toBe(true);
     expect(short).toContain('…');
     expect(middleEllipsis('CE-Chimie.pdf')).toBe('CE-Chimie.pdf');
-  });
-
-  it('accorde le nombre', () => {
-    expect(countLabel(0, 'épreuve', 'épreuves', 'Aucune épreuve')).toBe('Aucune épreuve');
-    expect(countLabel(1, 'épreuve', 'épreuves', 'Aucune épreuve')).toBe('1 épreuve');
-    expect(countLabel(3, 'épreuve', 'épreuves', 'Aucune épreuve')).toBe('3 épreuves');
   });
 
   it('nomme le mode de remise, et reste neutre sur une valeur inconnue', () => {

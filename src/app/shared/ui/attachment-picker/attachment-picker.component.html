@@ -1,0 +1,25 @@
+<input
+  #picker
+  class="visually-hidden"
+  type="file"
+  tabindex="-1"
+  aria-hidden="true"
+  [accept]="acceptAttribute()"
+  (change)="picked($event)"
+/>
+
+@if (file(); as file) {
+  <ui-file-row [file]="file" [removable]="!disabled()" (remove)="remove()" />
+} @else {
+  <button type="button" class="choose" [disabled]="disabled()" (click)="choose()">
+    <ui-icon name="upload" [size]="18" />
+    {{ chooseLabel() }}
+  </button>
+  @if (hint()) {
+    <p class="hint">{{ hint() }}</p>
+  }
+}
+
+@if (refusal(); as refusal) {
+  <p class="failure" role="alert">{{ refusal }}</p>
+}

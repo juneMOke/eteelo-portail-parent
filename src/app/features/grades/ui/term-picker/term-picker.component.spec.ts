@@ -1,19 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { stubDialog } from '../../../../../testing/dialog';
 import { gradeCoursesFixture } from '../../../../../testing/grade-courses.fixture';
 import { GRADE_PERIODS, TERM } from '../../../../../testing/grades-terms.fixture';
 import { TermChoice } from '../../data-access/term-selection';
 import { TermPickerComponent } from './term-picker.component';
 
 describe('TermPickerComponent', () => {
-  beforeAll(() => {
-    // jsdom n'implémente pas showModal/close.
-    HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
-      this.setAttribute('open', '');
-    };
-    HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
-      this.removeAttribute('open');
-    };
-  });
+  beforeAll(stubDialog);
 
   async function render() {
     const fixture = TestBed.createComponent(TermPickerComponent);

@@ -10,6 +10,12 @@ import {
   HomeworkDetail,
   HomeworkList,
 } from './assignments.contract';
+import {
+  AbsenceJustification,
+  ChildAttendance,
+  ChildDiscipline,
+  JustificationRequest,
+} from './conduct.contract';
 import { GradeCourses, GradePeriod, GradeQuery, GradeWeek, ReportCard } from './grades.contract';
 
 type Schemas = components['schemas'];
@@ -98,6 +104,39 @@ export class ParentApi {
     return this.http.get<ReportCard>(`${PARENT_CHILDREN_API}/${childId}/grades/report-card`, {
       params: gradeParams(query),
     });
+  }
+
+  /** Présence de toute l'année scolaire, jusqu'à aujourd'hui (Ma présence). */
+  attendance(childId: string): Observable<ChildAttendance> {
+    return this.http.get<ChildAttendance>(`${PARENT_CHILDREN_API}/${childId}/attendance`);
+  }
+
+  /** Faits consignés d'un trimestre (Ma discipline) ; sans trimestre, celui en cours. */
+  discipline(childId: string, periodId?: string): Observable<ChildDiscipline> {
+    return this.http.get<ChildDiscipline>(`${PARENT_CHILDREN_API}/${childId}/discipline`, {
+      params: periodId ? { periodId } : {},
+    });
+  }
+
+  /**
+   * Justifie l'absence d'un jour : une demande que l'école valide. Rend les événements pour
+   * suivre l'envoi de la pièce jointe ; un renvoi du même `id` est sans effet.
+   */
+  justifyAbsence(
+    childId: string,
+    date: string,
+    request: JustificationRequest,
+  ): Observable<HttpEvent<AbsenceJustification>> {
+    const body = new FormData();
+    body.append('id', request.id);
+    body.append('reason', request.reason);
+    if (request.note) body.append('note', request.note);
+    if (request.file) body.append('file', request.file, request.file.name);
+    return this.http.post<AbsenceJustification>(
+      `${PARENT_CHILDREN_API}/${childId}/attendance/${date}/justification`,
+      body,
+      { observe: 'events', reportProgress: true },
+    );
   }
 
   /**

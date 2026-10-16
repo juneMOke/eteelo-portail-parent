@@ -1,0 +1,36 @@
+@if (view(); as view) {
+  <p class="state">
+    <ui-badge [tone]="view.state.tone">{{ view.state.label }}</ui-badge>
+    <span class="moment">{{ view.moment }}</span>
+  </p>
+  @if (view.reason) {
+    <p class="line"><span class="term">Motif retenu :</span> {{ view.reason }}</p>
+  }
+  @if (view.justification) {
+    <p class="line">{{ view.justification }}</p>
+  }
+  @if (view.decisionNote) {
+    <p class="line note">« {{ view.decisionNote }} »</p>
+  }
+  @if (view.recorded) {
+    <p class="recorded">{{ view.recorded }}</p>
+  }
+  @for (item of view.cases; track item.id) {
+    <a class="follow-up" [routerLink]="disciplineLink()" [queryParams]="item.params">
+      {{ item.label }}
+      <ui-icon name="chevron-right" [size]="16" />
+    </a>
+  }
+  @if (view.deadline) {
+    <div class="justify">
+      <p class="deadline">{{ view.deadline }}</p>
+      <button type="button" class="button attention" (click)="justify.emit(view.date)">
+        Justifier
+      </button>
+    </div>
+  } @else if (view.closed) {
+    <p class="line">Le délai de justification est passé.</p>
+  }
+} @else {
+  <p class="line">Présence pas encore enregistrée aujourd’hui.</p>
+}

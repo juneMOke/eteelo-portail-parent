@@ -1,0 +1,70 @@
+@if (view(); as view) {
+  @if (view.pending.length) {
+    <app-pending-absences [entries]="view.pending" (justify)="startJustification($event)" />
+  }
+
+  @if (view.empty) {
+    <ui-empty-period
+      heading="Aucune présence enregistrée pour le moment."
+      [message]="'La présence est enregistrée à partir du ' + view.firstDayLabel + '.'"
+    />
+  } @else {
+    @if (attendance(); as attendance) {
+      <app-attendance-header [summary]="attendance.summary" />
+    }
+
+    <app-month-navigator
+      [month]="view.month"
+      [bounds]="view.bounds"
+      [today]="view.today"
+      [counts]="view.counts"
+      (monthChange)="selectMonth($event)"
+    />
+
+    <ui-swipe-pager
+      [position]="view.month"
+      label="Présence du mois"
+      [attr.aria-busy]="resource.isLoading()"
+      (swipe)="onSwipe($event)"
+    >
+      <div class="month">
+        <app-month-calendar
+          [weeks]="view.weeks"
+          [legend]="view.legend"
+          [caption]="view.caption"
+          (open)="showDay($event)"
+        />
+        <app-absence-list
+          [days]="view.list"
+          [monthName]="view.monthName"
+          (open)="showDay($event)"
+        />
+      </div>
+    </ui-swipe-pager>
+  }
+
+  <app-day-sheet
+    [childId]="childId()"
+    [date]="openDate()"
+    [day]="openDay()"
+    (justify)="startJustification($event)"
+  />
+  <app-justification-sheet
+    [progress]="justification.progress()"
+    [failure]="justification.failure()"
+    (send)="sendJustification($event.date, $event.draft)"
+  />
+} @else if (resource.error()) {
+  <ui-load-error
+    heading="Impossible d’afficher la présence"
+    message="La présence nécessite une connexion. Vérifiez-la, puis réessayez."
+    (retry)="resource.reload()"
+  />
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement de la présence…</span>
+    <ui-skeleton height="150px" />
+    <ui-skeleton height="74px" />
+    <ui-skeleton height="260px" />
+  </div>
+}

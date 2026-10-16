@@ -1,0 +1,87 @@
+:host {
+  display: block;
+  border-radius: var(--radius-card);
+}
+
+/* Carte ciblée : un contour bleu ardoise qui s'efface (« c'est celle-ci »). */
+:host(.targeted) {
+  animation: target 1.5s ease-out;
+}
+
+@keyframes target {
+  from {
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+  to {
+    box-shadow: 0 0 0 2px transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host(.targeted) {
+    animation: none;
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+}
+
+article {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--case-tone);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+h3 {
+  color: var(--color-heading);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+}
+
+.meta,
+.revised {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.description,
+.follow-up {
+  color: var(--color-text);
+  font-size: var(--text-md);
+}
+
+.term {
+  color: var(--color-text-secondary);
+}
+
+.link {
+  display: inline-flex;
+  align-self: flex-start;
+  min-height: var(--tap-target);
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+/* ⑨ Ce que l'école attend du parent : surface or pâle, dans la carte. */
+.request {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-tone-pending-soft);
+  color: var(--color-text);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}

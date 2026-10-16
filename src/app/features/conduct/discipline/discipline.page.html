@@ -1,0 +1,35 @@
+@if (data(); as data) {
+  <ui-pill-group
+    label="Trimestre"
+    [options]="terms()"
+    [checked]="data.period.id"
+    (pick)="pickTerm($event)"
+  />
+
+  <app-discipline-summary [periodLabel]="data.period.label" [phrase]="summary()" />
+
+  <section class="cases" aria-label="Faits consignés" [attr.aria-busy]="resource.isLoading()">
+    @for (item of cases(); track item.id) {
+      <app-case-card [item]="item" [childId]="childId()" [targeted]="item.id === case()" />
+    } @empty {
+      <ui-empty-period heading="Aucun fait consigné ce trimestre." />
+    }
+  </section>
+
+  @if (schoolPhone(); as phone) {
+    <app-school-contact [phone]="phone" />
+  }
+} @else if (resource.error()) {
+  <ui-load-error
+    heading="Impossible d’afficher la discipline"
+    message="Ma discipline nécessite une connexion. Vérifiez-la, puis réessayez."
+    (retry)="resource.reload()"
+  />
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement de la discipline…</span>
+    <ui-skeleton height="44px" />
+    <ui-skeleton height="96px" />
+    <ui-skeleton height="140px" />
+  </div>
+}

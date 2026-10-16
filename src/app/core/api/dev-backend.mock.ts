@@ -4,7 +4,9 @@ import {
   evaluationDetailFixture,
   evaluationListFixture,
 } from '../../../testing/assessments.fixture';
+import { attendanceFixture, withPendingJustification } from '../../../testing/attendance.fixture';
 import { bootstrapFixture } from '../../../testing/bootstrap.fixture';
+import { disciplineFixture } from '../../../testing/discipline.fixture';
 import { gradeCoursesFixture } from '../../../testing/grade-courses.fixture';
 import { GRADE_PERIODS } from '../../../testing/grades-terms.fixture';
 import { gradeWeekFixture } from '../../../testing/grades-week.fixture';
@@ -22,6 +24,12 @@ const HOMEWORK_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/homework(?:/([^
 const SUBMISSION_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/homework/([^/?]+)/submission$`);
 const GRADES_ROUTE = new RegExp(
   `^${PARENT_CHILDREN_API}/[^/]+/grades/(week|periods|courses|report-card)$`,
+);
+/** Présence servie, mise à jour par les justifications reçues pendant la session de développement. */
+let attendance = attendanceFixture();
+const CONDUCT_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/(attendance|discipline)$`);
+const JUSTIFICATION_ROUTE = new RegExp(
+  `^${PARENT_CHILDREN_API}/[^/]+/attendance/[^/]+/justification$`,
 );
 
 /** Serveur factice : répond aux routes du portail parent sans quitter le navigateur. */
@@ -52,6 +60,29 @@ const mockBackend: HttpInterceptorFn = (req, next) => {
     if (grades[1] === 'week') return ok(gradeWeekFixture(req.params.get('weekOf') ?? undefined));
     if (grades[1] === 'periods') return ok(GRADE_PERIODS);
     return ok(grades[1] === 'courses' ? gradeCoursesFixture(query) : reportCardFixture(query));
+  }
+  const conduct = req.method === 'GET' ? CONDUCT_ROUTE.exec(req.url) : null;
+  if (conduct) {
+    return ok(
+      conduct[1] === 'attendance'
+        ? attendance
+        : disciplineFixture(req.params.get('periodId') ?? undefined),
+    );
+  }
+  if (req.method === 'POST' && JUSTIFICATION_ROUTE.test(req.url) && req.body instanceof FormData) {
+    attendance = withPendingJustification(attendance, req.url.split('/').at(-2) ?? '');
+    return of(
+      new HttpResponse({
+        status: 201,
+        body: {
+          status: 'PENDING',
+          reason: req.body.get('reason'),
+          submittedAt: new Date().toISOString(),
+          decidedAt: null,
+          decisionNote: null,
+        },
+      }),
+    );
   }
   const submission = req.method === 'POST' ? SUBMISSION_ROUTE.exec(req.url) : null;
   if (submission && req.body instanceof FormData) {

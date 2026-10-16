@@ -42,6 +42,7 @@ export function bootstrapFixture(children: Child[] = [GRACE, DAVID]): Bootstrap 
       schoolId: '9c8b7a6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d',
       name: 'Complexe Scolaire La Fontaine',
       logoFingerprint: null,
+      contactPhone: '+243998877665',
     },
     academicYear: { id: '5f1e2d3c-4b5a-4c6d-8e7f-0a1b2c3d4e5f', name: '2026-2027' },
     children,

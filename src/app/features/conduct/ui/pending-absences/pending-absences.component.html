@@ -1,0 +1,28 @@
+<section aria-labelledby="pending-absences-title">
+  <h2 id="pending-absences-title">{{ heading() }}</h2>
+  <ul>
+    @for (line of visible(); track line.date) {
+      <li [class.waiting]="!line.actionable">
+        <span class="text">
+          <span class="day">{{ line.label }}</span>
+          <span class="detail">{{ line.detail }}</span>
+        </span>
+        @if (line.actionable) {
+          <button
+            type="button"
+            class="justify button attention"
+            [attr.aria-label]="'Justifier l’absence du ' + line.label"
+            (click)="justify.emit(line.date)"
+          >
+            Justifier
+          </button>
+        }
+      </li>
+    }
+  </ul>
+  @if (hidden() > 0) {
+    <button type="button" class="more" (click)="expanded.set(true)">
+      et {{ hidden() }} {{ hidden() > 1 ? 'autres' : 'autre' }} ›
+    </button>
+  }
+</section>

@@ -11,7 +11,7 @@ import { GRADE_PERIODS, TERM } from '../../../../testing/grades-terms.fixture';
 import { COURSE } from '../../../../testing/grades-week.fixture';
 import { GradeQuery } from '../../../core/api/grades.contract';
 import { ParentApi } from '../../../core/api/parent-api';
-import { TermSelectionMemory } from '../data-access/term-selection';
+import { TermMemory } from '../../../core/navigation/term-memory';
 import CoursesPage from './courses.page';
 
 registerLocaleData(localeFr);
@@ -109,7 +109,7 @@ describe('CoursesPage', () => {
       [],
       expect.objectContaining({ queryParams: { term: TERM.first, part: 'ALL', course: null } }),
     );
-    expect(TestBed.inject(TermSelectionMemory).recall(GRACE.childId)).toEqual({
+    expect(TestBed.inject(TermMemory).recall(GRACE.childId)).toEqual({
       periodId: TERM.first,
       part: 'ALL',
     });
@@ -117,7 +117,7 @@ describe('CoursesPage', () => {
 
   it('reprend la sélection de la session quand l’URL n’en porte pas', async () => {
     const { gradeCourses } = await render({}, () =>
-      TestBed.inject(TermSelectionMemory).remember(GRACE.childId, {
+      TestBed.inject(TermMemory).remember(GRACE.childId, {
         periodId: TERM.first,
         part: 'SECOND',
       }),
