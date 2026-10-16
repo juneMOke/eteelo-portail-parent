@@ -3,9 +3,9 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Router, provideRouter } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
-import { evaluationListFixture } from '../../../../testing/assessments.fixture';
+import { GEOGRAPHY_LOW, evaluationListFixture } from '../../../../testing/assessments.fixture';
 import { settle } from '../../../../testing/async';
 import { GRACE, bootstrapFixture } from '../../../../testing/bootstrap.fixture';
 import { EvaluationList } from '../../../core/api/assignments.contract';
@@ -17,7 +17,7 @@ registerLocaleData(localeFr);
 
 describe('AssessmentsPage', () => {
   async function render(
-    date?: string,
+    params: Record<string, string> = {},
     evaluations: () => Observable<EvaluationList> = () => of(evaluationListFixture()),
   ) {
     TestBed.configureTestingModule({
@@ -30,72 +30,77 @@ describe('AssessmentsPage', () => {
     await TestBed.inject(SessionStore).ensureLoaded();
     const fixture = TestBed.createComponent(AssessmentsPage);
     fixture.componentRef.setInput('childId', GRACE.childId);
-    if (date) fixture.componentRef.setInput('date', date);
+    for (const [name, value] of Object.entries(params)) fixture.componentRef.setInput(name, value);
     await settle();
     await fixture.whenStable();
     return { fixture, el: fixture.nativeElement as HTMLElement };
   }
 
-  const cardTitles = (el: HTMLElement) =>
-    [...el.querySelectorAll('app-assignment-card .heading')].map((h) => h.textContent?.trim());
+  const texts = (el: HTMLElement, selector: string) =>
+    [...el.querySelectorAll(selector)].map((node) => node.textContent?.replace(/\s+/g, ' ').trim());
 
-  it("s'ouvre sur le prochain jour qui a une épreuve à venir", async () => {
+  it('s’ouvre sur la semaine en cours, avec la date et la durée de chaque épreuve', async () => {
     const { el } = await render();
 
-    expect(el.querySelector('.date')?.textContent).toBe('jeudi 24 septembre 2026');
-    expect(el.querySelector('.meta')?.textContent).toContain('dans 2 jours');
-    expect(el.querySelector('.meta')?.textContent).toContain('2 épreuves');
-    expect(cardTitles(el)).toEqual([
-      'Interrogation de Chimie — les bases.',
-      'Examen d’Histoire — la période coloniale.',
+    expect(texts(el, '.day-head')).toEqual(['Lundi 21/09 · hier', 'Jeudi 24/09']);
+    expect(texts(el, 'app-assignment-card .when')).toEqual([
+      'Lundi 21/09 · 50 min.',
+      'Jeudi 24/09 · 45 min.',
+      'Jeudi 24/09 · 2 h.',
+    ]);
+    expect(el.querySelector('app-assignment-card .urgent')).toBeNull();
+  });
+
+  it('signale une épreuve de demain', async () => {
+    const { el } = await render({}, () => of({ ...evaluationListFixture(), today: '2026-09-23' }));
+
+    expect(texts(el, 'app-assignment-card .urgent')).toEqual([
+      'Épreuve demain.',
+      'Épreuve demain.',
     ]);
   });
 
-  it('affiche une épreuve corrigée avec sa note, et mène à sa fiche en gardant le jour', async () => {
-    const { el } = await render('2026-09-15');
-    const card = el.querySelector('app-assignment-card a');
+  it('filtre les absences et donne leurs options propres', async () => {
+    const { el } = await render({ week: '2026-09-14', status: 'ABSENT' });
 
-    expect(card?.textContent).toContain('Corrigé');
-    expect(card?.querySelector('ui-grade')?.textContent).toContain('13,5/20');
-    expect(card?.getAttribute('href')).toBe(
-      `/c/${GRACE.childId}/assessments/41e0a1b2-c3d4-4e5f-8a6b-7c8d9e0f1a01?date=2026-09-15`,
+    expect(texts(el, 'app-assignment-card .heading')).toEqual(['Examen de Français — rédaction.']);
+    expect(texts(el, 'app-assignment-card .status')).toEqual(['Absent à l’épreuve.']);
+    expect(el.querySelectorAll('app-filter-menu .trigger')[1].textContent).toContain('Absences');
+  });
+
+  it('remplace le chevron par la note, à la couleur de son niveau', async () => {
+    const { el } = await render({ week: '2026-09-14', status: 'GRADED' });
+    const low = [...el.querySelectorAll('app-assignment-card a')].find((card) =>
+      card.getAttribute('href')?.includes(GEOGRAPHY_LOW.evaluationId),
+    );
+
+    expect(low?.querySelector('ui-grade')?.textContent).toContain('9/20');
+    expect(low?.querySelector('.chevron')).toBeNull();
+  });
+
+  it('dit une semaine sans évaluation', async () => {
+    const { el } = await render({}, () => of(evaluationListFixture([])));
+
+    expect(el.querySelector('ui-empty-period h2')?.textContent).toBe(
+      'Aucune évaluation cette semaine',
+    );
+    expect(el.querySelector('ui-empty-period p')?.textContent).toBe(
+      'Utilisez les flèches pour changer de semaine.',
     );
   });
 
-  it('dit un jour vide et mène au prochain jour occupé', async () => {
-    const { el } = await render('2026-09-22');
+  it('dit un jour sans épreuve quand seul le filtre jour est posé', async () => {
+    const { el } = await render({ day: '2026-09-22' });
 
-    expect(el.querySelector('.empty-day h2')?.textContent).toBe('Aucune épreuve ce jour');
-    expect(el.querySelector('.next')?.textContent).toContain('Prochaine épreuve : jeudi 24/09');
-  });
-
-  it("distingue un jour sans école d'un jour sans épreuve", async () => {
-    const { el } = await render('2026-09-26');
-
-    expect(el.querySelector('.empty-day h2')?.textContent).toBe('Pas d’école ce jour');
-    expect(el.querySelector('.meta')?.textContent).toContain('Pas d’école');
-  });
-
-  it("change de jour par l'URL, sans relancer d'appel", async () => {
-    const evaluations = vi.fn(() => of(evaluationListFixture()));
-    const { el, fixture } = await render(undefined, evaluations);
-    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-
-    el.querySelector<HTMLButtonElement>('[aria-label="Jour suivant"]')?.click();
-    expect(navigate).toHaveBeenCalledWith(
-      [],
-      expect.objectContaining({ queryParams: { date: '2026-09-25' }, replaceUrl: true }),
+    expect(el.querySelector('ui-empty-period h2')?.textContent).toBe('Aucune épreuve ce jour');
+    expect(el.querySelector('ui-empty-period p')?.textContent).toBe(
+      'Choisissez « Toute la semaine » pour tout revoir.',
     );
-
-    fixture.componentRef.setInput('date', '2026-09-25');
-    await fixture.whenStable();
-    expect(el.querySelector('.date')?.textContent).toBe('vendredi 25 septembre 2026');
-    expect(evaluations).toHaveBeenCalledOnce();
   });
 
   it("propose de réessayer quand la liste n'a pas pu être chargée", async () => {
     let calls = 0;
-    const { el, fixture } = await render(undefined, () =>
+    const { el, fixture } = await render({}, () =>
       calls++ === 0
         ? throwError(() => new HttpErrorResponse({ status: 0 }))
         : of(evaluationListFixture()),
@@ -107,6 +112,6 @@ describe('AssessmentsPage', () => {
     el.querySelector<HTMLButtonElement>('ui-empty-state button')?.click();
     await settle();
     await fixture.whenStable();
-    expect(el.querySelectorAll('app-assignment-card')).toHaveLength(2);
+    expect(el.querySelectorAll('app-assignment-card')).toHaveLength(3);
   });
 });

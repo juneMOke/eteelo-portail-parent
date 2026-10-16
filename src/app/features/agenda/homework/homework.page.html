@@ -1,31 +1,15 @@
 @if (data(); as list) {
-  @if (day(); as day) {
-    <app-day-list
-      [day]="day"
-      [window]="list"
-      [count]="items().length"
-      [busyDays]="busyDays()"
-      [labels]="labels"
-      (dayChange)="selectDay($event)"
-    >
-      <ul class="cards">
-        @for (item of items(); track item.evaluationId) {
-          <li>
-            <app-assignment-card
-              [link]="cardLink(item.evaluationId)"
-              [queryParams]="{ date: item.dueDate }"
-              [heading]="item.title"
-              [when]="cardWhen(item)"
-              [teacher]="item.teacherLabel"
-              [status]="statusView(item.status)"
-              [points]="item.status === 'GRADED' ? item.points : null"
-              [maxPoints]="item.maxPoints"
-            />
-          </li>
-        }
-      </ul>
-    </app-day-list>
-  }
+  <app-week-board
+    [window]="list"
+    [cards]="cards()"
+    [labels]="labels"
+    [listLink]="listLink()"
+    [week]="week()"
+    [day]="day()"
+    [status]="status()"
+    [viewParam]="view()"
+    [date]="date()"
+  />
 } @else if (list.error()) {
   <ui-empty-state
     icon="info"
@@ -37,9 +21,9 @@
 } @else {
   <div class="loading" role="status" aria-busy="true">
     <span class="visually-hidden">Chargement des devoirs…</span>
-    <ui-skeleton height="74px" />
-    <ui-skeleton width="60%" height="44px" />
-    <ui-skeleton height="88px" />
-    <ui-skeleton height="88px" />
+    <ui-skeleton height="56px" />
+    <ui-skeleton height="48px" />
+    <ui-skeleton height="48px" />
+    <ui-skeleton height="160px" />
   </div>
 }

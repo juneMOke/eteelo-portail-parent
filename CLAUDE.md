@@ -48,7 +48,7 @@ src/app/
                   file-upload, grade, icon, load-error, period-navigator, pill-group, sheet, skeleton,
                   swipe-pager, upload-progress, tone), a11y (radio-focus), date (civil-date),
               files (document-actions, downscale-image, file-type), format (amount, count, day-labels,
-                  file-size, time-labels), navigation (query-param-sheet), network (online),
+                  file-size, time-labels), layout (media-query), navigation (query-param-sheet), network (online),
               resource (latest-value), pipes (amount)
   features/   auth, home, agenda, grades, conduct, finance, communication
 src/styles/   tokens.css, base.css

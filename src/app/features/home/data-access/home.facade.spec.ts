@@ -21,11 +21,11 @@ describe('HomeFacade', () => {
   }
 
   it("salue le parent selon son lien avec l'enfant affiché", async () => {
-    expect((await setup('MOTHER')).greeting(GRACE.childId)).toBe('Mbote, Mme Kabila');
+    expect((await setup('MOTHER')).greetingName(GRACE.childId)).toBe('Mme Léonie Kabila Mwamba');
   });
 
-  it('se contente de « Mbote » pour un tuteur', async () => {
-    expect((await setup('GUARDIAN')).greeting(GRACE.childId)).toBe('Mbote');
+  it('salue un tuteur sans civilité', async () => {
+    expect((await setup('GUARDIAN')).greetingName(GRACE.childId)).toBe('Léonie Kabila Mwamba');
   });
 
   it("expose l'enfant et les cinq groupes du catalogue", async () => {

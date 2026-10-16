@@ -37,9 +37,13 @@
     --palette-or-pale: #f7ecd6;
     --palette-terre-pale: #f6e6dc;
     --palette-terre-cuite-fonce: #9c4a1f;
+    --palette-rouge-alerte: #a8301f;
+    --palette-rouge-pale: #f9e7e4;
 
     /* 2. Sémantiques — couleurs */
     --color-page: var(--palette-papier);
+    /* Fond de l'application, sous la texture kuba ; --color-page reste le fond des encarts. */
+    --color-backdrop: var(--palette-blanc-casse);
     --color-surface: var(--palette-blanc);
     --color-surface-soft: var(--palette-blanc-casse);
     --color-border: var(--palette-sable);
@@ -71,6 +75,9 @@
     --color-tone-neutral: var(--palette-gris-texte);
     --color-tone-neutral-soft: var(--palette-sable-clair);
     --color-on-tone: var(--palette-blanc-casse);
+    /* Urgence d'un devoir ou d'une épreuve (aujourd'hui, demain) : 6,8:1 sur blanc, 5,7:1 sur son fond. */
+    --color-urgent: var(--palette-rouge-alerte);
+    --color-urgent-soft: var(--palette-rouge-pale);
 
     /* Code couleur des notes (seul calcul admis côté front) : ≥ 60 %, 50 à 60 %, < 50 %. */
     --color-grade-good: var(--palette-vert-savane);
@@ -92,9 +99,30 @@
     --color-bar-control-active-bg: rgb(250 250 247 / 0.26);
     --color-bar-control-border: rgb(250 250 247 / 0.3);
 
+    /* Pastille d'icône des tuiles de l'Accueil : décorative, distincte de --color-attention. */
+    --color-tile-icon: var(--palette-terre-cuite);
+    --color-tile-icon-bg: var(--palette-terre-pale);
+    /*
+     * Accueil : nom du parent après « Mbote » et pastille de l'élève. Terre cuite foncée :
+     * la teinte de marque ne tient que 4,4:1 sur texte courant (5,1:1 sur la pastille).
+     */
+    --color-greeting: var(--palette-terre-cuite-fonce);
+    --color-greeting-pill-bg: var(--palette-terre-pale);
+
     --color-avatar-bg: var(--palette-bleu-ardoise);
     --color-avatar-text: var(--palette-blanc-casse);
     --color-scrim: rgb(14 45 66 / 0.45);
+    /* Voile léger sous un menu déroulant. */
+    --color-scrim-light: rgb(14 45 66 / 0.08);
+
+    /*
+     * Texture de fond : motif kuba (Bleu Ardoise, Terre Cuite, Or Doux à 7 %), tuile de 60px.
+     * SVG en ligne pour ne coûter aucun aller-retour réseau ; fond transparent, la couleur
+     * vient de --color-backdrop.
+     */
+    --texture-page: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g opacity='.07'><g fill='none' stroke='%231b4d6b' stroke-width='1.3' stroke-linecap='square'><path d='M0 30 30 0M30 60 60 30M0 60 60 0M0 30 30 60M30 0 60 30M0 0 60 60'/><path d='m15 15 4 4m26 26-4-4m4-26-4 4M15 45l4-4' stroke-width='1.1'/></g><path fill='%23b85c2c' d='M30 26l4 4-4 4-4-4zM30-4l4 4-4 4-4-4zM30 56l4 4-4 4-4-4zM-4 30l4 4 4-4-4-4zM56 30l4 4 4-4-4-4z'/><path fill='%23d9a24e' d='M-3 0l3 3 3-3-3-3zM57 0l3 3 3-3-3-3zM-3 60l3 3 3-3-3-3zM57 60l3 3 3-3-3-3z'/></g></svg>");
+    /* Le même motif en blanc à 9 %, sur les aplats Bleu Ardoise (bandeau de semaine). */
+    --texture-banner: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g opacity='.09' fill='%23fff'><g fill='none' stroke='%23fff' stroke-width='1.3' stroke-linecap='square'><path d='M0 30 30 0M30 60 60 30M0 60 60 0M0 30 30 60M30 0 60 30M0 0 60 60'/><path d='m15 15 4 4m26 26-4-4m4-26-4 4M15 45l4-4' stroke-width='1.1'/></g><path d='M30 26l4 4-4 4-4-4zM30-4l4 4-4 4-4-4zM30 56l4 4-4 4-4-4zM-4 30l4 4 4-4-4-4zM56 30l4 4 4-4-4-4zM-3 0l3 3 3-3-3-3zM57 0l3 3 3-3-3-3zM-3 60l3 3 3-3-3-3zM57 60l3 3 3-3-3-3z'/></g></svg>");
 
     /* Typographie */
     --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;

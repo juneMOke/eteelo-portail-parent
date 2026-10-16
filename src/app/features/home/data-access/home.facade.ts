@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { NAV_GROUPS, NavGroup } from '../../../core/navigation/nav';
 import { Child } from '../../../core/session/bootstrap.schema';
 import { SessionStore } from '../../../core/session/session.store';
-import { greeting } from './greeting';
+import { greetingName } from './greeting';
 
 /**
  * Façade de l'Accueil. Aucun appel réseau : tout vient du bootstrap déjà en mémoire.
@@ -18,7 +18,8 @@ export class HomeFacade {
     return this.session.childById(childId);
   }
 
-  greeting(childId: string): string {
-    return greeting(this.session.parent()?.lastName, this.child(childId)?.relationshipType);
+  /** Le nom du parent après « Mbote, », ou null pour « Mbote » seul. */
+  greetingName(childId: string): string | null {
+    return greetingName(this.session.parent(), this.child(childId)?.relationshipType);
   }
 }

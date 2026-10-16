@@ -1,15 +1,6 @@
+/* Pleine largeur du contenu : la grille de la semaine en a besoin (la fiche, elle, reste à 760 px). */
 :host {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-  max-width: var(--reading-max-width);
-  margin-inline: auto;
-}
-
-.cards {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+  display: block;
 }
 
 .loading {

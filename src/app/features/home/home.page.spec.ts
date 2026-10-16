@@ -23,8 +23,8 @@ describe('HomePage', () => {
   it("salue le parent et rappelle l'enfant affiché", async () => {
     const el = await render();
 
-    expect(el.querySelector('.hello')?.textContent).toBe('Mbote, Mme Kabila');
-    expect(el.querySelector('.meta')?.textContent).toContain('Grâce · 5e B');
+    expect(el.querySelector('.hello')?.textContent?.trim()).toBe('Mbote, Mme Léonie Kabila Mwamba');
+    expect(el.querySelector('.child')?.textContent).toBe('Grâce Mbala Nsimba · 5e B');
   });
 
   it('mène à toutes les pages, en cinq groupes', async () => {

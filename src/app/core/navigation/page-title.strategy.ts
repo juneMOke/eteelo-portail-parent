@@ -30,10 +30,14 @@ function origin(route: ActivatedRouteSnapshot): NavEntry | null {
   return NAV_ENTRIES.find((entry) => entry.id === from && entry !== HOME_ENTRY) ?? null;
 }
 
+/** Paramètres d'une liste que sa fiche lui rend : jour, ou semaine, filtres et vue. */
+const LIST_PARAMS = ['date', 'week', 'day', 'status', 'view'] as const;
+
 /**
  * Pages imbriquées (`data.back`, ex. une fiche) : le retour mène à la page de la liste et lui
- * rend le jour affiché (`?date=`), pour retrouver « même jour, même position ». Une fiche
- * ouverte depuis une autre page (`?from=grades-week`) y ramène, avec les autres paramètres.
+ * rend son état (`?date=`, ou `?week=&day=&status=&view=`), pour retrouver « même semaine,
+ * mêmes filtres, même vue ». Une fiche ouverte depuis une autre page (`?from=grades-week`) y
+ * ramène, avec les autres paramètres.
  */
 function backTarget(route: ActivatedRouteSnapshot): BackTarget {
   const back = route.data['back'] as NavEntryId | undefined;
@@ -43,8 +47,12 @@ function backTarget(route: ActivatedRouteSnapshot): BackTarget {
     const { from: _, ...queryParams } = route.queryParams;
     return { entry: from, queryParams };
   }
-  const date = route.queryParamMap.get('date');
-  return { entry: navEntry(back), queryParams: date ? { date } : {} };
+  const queryParams: Params = {};
+  for (const name of LIST_PARAMS) {
+    const value = route.queryParamMap.get(name);
+    if (value) queryParams[name] = value;
+  }
+  return { entry: navEntry(back), queryParams };
 }
 
 /**

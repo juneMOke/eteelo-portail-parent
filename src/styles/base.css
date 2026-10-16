@@ -63,7 +63,7 @@
 
   body {
     min-height: 100dvh;
-    background: var(--color-page);
+    background: var(--color-backdrop) var(--texture-page);
     color: var(--color-text);
     font-family: var(--font-ui);
     font-size: var(--text-base);
@@ -98,7 +98,7 @@
     display: grid;
     min-height: 100dvh;
     place-items: center;
-    background: var(--color-page);
+    background: var(--color-backdrop) var(--texture-page);
     color: var(--color-text-muted);
     font-size: var(--text-sm);
   }

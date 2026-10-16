@@ -30,7 +30,7 @@ test.describe('Connexion', () => {
     await page.goto('/login/jeton-du-lien');
 
     await expect(page).toHaveURL(`/c/${GRACE.childId}`);
-    await expect(page.getByText('Mbote, Mme Kabila')).toBeVisible();
+    await expect(page.getByText('Mbote, Mme Léonie Kabila Mwamba')).toBeVisible();
   });
 
   test('accepte la forme courte du lien envoyée par le serveur', async ({ page }) => {

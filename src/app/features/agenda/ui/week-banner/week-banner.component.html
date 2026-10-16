@@ -1,0 +1,57 @@
+@if (wide()) {
+  <div class="views" role="radiogroup" aria-label="Affichage">
+    <button
+      type="button"
+      role="radio"
+      class="view"
+      [attr.aria-checked]="view() === 'list'"
+      (click)="viewChange.emit('list')"
+    >
+      <ui-icon name="list" [size]="16" />Liste
+    </button>
+    <button
+      type="button"
+      role="radio"
+      class="view"
+      [attr.aria-checked]="view() === 'grid'"
+      (click)="viewChange.emit('grid')"
+    >
+      <ui-icon name="grid" [size]="16" />Grille
+    </button>
+  </div>
+}
+
+<div class="week">
+  <button
+    type="button"
+    class="arrow previous"
+    aria-label="Semaine précédente"
+    [attr.aria-disabled]="!hasPrevious()"
+    (click)="go(-1)"
+  >
+    <ui-icon name="chevron-left" [size]="20" [strokeWidth]="2" />
+  </button>
+
+  <div class="label">
+    <p #titleRef class="title" tabindex="-1">{{ wide() ? label() : shortLabel() }}</p>
+    <p class="relative">{{ wide() ? relative().long : relative().short }}</p>
+  </div>
+
+  @if (!isCurrent()) {
+    <button type="button" class="current" (click)="goCurrent()">
+      {{ wide() ? 'Revenir à cette semaine' : 'Revenir' }}
+    </button>
+  }
+
+  <button
+    type="button"
+    class="arrow next"
+    aria-label="Semaine suivante"
+    [attr.aria-disabled]="!hasNext()"
+    (click)="go(1)"
+  >
+    <ui-icon name="chevron-right" [size]="20" [strokeWidth]="2" />
+  </button>
+</div>
+
+<p class="visually-hidden" aria-live="polite">{{ announcement() }}</p>

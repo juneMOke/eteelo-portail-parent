@@ -1,5 +1,5 @@
 import { DAVID, GRACE } from '../../../testing/bootstrap.fixture';
-import { childLabel, childName, childPhoto } from './child-format';
+import { childFullName, childLabel, childName, childPhoto } from './child-format';
 
 describe('mise en forme d’un enfant', () => {
   it('compose prénom et classe', () => {
@@ -12,6 +12,11 @@ describe('mise en forme d’un enfant', () => {
 
   it('se rabat sur le nom quand le prénom manque', () => {
     expect(childName({ ...GRACE, firstName: '  ' })).toBe('Mbala');
+  });
+
+  it('compose le nom complet, sans les parties absentes', () => {
+    expect(childFullName(GRACE)).toBe('Grâce Mbala Nsimba');
+    expect(childFullName({ ...GRACE, firstName: null, surname: ' ' })).toBe('Mbala');
   });
 
   it("ne donne une photo que si l'enfant en a une", () => {

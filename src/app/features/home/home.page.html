@@ -1,4 +1,9 @@
-<app-greeting [greeting]="greeting()" [childLabel]="childLabel()" [today]="today" />
+<app-greeting
+  [parentName]="parentName()"
+  [childName]="childName()"
+  [childClass]="childClass()"
+  [today]="today"
+/>
 
 <div class="groups">
   @for (group of groups; track group.title) {

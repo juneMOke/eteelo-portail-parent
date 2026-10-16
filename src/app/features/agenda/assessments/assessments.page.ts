@@ -1,4 +1,3 @@
-import { formatDate } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,90 +6,97 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CivilDate, EvaluationSummary } from '../../../core/api/assignments.contract';
+import { EvaluationSummary } from '../../../core/api/assignments.contract';
 import { childLink, navEntry } from '../../../core/navigation/nav';
+import { dayLabel } from '../../../shared/format/day-labels';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { statusView } from '../data-access/assignment-status';
 import { durationLabel } from '../data-access/formats';
-import { civilToDate } from '../../../shared/date/civil-date';
-import { openingDay } from '../data-access/school-days';
-import { AssignmentCardComponent } from '../ui/assignment-card/assignment-card.component';
-import { DayListComponent, DayListLabels } from '../ui/day-list/day-list.component';
+import { nearDay } from '../data-access/school-week';
+import { WeekBoardLabels, WeekCard } from '../data-access/week-board';
+import { WeekBoardComponent } from '../ui/week-board/week-board.component';
 import { AssessmentsFacade } from './data-access/assessments.facade';
 
-const LABELS: DayListLabels = {
-  region: 'Épreuves du jour',
+const LABELS: WeekBoardLabels = {
+  region: 'Épreuves de la semaine',
   one: 'épreuve',
   many: 'épreuves',
-  none: 'Aucune épreuve',
+  none: 'aucune épreuve',
+  all: 'Toutes',
+  statuses: [
+    { id: 'UPCOMING', label: 'À venir', tone: 'pending', empty: 'Aucune évaluation à venir' },
+    {
+      id: 'AWAITING_GRADE',
+      label: 'En attente de correction',
+      tone: 'info',
+      empty: 'Aucune évaluation en attente de correction',
+    },
+    { id: 'GRADED', label: 'Corrigées', tone: 'success', empty: 'Aucune évaluation corrigée' },
+    { id: 'ABSENT', label: 'Absences', tone: 'alert', empty: 'Aucune absence à une épreuve' },
+  ],
+  emptyWeek: 'Aucune évaluation cette semaine',
   emptyDay: 'Aucune épreuve ce jour',
-  next: 'Prochaine épreuve',
+  emptyColumn: 'Rien de prévu',
 };
 
 /**
- * Mes évaluations : « qu'a-t-il à réviser, et pour quand ? ». Un jour à la fois ; s'ouvre sur
- * le prochain jour qui a une épreuve à venir. Le jour affiché vit dans l'URL (`?date=`), ce
- * qui permet à la fiche d'y ramener.
+ * Mes évaluations : « qu'a-t-il à réviser, et pour quand ? ». Une semaine à la fois ; chaque
+ * épreuve se range au jour où elle est passée. Semaine, filtres et vue vivent dans l'URL.
  */
 @Component({
   selector: 'app-assessments-page',
-  imports: [AssignmentCardComponent, DayListComponent, EmptyStateComponent, SkeletonComponent],
+  imports: [EmptyStateComponent, SkeletonComponent, WeekBoardComponent],
   templateUrl: './assessments.page.html',
   styleUrl: './assessments.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class AssessmentsPage {
   readonly childId = input.required<string>();
-  /** Jour demandé (`?date=YYYY-MM-DD`) ; ignoré s'il est invalide ou hors fenêtre. */
+  readonly week = input<string>();
+  readonly day = input<string>();
+  readonly status = input<string>();
+  readonly view = input<string>();
+  /** Jour d'un lien venu d'ailleurs (notification, Mes notes) : ouvre sa semaine. */
   readonly date = input<string>();
 
   private readonly facade = inject(AssessmentsFacade);
-  private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
   private readonly locale = inject(LOCALE_ID);
 
   protected readonly labels = LABELS;
   protected readonly list = this.facade.listResource(() => this.childId());
   /** La liste chargée ; undefined pendant le chargement ou en erreur (value() lève alors). */
   protected readonly data = computed(() => (this.list.hasValue() ? this.list.value() : undefined));
+  protected readonly listLink = computed(() =>
+    childLink(this.childId(), navEntry('assessments').path),
+  );
 
-  protected readonly day = computed(() => {
+  protected readonly cards = computed<WeekCard[]>(() => {
     const list = this.data();
-    if (!list) return null;
-    const upcoming = list.items
-      .filter((item) => item.status === 'UPCOMING')
-      .map((item) => item.date);
-    return openingDay(list, this.date(), upcoming);
+    return list ? list.items.map((item) => this.card(item, list.today)) : [];
   });
 
-  /** Épreuves du jour, dans l'ordre du serveur (date, puis matière). */
-  protected readonly items = computed(() => {
-    const day = this.day();
-    return this.data()?.items.filter((item) => item.date === day) ?? [];
-  });
-
-  protected readonly busyDays = computed(() => this.data()?.items.map((item) => item.date) ?? []);
-
-  protected cardLink(evaluationId: string): string[] {
-    return [...childLink(this.childId(), navEntry('assessments').path), evaluationId];
-  }
-
-  protected cardWhen(item: EvaluationSummary): string {
-    const day = formatDate(civilToDate(item.date), 'EEEE dd/MM', this.locale, 'UTC');
+  /** « Jeudi 24/09 · 2 h » ; sans durée connue, la date seule. */
+  private card(item: EvaluationSummary, today: string): WeekCard {
     const duration = durationLabel(item.durationMinutes);
-    const when = `${day.charAt(0).toUpperCase()}${day.slice(1)}`;
-    return duration ? `${when} · ${duration}` : when;
-  }
-
-  protected readonly statusView = statusView;
-
-  protected selectDay(day: CivilDate): void {
-    void this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { date: day },
-      replaceUrl: true,
-    });
+    const near = nearDay(item.date, today);
+    return {
+      id: item.evaluationId,
+      day: item.date,
+      status: item.status,
+      view: statusView(item.status),
+      heading: item.title,
+      when: [dayLabel(item.date, this.locale), duration].filter(Boolean).join(' · '),
+      compactWhen: duration,
+      detail: item.teacherLabel,
+      urgent:
+        item.status === 'UPCOMING' && (near === 'aujourd’hui' || near === 'demain')
+          ? `Épreuve ${near}`
+          : null,
+      grade:
+        item.status === 'GRADED' && item.points !== null
+          ? { points: item.points, maxPoints: item.maxPoints }
+          : null,
+    };
   }
 }

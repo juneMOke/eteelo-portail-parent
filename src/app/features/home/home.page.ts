@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { childLink, navEntry } from '../../core/navigation/nav';
-import { childLabel } from '../../core/session/child-format';
+import { childClass, childFullName } from '../../core/session/child-format';
 import { HomeFacade } from './data-access/home.facade';
 import { GreetingComponent } from './greeting/greeting.component';
 import { TileGroupComponent } from './tile-group/tile-group.component';
@@ -24,10 +24,15 @@ export default class HomePage {
 
   protected readonly groups = this.facade.groups;
   protected readonly today = new Date();
-  protected readonly greeting = computed(() => this.facade.greeting(this.childId()));
-  protected readonly childLabel = computed(() => {
-    const child = this.facade.child(this.childId());
-    return child ? childLabel(child) : '';
+  protected readonly parentName = computed(() => this.facade.greetingName(this.childId()));
+  private readonly child = computed(() => this.facade.child(this.childId()));
+  protected readonly childName = computed(() => {
+    const child = this.child();
+    return child ? childFullName(child) : '';
+  });
+  protected readonly childClass = computed(() => {
+    const child = this.child();
+    return child ? childClass(child) : null;
   });
   protected readonly messagesLink = computed(() =>
     childLink(this.childId(), navEntry('messages').path),
