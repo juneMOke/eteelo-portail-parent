@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, LOCALE_ID, computed, inject, input } from '@angular/core';
 import { AttendanceSummary } from '../../../../core/api/conduct.contract';
-import { IconComponent } from '../../../../shared/ui/icon/icon.component';
+import { SectionCardComponent } from '../../../../shared/ui/section-card/section-card.component';
 import { weekIndicators, weekSummaryLabel } from '../../data-access/attendance-formats';
 
 /**
@@ -10,7 +10,7 @@ import { weekIndicators, weekSummaryLabel } from '../../data-access/attendance-f
  */
 @Component({
   selector: 'app-week-indicators',
-  imports: [IconComponent],
+  imports: [SectionCardComponent],
   templateUrl: './week-indicators.component.html',
   styleUrl: './week-indicators.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

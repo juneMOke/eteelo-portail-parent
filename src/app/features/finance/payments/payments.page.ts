@@ -8,31 +8,34 @@ import {
   viewChild,
 } from '@angular/core';
 import { Payment } from '../../../core/api/finance.contract';
+import { countLabel } from '../../../shared/format/count';
 import { injectQueryParamSheet } from '../../../shared/navigation/query-param-sheet';
 import { latestValue } from '../../../shared/resource/latest-value';
 import { EmptyPeriodComponent } from '../../../shared/ui/empty-period/empty-period.component';
 import { LoadErrorComponent } from '../../../shared/ui/load-error/load-error.component';
+import { SectionCardComponent } from '../../../shared/ui/section-card/section-card.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { FinanceDocumentsStore, receiptKey } from '../data-access/finance-documents.store';
 import { paymentMonths } from '../data-access/finance-formats';
 import { feesLink } from '../data-access/finance-links';
-import { paymentRow } from '../data-access/finance-rows';
+import { paymentLine } from '../data-access/finance-rows';
 import { FinanceFacade } from '../data-access/finance.facade';
-import { LedgerRowComponent } from '../ui/ledger-row/ledger-row.component';
+import { FinanceLineComponent } from '../ui/finance-line/finance-line.component';
 import { PaymentSheetComponent } from '../ui/payment-sheet/payment-sheet.component';
 
 /**
  * Mes paiements : « c'est arrivé ? ». Le journal des versements de l'année, par mois, le plus
- * récent en haut (⑥, ⑦). La fiche d'un versement (⑧) vit dans l'URL (`?payment=`) : un frais
+ * récent en haut, une carte par mois (⑥, ⑦). La fiche d'un versement (⑧) vit dans l'URL (`?payment=`) : un frais
  * de Mes frais y mène, et le retour la rouvre. Pas de bilan ici : il est dans Mes frais.
  */
 @Component({
   selector: 'app-payments-page',
   imports: [
     EmptyPeriodComponent,
-    LedgerRowComponent,
+    FinanceLineComponent,
     LoadErrorComponent,
     PaymentSheetComponent,
+    SectionCardComponent,
     SkeletonComponent,
   ],
   templateUrl: './payments.page.html',
@@ -56,9 +59,11 @@ export default class PaymentsPage {
   protected readonly months = computed(() =>
     paymentMonths(this.data() ?? [], this.locale).map((month) => ({
       ...month,
-      rows: month.payments.map((payment) => ({
+      /** « 3 versements » : pas de total du mois, le front n'additionne pas (invariant 2). */
+      count: countLabel(month.payments.length, 'versement', 'versements', ''),
+      lines: month.payments.map((payment) => ({
         id: payment.paymentId,
-        row: paymentRow(payment, this.locale),
+        line: paymentLine(payment, this.locale),
       })),
     })),
   );

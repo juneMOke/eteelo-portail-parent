@@ -8,6 +8,9 @@
   (mousedown)="open() && $event.preventDefault()"
   (click)="toggle()"
 >
+  @if (icon(); as icon) {
+    <ui-icon class="lead" [name]="icon" [size]="18" />
+  }
   <span class="caption">{{ caption() }}</span>
   <span class="value">
     @if (selected().tone; as tone) {

@@ -46,7 +46,7 @@ test.describe('Ma présence', () => {
 
     await expect(page).toHaveURL(`${ATTENDANCE}?week=2026-09-14`);
     await expect(page.locator('app-week-indicators dd')).toHaveText(['80 %', '0', '1', '2']);
-    await expect(page.locator('app-week-indicators .pill')).toHaveText('4 jours présents sur 5 · 2 retards');
+    await expect(page.locator('app-week-indicators .count')).toHaveText('4 jours présents sur 5 · 2 retards');
     await expect(page.locator('app-month-navigator .title')).toHaveText('Octobre 2026');
   });
 

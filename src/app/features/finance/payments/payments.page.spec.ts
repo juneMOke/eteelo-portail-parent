@@ -45,14 +45,18 @@ describe('PaymentsPage', () => {
     const { el, api } = await render();
 
     expect(api.payments).toHaveBeenCalledWith(GRACE.childId, undefined);
-    expect([...el.querySelectorAll('h2.list-title')].map(text)).toEqual(['Septembre 2026']);
-    expect([...el.querySelectorAll('app-ledger-row .title')].map(text)).toEqual([
+    expect([...el.querySelectorAll('ui-section-card h2')].map(text)).toEqual(['Septembre 2026']);
+    expect(text(el.querySelector('ui-section-card .count'))).toBe('4 versements');
+    expect([...el.querySelectorAll('app-finance-line .heading')].map(text)).toEqual([
       'Mardi 22/09 · Mobile money',
       'Samedi 12/09 · Espèces',
       'Samedi 05/09 · Espèces',
       'Jeudi 03/09 · Espèces',
     ]);
-    expect([...el.querySelectorAll('app-ledger-row .amount')].map(text)).toEqual([
+    expect(text(el.querySelector('app-finance-line .details'))).toBe(
+      'Imputé sur : Frais scolaires · 1re tranche',
+    );
+    expect([...el.querySelectorAll('app-finance-line .amount')].map(text)).toEqual([
       '40 $',
       '50 000 FC',
       '140 $',

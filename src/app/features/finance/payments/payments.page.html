@@ -1,22 +1,21 @@
 @if (data(); as data) {
-  @for (month of months(); track month.month) {
-    <section
-      class="list"
-      [attr.aria-labelledby]="'month-' + month.month"
-      [attr.aria-busy]="resource.isLoading()"
-    >
-      <h2 class="list-title" [id]="'month-' + month.month">{{ month.label }}</h2>
-      @for (item of month.rows; track item.id) {
-        <app-ledger-row [row]="item.row" (activate)="fiche.show(item.id)" />
-      }
-    </section>
-  } @empty {
-    <ui-empty-period
-      heading="Aucun versement enregistré cette année."
-      linkLabel="Voir les frais à payer"
-      [link]="feesLink()"
-    />
-  }
+  <div class="cards" [attr.aria-busy]="resource.isLoading()">
+    @for (month of months(); track month.month) {
+      <ui-section-card [heading]="month.label" icon="calendar" [count]="month.count">
+        <ul class="rows">
+          @for (item of month.lines; track item.id) {
+            <li><app-finance-line [line]="item.line" (activate)="fiche.show(item.id)" /></li>
+          }
+        </ul>
+      </ui-section-card>
+    } @empty {
+      <ui-empty-period
+        heading="Aucun versement enregistré cette année."
+        linkLabel="Voir les frais à payer"
+        [link]="feesLink()"
+      />
+    }
+  </div>
 
   <app-payment-sheet
     [childId]="childId()"

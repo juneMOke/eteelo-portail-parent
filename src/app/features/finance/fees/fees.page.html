@@ -6,11 +6,13 @@
 
     <app-balance-summary [yearLabel]="yearLabel()" [totals]="data.totals" [asOf]="data.asOf" />
 
-    <section class="list" aria-label="Frais de l’année" [attr.aria-busy]="resource.isLoading()">
-      @for (item of rows(); track item.id) {
-        <app-ledger-row [row]="item.row" (activate)="fiche.show(item.id)" />
-      }
-    </section>
+    <ui-section-card heading="Les frais de l’année" icon="wallet" [count]="feesCount()">
+      <ul class="rows" [attr.aria-busy]="resource.isLoading()">
+        @for (item of lines(); track item.id) {
+          <li><app-finance-line [line]="item.line" (activate)="fiche.show(item.id)" /></li>
+        }
+      </ul>
+    </ui-section-card>
   } @else {
     <ui-empty-period
       [heading]="'Les frais de l’année ' + yearLabel() + ' seront publiés par l’école.'"

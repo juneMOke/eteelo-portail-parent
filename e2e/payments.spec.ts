@@ -15,7 +15,8 @@ test.describe('Mes paiements', () => {
     await expect(page).toHaveURL(PAYMENTS);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mes paiements');
     await expect(page.getByRole('heading', { name: 'Septembre 2026' })).toBeVisible();
-    await expect(page.locator('app-ledger-row .title')).toHaveText([
+    await expect(page.locator('ui-section-card .count')).toHaveText('4 versements');
+    await expect(page.locator('app-finance-line .heading')).toHaveText([
       'Mardi 22/09 · Mobile money',
       'Samedi 12/09 · Espèces',
       'Samedi 05/09 · Espèces',

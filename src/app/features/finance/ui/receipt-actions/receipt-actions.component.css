@@ -16,8 +16,17 @@
   cursor: pointer;
 }
 
-.action:hover {
-  background: var(--color-accent-soft);
+.action {
+  transition:
+    translate var(--duration-hover) var(--ease-out),
+    background-color var(--duration-hover);
+}
+
+@media (hover: hover) {
+  .action:hover:not(:disabled) {
+    background: var(--color-accent-soft);
+    translate: 0 -1px;
+  }
 }
 
 .action:disabled {

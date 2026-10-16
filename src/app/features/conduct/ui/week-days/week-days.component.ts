@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { IconComponent } from '../../../../shared/ui/icon/icon.component';
+import { SectionCardComponent } from '../../../../shared/ui/section-card/section-card.component';
 import { WeekTile } from '../../data-access/attendance-view';
 
 /**
@@ -8,7 +8,7 @@ import { WeekTile } from '../../data-access/attendance-view';
  */
 @Component({
   selector: 'app-week-days',
-  imports: [IconComponent],
+  imports: [SectionCardComponent],
   templateUrl: './week-days.component.html',
   styleUrl: './week-days.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

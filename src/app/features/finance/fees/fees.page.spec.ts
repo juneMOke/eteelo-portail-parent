@@ -52,20 +52,28 @@ describe('FeesPage', () => {
     expect(text(el.querySelector('app-overdue-banner .headline'))).toBe(
       'Frais scolaires · 1re tranche · 80 $ en retard depuis le 15/09',
     );
-    expect(text(el.querySelector('app-balance-summary .band'))).toBe('Année 2026-2027');
+    expect(text(el.querySelector('app-balance-summary .year'))).toBe('Année 2026-2027');
     expect([...el.querySelectorAll('app-balance-summary .remaining')].map(text)).toEqual([
-      '314 $ restant',
-      '100 000 FC restant',
+      '314 $ restant sur l’année',
+      '100 000 FC restant sur l’année',
     ]);
-    expect([...el.querySelectorAll('app-ledger-row .title')].map(text)).toEqual([
+    expect([...el.querySelectorAll('app-balance-summary .total dd')].map(text)).toEqual([
+      '594 $',
+      expect.stringContaining('FC'),
+    ]);
+    expect(text(el.querySelector('ui-section-card h2'))).toBe('Les frais de l’année');
+    expect(text(el.querySelector('ui-section-card .count'))).toBe('4 frais · 1 en retard');
+    expect([...el.querySelectorAll('app-finance-line .heading')].map(text)).toEqual([
       'Frais scolaires · 1re tranche',
       'Transport scolaire · 1er trimestre',
       'Frais scolaires · 2e tranche',
       'Frais d’inscription',
     ]);
-    expect(text(el.querySelector('app-ledger-row .detail'))).toBe(
-      'En retard depuis le 15/09 · 80 $ restant · 180 $ déjà versés',
-    );
+    const first = el.querySelector('app-finance-line')!;
+    expect(text(first.querySelector('.status'))).toBe('En retard depuis le 15/09');
+    expect(text(first.querySelector('.details'))).toContain('180 $ déjà versés');
+    expect(text(first.querySelector('.amount'))).toBe('80 $');
+    expect(text(first.querySelector('.note'))).toBe('sur 260 $');
   });
 
   it('n’affiche pas de bandeau quand rien n’est en retard', async () => {
@@ -107,7 +115,7 @@ describe('FeesPage', () => {
     const { el } = await render();
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
-    el.querySelector<HTMLButtonElement>('app-ledger-row button')!.click();
+    el.querySelector<HTMLButtonElement>('app-finance-line button')!.click();
 
     expect(navigate).toHaveBeenCalledWith(
       [],

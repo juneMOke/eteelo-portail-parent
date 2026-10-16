@@ -83,4 +83,15 @@ describe('FilterMenuComponent', () => {
     await fixture.whenStable();
     expect(el.querySelector('.value-count')).toBeNull();
   });
+
+  it('porte une icône devant l’intitulé quand la page en donne une', async () => {
+    const { fixture, el } = await render();
+    expect(el.querySelector('.lead')).toBeNull();
+
+    fixture.componentRef.setInput('icon', 'calendar');
+    await fixture.whenStable();
+
+    expect(el.querySelector('.trigger .lead')).not.toBeNull();
+    expect(el.classList).toContain('with-icon');
+  });
 });

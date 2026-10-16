@@ -15,12 +15,12 @@ import {
 import {
   asOfLabel,
   feeStateView,
-  feeStatusLine,
+  feeStatePill,
   methodView,
   overdueHeadline,
   paidOverExpectedLabel,
   payerName,
-  paymentMeta,
+  allocationsLabel,
   paymentMonths,
   paymentTitle,
   receiptMeta,
@@ -42,14 +42,12 @@ describe('finance-formats', () => {
     expect(feeStateView('WAIVED')).toBeNull();
   });
 
-  it('écrit l’état d’un frais avec ce qui reste, sans cacher ce qui est déjà versé', () => {
-    expect(plain(feeStatusLine(OVERDUE_FEE, 'fr'))).toBe(
-      'En retard depuis le 15/09 · 80 $ restant · 180 $ déjà versés',
-    );
-    expect(plain(feeStatusLine(PARTIAL_FEE, 'fr'))).toBe('100 000 FC restant avant le 10/10');
-    expect(plain(feeStatusLine(DUE_FEE, 'fr'))).toBe('234 $ avant le 15/12');
-    expect(feeStatusLine(PAID_FEE, 'fr')).toBe('Payé le 03/09');
-    expect(plain(feeStatusLine({ ...DUE_FEE, dueDate: null }, 'fr'))).toBe('234 $ à payer');
+  it('écrit la pastille d’état d’un frais : le mot et sa date', () => {
+    expect(feeStatePill(OVERDUE_FEE, 'fr')).toBe('En retard depuis le 15/09');
+    expect(feeStatePill(PARTIAL_FEE, 'fr')).toBe('Partiellement payé · avant le 10/10');
+    expect(feeStatePill(DUE_FEE, 'fr')).toBe('À payer avant le 15/12');
+    expect(feeStatePill(PAID_FEE, 'fr')).toBe('Payé le 03/09');
+    expect(feeStatePill({ ...DUE_FEE, dueDate: null }, 'fr')).toBe('À payer');
   });
 
   it('dit une ligne de frais en entier pour un lecteur d’écran', () => {
@@ -83,8 +81,7 @@ describe('finance-formats', () => {
 
   it('écrit un versement : jour, moyen, frais couverts et payeur', () => {
     expect(paymentTitle(AIRTEL_PAYMENT, 'fr')).toBe('Mardi 22/09 · Mobile money');
-    expect(paymentMeta(AIRTEL_PAYMENT)).toBe('Frais scolaires · 1re tranche · Léonie Kabila');
-    expect(paymentMeta({ ...CASH_PAYMENT, allocations: [] })).toBe('Léonie Kabila');
+    expect(allocationsLabel(AIRTEL_PAYMENT)).toBe('Imputé sur : Frais scolaires · 1re tranche');
     expect(
       payerName({ payerFirstName: null, payerLastName: null, payerMiddleName: null }),
     ).toBeNull();
@@ -100,7 +97,7 @@ describe('finance-formats', () => {
   });
 
   it('écrit la ligne d’un reçu', () => {
-    expect(plain(receiptMeta(CASH_PAYMENT, 'fr'))).toBe('05/09 · 140 $');
+    expect(receiptMeta(CASH_PAYMENT, 'fr')).toBe('Sam. 5 sept. · Espèces');
   });
 
   it('range le journal par mois, dans l’ordre du serveur, sans total calculé', () => {

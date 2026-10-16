@@ -1,32 +1,50 @@
 @if (yearOptions().length) {
-  <ui-pill-group
-    label="Année scolaire"
-    [options]="yearOptions()"
-    [checked]="checkedYear()"
-    (pick)="pickYear($event)"
-  />
+  @if (wide()) {
+    <ui-pill-group
+      label="Année scolaire"
+      [options]="yearOptions()"
+      [checked]="checkedYear()"
+      (pick)="pickYear($event)"
+    />
+  } @else {
+    <ui-filter-menu
+      caption="Année scolaire"
+      icon="calendar"
+      [options]="yearMenu()"
+      [checked]="checkedYear() ?? null"
+      [open]="yearMenuOpen()"
+      (openChange)="yearMenuOpen.set($event)"
+      (pick)="pickYear($event)"
+    />
+  }
 }
 
 @if (data(); as data) {
-  <section class="list" aria-label="Reçus de l’année" [attr.aria-busy]="resource.isLoading()">
-    @for (payment of receipts(); track payment.paymentId) {
-      <app-receipt-row
-        [payment]="payment"
-        [href]="receiptHref(payment)"
-        [sharing]="isSharing(payment)"
-        (share)="share(payment)"
-      />
-      @if (receiptFailure(payment); as failure) {
-        <p class="failure" role="alert">{{ failure }}</p>
-      }
-    } @empty {
-      <ui-empty-period
-        [heading]="emptyHeading()"
-        [linkLabel]="feesLinkLabel()"
-        [link]="feesLink()"
-      />
-    }
-  </section>
+  @if (receipts().length) {
+    <ui-section-card heading="Reçus de l’année" icon="file-text" [count]="receiptsCount()">
+      <ul class="rows" [attr.aria-busy]="resource.isLoading()">
+        @for (payment of receipts(); track payment.paymentId) {
+          <li>
+            <app-receipt-row
+              [payment]="payment"
+              [href]="receiptHref(payment)"
+              [sharing]="isSharing(payment)"
+              (share)="share(payment)"
+            />
+            @if (receiptFailure(payment); as failure) {
+              <p class="failure" role="alert">{{ failure }}</p>
+            }
+          </li>
+        }
+      </ul>
+    </ui-section-card>
+  } @else {
+    <ui-empty-period
+      [heading]="emptyHeading()"
+      [linkLabel]="feesLinkLabel()"
+      [link]="feesLink()"
+    />
+  }
 
   @if (data.length) {
     <app-statement-footer

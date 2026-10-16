@@ -1,10 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Payment } from '../../../core/api/finance.contract';
+import { countLabel } from '../../../shared/format/count';
+import { WIDE_SCREEN, mediaQuery } from '../../../shared/layout/media-query';
 import { latestValue } from '../../../shared/resource/latest-value';
 import { EmptyPeriodComponent } from '../../../shared/ui/empty-period/empty-period.component';
+import {
+  FilterMenuComponent,
+  FilterOption,
+} from '../../../shared/ui/filter-menu/filter-menu.component';
 import { LoadErrorComponent } from '../../../shared/ui/load-error/load-error.component';
 import { PillGroupComponent, PillOption } from '../../../shared/ui/pill-group/pill-group.component';
+import { SectionCardComponent } from '../../../shared/ui/section-card/section-card.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import {
   FinanceDocumentsStore,
@@ -17,17 +24,19 @@ import { ReceiptRowComponent } from '../ui/receipt-row/receipt-row.component';
 import { StatementFooterComponent } from '../ui/statement-footer/statement-footer.component';
 
 /**
- * Mes reçus : « la preuve ». Une archive de documents : un reçu par ligne (⑩), à ouvrir ou
- * partager en deux gestes, les années précédentes (⑨, `?year=`) et le relevé de l'année en
- * pied. Moyens, imputation et payeur restent dans Mes paiements.
+ * Mes reçus : « la preuve ». Une archive de documents : un reçu par ligne dans la carte « Reçus
+ * de l'année » (⑩), à ouvrir ou partager en deux gestes, les années précédentes (⑨, `?year=`,
+ * pilules au grand écran, menu déroulant au téléphone) et le relevé de l'année en pied. Moyens, imputation et payeur restent dans Mes paiements.
  */
 @Component({
   selector: 'app-receipts-page',
   imports: [
     EmptyPeriodComponent,
+    FilterMenuComponent,
     LoadErrorComponent,
     PillGroupComponent,
     ReceiptRowComponent,
+    SectionCardComponent,
     SkeletonComponent,
     StatementFooterComponent,
   ],
@@ -76,6 +85,18 @@ export default class ReceiptsPage {
       ? years.map((year) => ({ id: year.id, label: year.label, available: true, hint: null }))
       : [];
   });
+  protected readonly wide = mediaQuery(WIDE_SCREEN);
+  protected readonly yearMenuOpen = signal(false);
+  /** Le menu du téléphone : le compteur de reçus sur l'année affichée seulement. */
+  protected readonly yearMenu = computed<readonly FilterOption[]>(() =>
+    this.yearOptions().map((option) => ({
+      id: option.id,
+      label: option.label,
+      count: option.id === this.checkedYear() && this.data() ? this.receipts().length : null,
+      unit: 'reçus',
+      tone: null,
+    })),
+  );
   protected readonly checkedYear = computed(
     () => this.pastYear()?.id ?? this.years()?.find((year) => year.current)?.id,
   );
@@ -83,6 +104,10 @@ export default class ReceiptsPage {
   /** Les versements dont le reçu est scellé : un document par ligne. */
   protected readonly receipts = computed(() =>
     (this.data() ?? []).filter((payment) => payment.receiptNumber),
+  );
+  /** « 4 reçus ». */
+  protected readonly receiptsCount = computed(() =>
+    countLabel(this.receipts().length, 'reçu', 'reçus', 'Aucun reçu'),
   );
   protected readonly emptyHeading = computed(() => {
     if (this.data()?.length) return 'Les reçus de vos versements sont en préparation.';
@@ -128,6 +153,7 @@ export default class ReceiptsPage {
   }
 
   protected pickYear(id: string | null): void {
+    this.yearMenuOpen.set(false);
     const current = this.years()?.find((year) => year.id === id)?.current;
     void this.router.navigate([], {
       relativeTo: this.route,

@@ -13,19 +13,20 @@ import { injectQueryParamSheet } from '../../../shared/navigation/query-param-sh
 import { latestValue } from '../../../shared/resource/latest-value';
 import { EmptyPeriodComponent } from '../../../shared/ui/empty-period/empty-period.component';
 import { LoadErrorComponent } from '../../../shared/ui/load-error/load-error.component';
+import { SectionCardComponent } from '../../../shared/ui/section-card/section-card.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { overdueHeadline } from '../data-access/finance-formats';
-import { feeRow } from '../data-access/finance-rows';
+import { feeLine } from '../data-access/finance-rows';
 import { FinanceFacade } from '../data-access/finance.facade';
 import { BalanceSummaryComponent } from '../ui/balance-summary/balance-summary.component';
 import { FeeSheetComponent } from '../ui/fee-sheet/fee-sheet.component';
 import { HowToPaySheetComponent } from '../ui/how-to-pay-sheet/how-to-pay-sheet.component';
-import { LedgerRowComponent } from '../ui/ledger-row/ledger-row.component';
+import { FinanceLineComponent } from '../ui/finance-line/finance-line.component';
 import { OverdueBannerComponent } from '../ui/overdue-banner/overdue-banner.component';
 
 /**
  * Mes frais : « combien, et quand ? ». Ce qui est en retard en haut (②), le bilan de l'année
- * (①), puis chaque frais dans l'ordre du serveur (④). La fiche d'un frais (⑤) vit dans l'URL
+ * (①), puis chaque frais dans l'ordre du serveur, dans la carte « Les frais de l'année » (④). La fiche d'un frais (⑤) vit dans l'URL
  * (`?fee=`) : un versement de Mes paiements y mène, et le retour la rouvre. « Comment payer »
  * (③) s'ouvre du bandeau ou de la fiche.
  */
@@ -35,10 +36,11 @@ import { OverdueBannerComponent } from '../ui/overdue-banner/overdue-banner.comp
     BalanceSummaryComponent,
     EmptyPeriodComponent,
     FeeSheetComponent,
+    FinanceLineComponent,
     HowToPaySheetComponent,
-    LedgerRowComponent,
     LoadErrorComponent,
     OverdueBannerComponent,
+    SectionCardComponent,
     SkeletonComponent,
   ],
   templateUrl: './fees.page.html',
@@ -60,12 +62,18 @@ export default class FeesPage {
   protected readonly yearLabel = this.facade.currentYearLabel;
   protected readonly schoolPhone = this.facade.schoolPhone;
 
-  protected readonly rows = computed(() =>
-    (this.data()?.fees ?? []).map((fee) => ({ id: fee.feeId, row: feeRow(fee, this.locale) })),
+  protected readonly lines = computed(() =>
+    (this.data()?.fees ?? []).map((fee) => ({ id: fee.feeId, line: feeLine(fee, this.locale) })),
   );
   protected readonly overdue = computed(() =>
     (this.data()?.fees ?? []).filter((fee) => fee.state === 'OVERDUE'),
   );
+  /** « 4 frais · 1 en retard ». */
+  protected readonly feesCount = computed(() => {
+    const count = this.data()?.fees.length ?? 0;
+    const overdue = this.overdue().length;
+    return `${count} frais${overdue ? ` · ${overdue} en retard` : ''}`;
+  });
   protected readonly headline = computed(() => {
     const data = this.data();
     return data ? overdueHeadline(this.overdue(), data.totals, this.locale) : '';

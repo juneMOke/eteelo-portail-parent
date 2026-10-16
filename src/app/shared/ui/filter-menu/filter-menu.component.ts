@@ -12,6 +12,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
+import { IconName } from '../icon/icons';
 import { Tone } from '../tone';
 
 /** Une option du menu : son libellé, son compteur, son ton éventuel. */
@@ -40,12 +41,14 @@ let nextId = 0;
   imports: [IconComponent],
   templateUrl: './filter-menu.component.html',
   styleUrl: './filter-menu.component.css',
-  host: { '[class.open]': 'open()' },
+  host: { '[class.open]': 'open()', '[class.with-icon]': '!!icon()' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterMenuComponent {
   /** « Filtrer par jour ». */
   readonly caption = input.required<string>();
+  /** Icône devant l'intitulé (le choix d'année de Mes reçus) ; null, aucune. */
+  readonly icon = input<IconName | null>(null);
   readonly options = input.required<readonly FilterOption[]>();
   readonly checked = input.required<string | null>();
   readonly open = input(false);
