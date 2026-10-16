@@ -40,6 +40,8 @@
 
     /* 2. Sémantiques — couleurs */
     --color-page: var(--palette-papier);
+    /* Fond de l'application, sous la texture kuba ; --color-page reste le fond des encarts. */
+    --color-backdrop: var(--palette-blanc-casse);
     --color-surface: var(--palette-blanc);
     --color-surface-soft: var(--palette-blanc-casse);
     --color-border: var(--palette-sable);
@@ -95,6 +97,13 @@
     --color-avatar-bg: var(--palette-bleu-ardoise);
     --color-avatar-text: var(--palette-blanc-casse);
     --color-scrim: rgb(14 45 66 / 0.45);
+
+    /*
+     * Texture de fond : motif kuba (Bleu Ardoise, Terre Cuite, Or Doux à 7 %), tuile de 60px.
+     * SVG en ligne pour ne coûter aucun aller-retour réseau ; fond transparent, la couleur
+     * vient de --color-backdrop.
+     */
+    --texture-page: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g opacity='.07'><g fill='none' stroke='%231b4d6b' stroke-width='1.3' stroke-linecap='square'><path d='M0 30 30 0M30 60 60 30M0 60 60 0M0 30 30 60M30 0 60 30M0 0 60 60'/><path d='m15 15 4 4m26 26-4-4m4-26-4 4M15 45l4-4' stroke-width='1.1'/></g><path fill='%23b85c2c' d='M30 26l4 4-4 4-4-4zM30-4l4 4-4 4-4-4zM30 56l4 4-4 4-4-4zM-4 30l4 4 4-4-4-4zM56 30l4 4 4-4-4-4z'/><path fill='%23d9a24e' d='M-3 0l3 3 3-3-3-3zM57 0l3 3 3-3-3-3zM-3 60l3 3 3-3-3-3zM57 60l3 3 3-3-3-3z'/></g></svg>");
 
     /* Typographie */
     --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
