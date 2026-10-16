@@ -16,7 +16,8 @@ export type WeekView = 'grid' | 'list';
 
 /**
  * Bandeau de semaine, aplat Bleu Ardoise au motif kuba (Mes devoirs, Mes évaluations, Ma
- * semaine) : dit de quelle semaine on parle et passe à la voisine d'un pouce. Au téléphone, une
+ * semaine, Ma présence) : dit de quelle semaine on parle et passe à la voisine d'un pouce. Sert
+ * aussi au pas d'un mois (Ma présence), avec ses propres libellés de flèches. Au téléphone, une
  * seule ligne ; au grand écran, la bascule Liste / Grille en haut à droite quand la page en a
  * une (`view`). À la borne, la flèche reste visible à 35 % et garde le focus (`aria-disabled`).
  */
@@ -43,6 +44,8 @@ export class WeekBannerComponent {
   readonly view = input<WeekView | null>(null);
   /** Pilule de retour au grand écran ; « Revenir » au téléphone. */
   readonly currentLabel = input('Revenir à cette semaine');
+  readonly previousLabel = input('Semaine précédente');
+  readonly nextLabel = input('Semaine suivante');
   /** Annoncé par les lecteurs d'écran à chaque changement. */
   readonly announcement = input('');
 

@@ -72,4 +72,14 @@ describe('WeekBannerComponent', () => {
     expect(el.querySelector('.views')).toBeNull();
     expect(el.querySelector('.current')?.textContent?.trim()).toBe('Revenir à aujourd’hui');
   });
+
+  it('nomme ses flèches au pas choisi par la page', async () => {
+    const { fixture, el } = await render();
+    fixture.componentRef.setInput('previousLabel', 'Mois précédent');
+    fixture.componentRef.setInput('nextLabel', 'Mois suivant');
+    await fixture.whenStable();
+
+    expect(el.querySelector('[aria-label="Mois précédent"]')).not.toBeNull();
+    expect(el.querySelector('[aria-label="Mois suivant"]')).not.toBeNull();
+  });
 });

@@ -12,6 +12,7 @@ import { GradeCard, GradeWeek } from '../../../core/api/grades.contract';
 import { CivilDate, addDays, daysBetween } from '../../../shared/date/civil-date';
 import { dayLabel } from '../../../shared/format/day-labels';
 import { relativeWeek } from '../../../shared/format/relative-week';
+import { shortWeekLabel, weekLabel } from '../../../shared/format/week-labels';
 import { WIDE_SCREEN, mediaQuery } from '../../../shared/layout/media-query';
 import { latestValue } from '../../../shared/resource/latest-value';
 import { EmptyPeriodComponent } from '../../../shared/ui/empty-period/empty-period.component';
@@ -19,7 +20,7 @@ import { LoadErrorComponent } from '../../../shared/ui/load-error/load-error.com
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { SwipePagerComponent } from '../../../shared/ui/swipe-pager/swipe-pager.component';
 import { WeekBannerComponent } from '../../../shared/ui/week-banner/week-banner.component';
-import { shortWeekLabel, weekLabel, weekSummary } from '../data-access/grade-formats';
+import { weekSummary } from '../data-access/grade-formats';
 import { evaluationLink, evaluationQueryParams } from '../data-access/grade-links';
 import { GradesFacade } from '../data-access/grades.facade';
 import { ResultCardComponent } from '../ui/result-card/result-card.component';
