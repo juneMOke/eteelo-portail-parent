@@ -51,15 +51,16 @@ describe('ReceiptsPage', () => {
   it('liste un reçu par ligne pour l’année en cours, sans les reçus en préparation', async () => {
     const { el } = await render();
 
-    expect(el.querySelector('[role="radio"][aria-checked="true"]')?.textContent?.trim()).toBe(
-      '2026-2027',
-    );
+    expect(text(el.querySelector('ui-filter-menu .value-label'))).toBe('2026-2027');
+    expect(text(el.querySelector('ui-filter-menu .value-count'))).toBe('· 3 reçus');
+    expect(text(el.querySelector('ui-section-card .count'))).toBe('3 reçus');
     expect(names(el)).toEqual([
       'Reçu n° ETL-RC-2627-001061',
       'Reçu n° ETL-RC-2627-001042',
       'Reçu n° ETL-RC-2627-001031',
     ]);
-    expect(text(el.querySelector('app-receipt-row .meta'))).toBe('12/09 · 50 000 FC');
+    expect(text(el.querySelector('app-receipt-row .meta'))).toBe('Sam. 12 sept. · Espèces');
+    expect(text(el.querySelector('app-receipt-row .amount'))).toBe('50 000 FC');
     expect(text(el.querySelector('app-statement-footer .name'))).toBe(
       'Relevé de l’année 2026-2027',
     );
@@ -76,10 +77,12 @@ describe('ReceiptsPage', () => {
   });
 
   it('change d’année par l’URL, sans paramètre pour l’année en cours', async () => {
-    const { el } = await render({ year: YEAR.past });
+    const { el, fixture } = await render({ year: YEAR.past });
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
-    el.querySelector<HTMLButtonElement>('[role="radio"]')!.click();
+    el.querySelector<HTMLButtonElement>('ui-filter-menu .trigger')!.click();
+    await fixture.whenStable();
+    el.querySelector<HTMLElement>('ui-filter-menu [role="option"]')!.click();
 
     expect(navigate).toHaveBeenCalledWith(
       [],
@@ -91,6 +94,7 @@ describe('ReceiptsPage', () => {
     const { el } = await render({ years: [ACADEMIC_YEARS[0]] });
 
     expect(el.querySelector('ui-pill-group')).toBeNull();
+    expect(el.querySelector('ui-filter-menu')).toBeNull();
   });
 
   it('génère le relevé de l’année affichée au geste', async () => {

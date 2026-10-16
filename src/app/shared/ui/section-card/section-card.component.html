@@ -1,0 +1,16 @@
+<section class="card" [attr.aria-labelledby]="id">
+  <header class="head">
+    <span class="title">
+      <ui-icon class="icon" [name]="icon()" [size]="17" />
+      @if (level() === 3) {
+        <h3 [id]="id">{{ heading() }}</h3>
+      } @else {
+        <h2 [id]="id">{{ heading() }}</h2>
+      }
+    </span>
+    @if (count(); as count) {
+      <p class="count">{{ count }}</p>
+    }
+  </header>
+  <div class="body"><ng-content /></div>
+</section>

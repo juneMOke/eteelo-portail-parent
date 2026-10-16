@@ -1,0 +1,80 @@
+:host {
+  display: block;
+}
+
+.card {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  transition:
+    translate var(--duration-lift) var(--ease-out-cubic),
+    box-shadow var(--duration-lift) var(--ease-out-cubic);
+}
+
+/* Téléphone : titre et pilule sur deux lignes, pilule à gauche. */
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-accent-line);
+  background: var(--color-accent-soft);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.icon {
+  flex: none;
+  color: var(--color-accent);
+}
+
+h2,
+h3 {
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+}
+
+.count {
+  padding: 6px var(--space-3);
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-accent);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+/* L'espace intérieur se règle par la page : `--section-card-padding`. */
+.body {
+  padding: var(--section-card-padding, var(--space-4));
+}
+
+@media (min-width: 600px) {
+  .head {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .count {
+    flex: none;
+  }
+}
+
+@media (hover: hover) {
+  :host(.lift) .card:hover {
+    translate: 0 -2px;
+    box-shadow: var(--shadow-lift);
+  }
+}

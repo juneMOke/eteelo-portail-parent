@@ -1,10 +1,11 @@
-<div class="text">
-  <p class="name">
-    Reçu n° <span class="number">{{ receiptNumber() }}</span>
-  </p>
-  <p class="meta">{{ meta() }}</p>
-</div>
+<span class="icon" aria-hidden="true"><ui-icon name="file-text" [size]="20" /></span>
+<p class="name">
+  Reçu n° <span class="number">{{ receiptNumber() }}</span>
+</p>
+<p class="amount">{{ payment().amounts | amount }}</p>
+<p class="meta">{{ meta() }}</p>
 <app-receipt-actions
+  class="actions"
   [href]="href()"
   [receiptNumber]="receiptNumber()"
   [sharing]="sharing()"

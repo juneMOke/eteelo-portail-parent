@@ -20,10 +20,11 @@ test.describe('Mes frais', () => {
       'Frais scolaires · 1re tranche · 80 $ en retard depuis le 15/09',
     );
     await expect(page.locator('app-balance-summary .remaining')).toHaveText([
-      '314 $ restant',
-      '100 000 FC restant',
+      '314 $ restant sur l’année',
+      '100 000 FC restant sur l’année',
     ]);
-    await expect(page.locator('app-ledger-row .title')).toHaveText([
+    await expect(page.locator('ui-section-card .count')).toHaveText('4 frais · 1 en retard');
+    await expect(page.locator('app-finance-line .heading')).toHaveText([
       'Frais scolaires · 1re tranche',
       'Transport scolaire · 1er trimestre',
       'Frais scolaires · 2e tranche',

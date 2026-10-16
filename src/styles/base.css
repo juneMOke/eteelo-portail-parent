@@ -32,6 +32,8 @@
   p,
   ul,
   ol,
+  dl,
+  dd,
   figure,
   dialog {
     margin: 0;

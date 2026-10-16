@@ -90,7 +90,7 @@ describe('AttendancePage', () => {
       from: '2026-10-05',
       to: '2026-10-06',
     });
-    expect(el.querySelector('app-week-indicators .pill')?.textContent).toBe(
+    expect(el.querySelector('app-week-indicators .count')?.textContent).toBe(
       '0 jour présent sur 1 · aucun retard',
     );
   });
@@ -107,7 +107,7 @@ describe('AttendancePage', () => {
       'En retard',
     ]);
     expect(texts(el, 'app-week-indicators dd')).toEqual(['80 %', '0', '1', '2']);
-    expect(el.querySelector('app-week-indicators .pill')?.textContent).toBe(
+    expect(el.querySelector('app-week-indicators .count')?.textContent).toBe(
       '4 jours présents sur 5 · 2 retards',
     );
   });

@@ -28,6 +28,20 @@
     box-shadow var(--duration-hover);
 }
 
+/* Avec une icône : elle tient les deux lignes, à gauche. */
+:host(.with-icon) .trigger {
+  grid-template-areas:
+    'lead caption chevron'
+    'lead value chevron';
+  grid-template-columns: auto 1fr auto;
+  column-gap: var(--space-3);
+}
+
+.lead {
+  grid-area: lead;
+  color: var(--color-accent);
+}
+
 :host(.open) .trigger {
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px var(--color-accent-soft);

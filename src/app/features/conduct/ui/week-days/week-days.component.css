@@ -1,38 +1,8 @@
-/* Carte blanche, en-tête bleu brume (titre Lora) ; elle monte de 2 px au survol, comme chaque tuile. */
-.card {
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
-  transition:
-    translate var(--duration-lift) var(--ease-out),
-    box-shadow var(--duration-lift) var(--ease-out);
-}
-
-.head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--color-accent-line);
-  background: var(--color-accent-soft);
-  color: var(--color-accent);
-}
-
-h3 {
-  color: var(--color-heading);
-  font-family: var(--font-title);
-  font-size: var(--text-card-title);
-  font-weight: var(--weight-semibold);
-}
-
 /* 110 px au moins par tuile, retour à la ligne automatique. */
 .tiles {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: var(--space-3);
-  padding: var(--space-4);
 }
 
 .tile {
@@ -121,11 +91,6 @@ h3 {
 }
 
 @media (hover: hover) {
-  .card:hover {
-    translate: 0 -2px;
-    box-shadow: var(--shadow-lift);
-  }
-
   .tile:hover {
     translate: 0 -2px;
     box-shadow: var(--shadow-lift);

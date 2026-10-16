@@ -1,27 +1,78 @@
+/*
+ * Téléphone : pastille d'icône, numéro, montant dessous, date et moyen ; les deux boutons ronds
+ * à droite, toujours 44 px.
+ */
 :host {
-  display: flex;
+  display: grid;
+  grid-template-areas:
+    'icon name actions'
+    'icon amount actions'
+    'icon meta actions';
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-tile);
-  background: var(--color-surface);
+  column-gap: var(--space-3);
+  padding: var(--space-2);
 }
-.text {
-  flex: 1;
-  min-width: 0;
+
+.icon {
+  display: grid;
+  grid-area: icon;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
 }
+
 .name {
+  grid-area: name;
   color: var(--color-heading);
-  font-size: var(--text-md);
+  font-size: var(--text-card-title);
   font-weight: var(--weight-semibold);
 }
 
 .number {
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
+
 .meta {
+  grid-area: meta;
   color: var(--color-text-secondary);
   font-size: var(--text-sm);
+}
+
+.amount {
+  grid-area: amount;
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.actions {
+  grid-area: actions;
+}
+
+/* Grand écran : le montant rejoint la colonne de droite, avant les boutons. */
+@media (min-width: 905px) {
+  :host {
+    grid-template-areas:
+      'icon name amount actions'
+      'icon meta amount actions';
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    padding: var(--space-3);
+  }
+
+  .icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .amount {
+    text-align: right;
+  }
 }

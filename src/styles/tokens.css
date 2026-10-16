@@ -192,6 +192,8 @@
     --shadow-card: 0 2px 8px rgb(44 42 38 / 0.04);
     --shadow-tile: 0 1px 3px rgb(44 42 38 / 0.05);
     --shadow-bar: 0 2px 10px rgb(14 45 66 / 0.16);
+    /* Bandeau de bilan (Mes finances ①) : il se détache de la page. */
+    --shadow-banner: 0 10px 26px rgb(14 45 66 / 0.2);
     --shadow-sheet: 0 -8px 32px rgb(14 45 66 / 0.24);
     /* Carte survolée : ombre bleutée, « ceci s'ouvre ». */
     --shadow-lift: 0 6px 16px rgb(14 45 66 / 0.1);

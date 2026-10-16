@@ -1,4 +1,4 @@
-import { formatNumber } from '@angular/common';
+import { formatDate, formatNumber } from '@angular/common';
 import {
   Fee,
   FeeReduction,
@@ -9,7 +9,7 @@ import {
   PaymentMethod,
   ReceivedMoney,
 } from '../../../core/api/finance.contract';
-import { CivilMonth, monthOf } from '../../../shared/date/civil-date';
+import { CivilMonth, civilToDate, monthOf } from '../../../shared/date/civil-date';
 import { Money, amountLabel, currencySymbol, spokenAmount } from '../../../shared/format/amount';
 import { dayLabel, monthLabel, shortDate, spokenDay } from '../../../shared/format/day-labels';
 import { instantDay, instantTime } from '../../../shared/format/time-labels';
@@ -45,31 +45,26 @@ export function feeMoney(fee: Fee, amountInCents: number): Money {
 }
 
 /**
- * La ligne d'état d'un frais, toujours avec ce qui reste : « En retard depuis le 15/09 ·
- * 80 $ restant · 180 $ déjà versés », « 80 $ restant avant le 30/09 », « 234 $ avant le
- * 15/12 », « Payé le 03/09 ».
+ * La pastille d'état d'une ligne de frais, le mot et sa date : « En retard depuis le 15/09 »,
+ * « Partiellement payé · avant le 30/09 », « À payer avant le 10/10 », « Payé le 03/09 ». Le
+ * reste s'écrit à droite, en Lora.
  */
-export function feeStatusLine(fee: Fee, locale: string): string {
-  const remaining = amountLabel(feeMoney(fee, fee.remainingInCents), locale);
+export function feeStatePill(fee: Fee, locale: string): string {
+  const label = feeStateView(fee.state)?.label ?? '';
   const due = fee.dueDate ? shortDate(fee.dueDate, locale) : null;
   switch (fee.state) {
-    case 'OVERDUE': {
-      const paid = fee.paidInCents
-        ? ` · ${amountLabel(feeMoney(fee, fee.paidInCents), locale)} déjà versés`
-        : '';
-      const since = due ? `En retard depuis le ${due}` : 'En retard';
-      return `${since} · ${remaining} restant${paid}`;
-    }
+    case 'OVERDUE':
+      return due ? `${label} depuis le ${due}` : label;
     case 'PARTIAL':
-      return due ? `${remaining} restant avant le ${due}` : `${remaining} restant`;
+      return due ? `${label} · avant le ${due}` : label;
     case 'DUE':
-      return due ? `${remaining} avant le ${due}` : `${remaining} à payer`;
+      return due ? `${label} avant le ${due}` : label;
     case 'PAID':
       return fee.lastPaymentAt
         ? `Payé le ${shortDate(instantDay(fee.lastPaymentAt, locale), locale)}`
-        : 'Payé';
+        : label;
     default:
-      return `${remaining} restant`;
+      return label;
   }
 }
 
@@ -169,11 +164,9 @@ export function paymentTitle(payment: Payment, locale: string): string {
   return `${dayLabel(instantDay(payment.paidAt, locale), locale)} · ${methodView(payment.method).label}`;
 }
 
-/** « Frais scolaires · 1re tranche · Léonie Kabila », « 2 frais · Joseph Mbala ». */
-export function paymentMeta(payment: Payment): string {
-  const { allocations } = payment;
-  const fees = allocations.length === 1 ? allocations[0].label : `${allocations.length} frais`;
-  return [allocations.length ? fees : null, payerName(payment)].filter(Boolean).join(' · ');
+/** « Imputé sur : 2e tranche », « Imputé sur : 2 frais ». */
+export function allocationsLabel({ allocations }: Payment): string {
+  return `Imputé sur : ${allocations.length === 1 ? allocations[0].label : `${allocations.length} frais`}`;
 }
 
 /** « Lundi 22 septembre à 11 h 05 » : le moment du versement, sur sa fiche. */
@@ -217,10 +210,10 @@ export function receiptFileName(receiptNumber: string): string {
   return `${receiptNumber}.pdf`;
 }
 
-/** « 22/09 · 40 $ » : la date et le montant d'un reçu, sur sa ligne. */
+/** « Lun. 22 sept. · Mobile money » : la date et le moyen d'un reçu, sur sa ligne. */
 export function receiptMeta(payment: Payment, locale: string): string {
-  const day = shortDate(instantDay(payment.paidAt, locale), locale);
-  return `${day} · ${payment.amounts.map((money) => amountLabel(money, locale)).join(' · ')}`;
+  const day = formatDate(civilToDate(instantDay(payment.paidAt, locale)), 'EEE d MMM', locale, 'UTC');
+  return `${day.charAt(0).toUpperCase()}${day.slice(1)} · ${methodView(payment.method).label}`;
 }
 
 export interface PaymentMonth {
