@@ -1,12 +1,7 @@
 import { HttpErrorResponse, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UploadFailure } from '../../shared/ui/file-upload/file-upload.component';
-
-/** Corps d'erreur de l'API (`ApiError`), réduit à ce que le portail lit. */
-export interface ApiErrorBody<Code extends string = string> {
-  readonly message?: string;
-  readonly detailCode?: Code | null;
-}
+import { detailCodeOf } from './api-error';
 
 /** L'envoi n'a pas abouti : le même envoi a une chance de passer plus tard. */
 export const INTERRUPTED: UploadFailure = { message: 'L’envoi n’a pas abouti.', retryable: true };
@@ -60,7 +55,7 @@ export interface UploadMessages {
 export function uploadFailure(error: unknown, messages: UploadMessages): UploadFailure {
   if (!(error instanceof HttpErrorResponse)) return INTERRUPTED;
   if (error.status === 422) {
-    const code = (error.error as ApiErrorBody | null)?.detailCode;
+    const code = detailCodeOf(error);
     return { message: (code && messages.refusals[code]) || messages.refused, retryable: false };
   }
   if (error.status === 429) return { message: messages.tooMany, retryable: true };

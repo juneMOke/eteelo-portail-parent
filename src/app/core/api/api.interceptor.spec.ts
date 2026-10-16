@@ -9,11 +9,11 @@ describe('apiInterceptor', () => {
   const reset = vi.fn();
   const navigateByUrl = vi.fn().mockResolvedValue(true);
 
-  function respond(url: string, status: number): void {
+  function respond(url: string, status: number, body: { detailCode: string } | null = null): void {
     TestBed.inject(HttpClient)
       .get(url)
       .subscribe({ error: () => undefined });
-    TestBed.inject(HttpTestingController).expectOne(url).flush(null, { status, statusText: '' });
+    TestBed.inject(HttpTestingController).expectOne(url).flush(body, { status, statusText: '' });
   }
 
   beforeEach(() => {
@@ -42,11 +42,18 @@ describe('apiInterceptor', () => {
     expect(navigateByUrl).not.toHaveBeenCalled();
   });
 
-  it("renvoie au premier enfant sur 403 d'une route d'enfant", () => {
-    respond('/api/v1/parent/children/abc/timetable', 403);
+  it("renvoie au premier enfant quand le garde refuse l'enfant", () => {
+    respond('/api/v1/parent/children/abc/timetable', 403, { detailCode: 'CHILD_NOT_VISIBLE' });
 
     expect(reset).toHaveBeenCalledOnce();
     expect(navigateByUrl).toHaveBeenCalledWith('/');
+  });
+
+  it("laisse à la page un autre 403 d'une route d'enfant (jeton CSRF refusé)", () => {
+    respond('/api/v1/parent/children/abc/statement', 403);
+
+    expect(reset).not.toHaveBeenCalled();
+    expect(navigateByUrl).not.toHaveBeenCalled();
   });
 
   it('laisse passer les autres erreurs', () => {
