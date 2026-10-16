@@ -94,6 +94,12 @@
     --color-bar-control-active-bg: rgb(250 250 247 / 0.26);
     --color-bar-control-border: rgb(250 250 247 / 0.3);
 
+    /* Pastille d'icône des tuiles de l'Accueil : décorative, distincte de --color-attention. */
+    --color-tile-icon: var(--palette-terre-cuite);
+    --color-tile-icon-bg: var(--palette-terre-pale);
+    /* Salutation « Mbote » de l'Accueil : terre cuite foncée, la teinte de marque tient 4,4:1 sur texte courant. */
+    --color-greeting: var(--palette-terre-cuite-fonce);
+
     --color-avatar-bg: var(--palette-bleu-ardoise);
     --color-avatar-text: var(--palette-blanc-casse);
     --color-scrim: rgb(14 45 66 / 0.45);

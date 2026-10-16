@@ -5,7 +5,7 @@
 }
 
 .hello {
-  color: var(--color-heading);
+  color: var(--color-greeting);
   font-family: var(--font-title);
   font-size: var(--text-xl);
   font-weight: var(--weight-semibold);

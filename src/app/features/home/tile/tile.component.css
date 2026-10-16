@@ -36,8 +36,8 @@
   height: 32px;
   place-items: center;
   border-radius: var(--radius-sm);
-  background: var(--color-accent-soft);
-  color: var(--color-accent);
+  background: var(--color-tile-icon-bg);
+  color: var(--color-tile-icon);
 }
 
 .title {
