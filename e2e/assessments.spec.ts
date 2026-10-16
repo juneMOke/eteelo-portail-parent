@@ -6,11 +6,12 @@ import {
 } from '../src/testing/assessments.fixture';
 import { GRACE } from '../src/testing/bootstrap.fixture';
 import { mockParentApi } from './support/parent-api';
+import { chooseFilter } from './support/week-filters';
 
 const LIST = `/c/${GRACE.childId}/assessments`;
 
 test.describe('Mes évaluations', () => {
-  test("s'ouvre depuis l'Accueil sur le prochain jour qui a une épreuve", async ({ page }) => {
+  test("s'ouvre depuis l'Accueil sur la semaine en cours", async ({ page }) => {
     await mockParentApi(page);
     await page.goto(`/c/${GRACE.childId}`);
 
@@ -18,50 +19,47 @@ test.describe('Mes évaluations', () => {
 
     await expect(page).toHaveURL(LIST);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mes évaluations');
-    await expect(page.locator('app-day-navigator .date')).toHaveText('jeudi 24 septembre 2026');
-    await expect(page.locator('app-assignment-card')).toHaveCount(2);
-    await expect(page.locator('app-assignment-card').first()).toContainText('À venir');
+    await expect(page.locator('app-week-banner .relative')).toHaveText(/cette sem/i);
+    await expect(page.locator('app-assignment-card')).toHaveCount(3);
+    await expect(page.locator('app-assignment-card').last()).toContainText('À venir');
   });
 
-  test("va de jour d'école en jour d'école et revient à aujourd'hui", async ({ page }) => {
+  test('change de semaine et revient à cette semaine', async ({ page }) => {
     await mockParentApi(page);
-    await page.goto(`${LIST}?date=2026-09-25`);
+    await page.goto(LIST);
 
-    await expect(page.getByText('Aucune épreuve ce jour')).toBeVisible();
-    await page.getByRole('button', { name: 'Jour suivant' }).click();
-    await expect(page).toHaveURL(`${LIST}?date=2026-09-28`);
-    await expect(page.locator('app-day-navigator .date')).toHaveText('lundi 28 septembre 2026');
+    await page.getByRole('button', { name: 'Semaine suivante' }).click();
+    await expect(page).toHaveURL(`${LIST}?week=2026-09-28`);
+    await expect(page.locator('app-assignment-card')).toHaveCount(1);
+    await expect(page.locator('app-assignment-card')).toContainText('Anglais');
 
-    await page.getByRole('button', { name: 'Aujourd’hui' }).click();
-    await expect(page).toHaveURL(`${LIST}?date=2026-09-22`);
-    await expect(page.locator('app-day-navigator .meta')).toContainText('aujourd’hui');
-    await expect(page.getByRole('button', { name: 'Aujourd’hui' })).toBeHidden();
+    await page.getByRole('button', { name: /^Revenir/ }).click();
+    await expect(page).toHaveURL(LIST);
+    await expect(page.locator('app-assignment-card')).toHaveCount(3);
   });
 
-  test('sort d’un jour vide vers la prochaine épreuve', async ({ page }) => {
+  test('filtre les absences de la semaine', async ({ page }, testInfo) => {
     await mockParentApi(page);
-    await page.goto(`${LIST}?date=2026-09-22`);
+    await page.goto(`${LIST}?week=2026-09-14`);
 
-    await page.getByRole('link', { name: /Prochaine épreuve : jeudi 24\/09/ }).click();
+    await chooseFilter(page, testInfo, 'Filtrer par statut', /^Absences/);
 
-    await expect(page).toHaveURL(`${LIST}?date=2026-09-24`);
-    await expect(page.locator('app-assignment-card')).toHaveCount(2);
+    await expect(page).toHaveURL(`${LIST}?week=2026-09-14&status=ABSENT`);
+    await expect(page.locator('app-assignment-card')).toHaveCount(1);
+    await expect(page.locator('app-assignment-card')).toContainText('Absent à l’épreuve');
   });
 
-  test("dit qu'il n'y a pas d'école le week-end", async ({ page }) => {
+  test('ouvre une épreuve corrigée et revient à la même semaine, au même filtre', async ({
+    page,
+  }) => {
     await mockParentApi(page);
-    await page.goto(`${LIST}?date=2026-09-26`);
+    await page.goto(`${LIST}?week=2026-09-14&status=GRADED`);
 
-    await expect(page.getByRole('heading', { name: 'Pas d’école ce jour' })).toBeVisible();
-  });
+    await page.locator('app-assignment-card a').filter({ hasText: 'Chimie' }).click();
 
-  test('ouvre une épreuve corrigée et revient au même jour', async ({ page }) => {
-    await mockParentApi(page);
-    await page.goto(`${LIST}?date=2026-09-15`);
-
-    await page.locator('app-assignment-card a').click();
-
-    await expect(page).toHaveURL(`${LIST}/${CHEMISTRY_GRADED.evaluationId}?date=2026-09-15`);
+    await expect(page).toHaveURL(
+      `${LIST}/${CHEMISTRY_GRADED.evaluationId}?week=2026-09-14&status=GRADED`,
+    );
     await expect(
       page.getByRole('heading', { name: 'Interrogation de Chimie — les acides' }),
     ).toBeVisible();
@@ -74,8 +72,8 @@ test.describe('Mes évaluations', () => {
     );
 
     await page.locator('app-top-bar').getByRole('link', { name: 'Mes évaluations' }).click();
-    await expect(page).toHaveURL(`${LIST}?date=2026-09-15`);
-    await expect(page.locator('app-day-navigator .date')).toHaveText('mardi 15 septembre 2026');
+    await expect(page).toHaveURL(`${LIST}?week=2026-09-14&status=GRADED`);
+    await expect(page.locator('app-assignment-card')).toHaveCount(2);
   });
 
   test('donne la marche à suivre après une absence', async ({ page }) => {
@@ -107,16 +105,16 @@ test.describe('Mes évaluations', () => {
       route.fulfill({ json: evaluationListFixture() }),
     );
     await page.getByRole('button', { name: 'Réessayer' }).click();
-    await expect(page.locator('app-assignment-card')).toHaveCount(2);
+    await expect(page.locator('app-assignment-card')).toHaveCount(3);
   });
 
-  test("affiche un jour vide quand l'enfant n'a aucune épreuve", async ({ page }) => {
+  test("dit une semaine vide quand l'enfant n'a aucune épreuve", async ({ page }) => {
     await mockParentApi(page, { evaluations: evaluationListFixture([]) });
     await page.goto(LIST);
 
-    await expect(page.getByRole('heading', { name: 'Aucune épreuve ce jour' })).toBeVisible();
     await expect(
-      page.getByText('Rien n’est prévu pour les quatre prochaines semaines.'),
+      page.getByRole('heading', { name: 'Aucune évaluation cette semaine' }),
     ).toBeVisible();
+    await expect(page.getByText('Utilisez les flèches pour changer de semaine.')).toBeVisible();
   });
 });

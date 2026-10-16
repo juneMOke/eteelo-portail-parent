@@ -1,0 +1,60 @@
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-2) 0 var(--space-3);
+  border: 1px solid var(--color-bar-control-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-bar-control-bg);
+  color: var(--color-bar-text);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  transition:
+    transform var(--duration-hover) var(--ease-out),
+    box-shadow var(--duration-hover);
+}
+
+.pill:hover:not([aria-checked='true']) {
+  box-shadow: var(--shadow-tile);
+  transform: translateY(-1px);
+}
+
+.pill[aria-checked='true'] {
+  border-color: var(--color-on-tone);
+  background: var(--color-on-tone);
+  color: var(--color-heading);
+}
+
+/* Le point porte le ton du statut ; un filet crème le détache de l'aplat bleu. */
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px var(--color-on-tone);
+}
+
+.count {
+  display: grid;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--color-bar-control-active-bg);
+  font-size: var(--text-xs);
+  font-feature-settings: 'tnum';
+}
+
+.pill[aria-checked='true'] .count {
+  background: var(--color-accent);
+  color: var(--color-on-tone);
+}

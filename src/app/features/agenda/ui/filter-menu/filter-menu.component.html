@@ -1,0 +1,66 @@
+<button
+  #trigger
+  type="button"
+  class="trigger"
+  aria-haspopup="listbox"
+  [attr.aria-expanded]="open()"
+  [attr.aria-controls]="id"
+  (mousedown)="open() && $event.preventDefault()"
+  (click)="toggle()"
+>
+  <span class="caption">{{ caption() }}</span>
+  <span class="value">
+    @if (selected().tone; as tone) {
+      <span class="dot" [style.background]="'var(--color-tone-' + tone + ')'"></span>
+    }
+    <span class="value-label">{{ selected().label }}</span>
+    <span class="value-count">· {{ selected().count }}</span>
+  </span>
+  <span class="chevron"><ui-icon name="chevron-down" [size]="16" [strokeWidth]="2" /></span>
+</button>
+
+@if (open()) {
+  <div class="scrim" aria-hidden="true" (click)="openChange.emit(false)"></div>
+  <ul
+    #listbox
+    class="listbox"
+    role="listbox"
+    tabindex="-1"
+    [id]="id"
+    [attr.aria-label]="caption()"
+    [attr.aria-activedescendant]="id + '-' + active()"
+    (keydown)="onKey($event)"
+    (blur)="openChange.emit(false)"
+  >
+    @for (option of options(); track option.id; let index = $index) {
+      <li
+        class="option"
+        role="option"
+        [id]="id + '-' + index"
+        [class.active]="index === active()"
+        [attr.aria-selected]="option.id === checked()"
+        (mousedown)="$event.preventDefault()"
+        (click)="choose(option)"
+      >
+        <span
+          class="swatch"
+          [style.background]="option.tone ? 'var(--color-tone-' + option.tone + '-soft)' : null"
+        >
+          <span
+            class="dot"
+            [style.background]="option.tone ? 'var(--color-tone-' + option.tone + ')' : null"
+          ></span>
+        </span>
+        <span class="option-label">{{ option.label }}</span>
+        <span
+          class="option-count"
+          [style.color]="option.tone ? 'var(--color-tone-' + option.tone + ')' : null"
+          ><span class="visually-hidden">, </span>{{ option.count }}</span
+        >
+        @if (option.id === checked()) {
+          <ui-icon class="check" name="check" [size]="18" [strokeWidth]="2.5" />
+        }
+      </li>
+    }
+  </ul>
+}

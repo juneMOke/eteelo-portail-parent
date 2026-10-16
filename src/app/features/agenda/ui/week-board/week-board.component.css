@@ -1,0 +1,151 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.menus {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* La semaine glisse de 24 px dans le sens de la flèche et se fond. */
+.slide[data-direction='1'] {
+  animation: week-from-right var(--duration-day-change) var(--ease-out);
+}
+
+.slide[data-direction='-1'] {
+  animation: week-from-left var(--duration-day-change) var(--ease-out);
+}
+
+@keyframes week-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes week-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+/* Liste : une carte blanche par jour, en-tête bleu clair ; les jours vides sont omis. */
+.days {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.day {
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.day-head {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-soft);
+  background: var(--color-accent-soft);
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.near {
+  color: var(--color-accent);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.day .cards {
+  padding: var(--space-2);
+}
+
+@media (min-width: 905px) {
+  .day .cards {
+    gap: var(--space-3);
+    padding: var(--space-3);
+  }
+}
+
+/* Grille : cinq colonnes de 156 px au moins, défilement horizontal si la largeur manque. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(156px, 1fr));
+  gap: var(--space-3);
+  padding-bottom: var(--space-1);
+  overflow-x: auto;
+}
+
+/* Un jour choisi : une seule colonne, pleine largeur, cartes complètes. */
+.grid.single {
+  grid-template-columns: 1fr;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.column.today {
+  border: 2px solid var(--color-accent);
+}
+
+.column-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-bottom: 2px solid var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.column-day {
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.column-day::first-letter {
+  text-transform: uppercase;
+}
+
+.column-date {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  font-feature-settings: 'tnum';
+}
+
+.column .cards {
+  padding: var(--space-2);
+}
+
+.column-empty {
+  padding: var(--space-4) var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}

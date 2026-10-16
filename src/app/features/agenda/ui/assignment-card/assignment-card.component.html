@@ -1,22 +1,35 @@
+@let item = card();
 <a class="card" [routerLink]="link()" [queryParams]="queryParams()">
-  <span class="icon" [style.background]="'var(--color-tone-' + status().tone + '-soft)'">
-    <ui-icon [name]="status().icon" [size]="18" />
-  </span>
+  <span class="icon" aria-hidden="true"><ui-icon [name]="item.view.icon" [size]="20" /></span>
 
-  <span class="body">
-    <span class="heading">{{ heading() }}<span class="visually-hidden">.</span></span>
-    <span class="when">{{ when() }}<span class="visually-hidden">.</span></span>
-    @if (teacher(); as teacher) {
-      <span class="teacher">{{ teacher }}<span class="visually-hidden">.</span></span>
+  <span class="tags">
+    <ui-badge class="status" [tone]="item.view.tone"
+      ><span class="dot" aria-hidden="true"></span>{{ item.view.label
+      }}<span class="visually-hidden">{{ item.grade ? ',' : '.' }}</span></ui-badge
+    >
+    @if (item.urgent; as urgent) {
+      <span class="urgent">
+        <ui-icon name="alert-triangle" [size]="14" [strokeWidth]="2" />{{ urgent
+        }}<span class="visually-hidden">.</span>
+      </span>
     }
   </span>
 
-  <span class="aside">
-    <ui-badge [tone]="status().tone">{{ status().label }}</ui-badge>
-    @if (grade(); as grade) {
+  <span class="heading">{{ item.heading }}<span class="visually-hidden">.</span></span>
+  @if (compact() ? item.compactWhen : item.when; as when) {
+    <span class="when">{{ when }}<span class="visually-hidden">.</span></span>
+  }
+  @if (!compact() && item.detail; as detail) {
+    <span class="detail">{{ detail }}<span class="visually-hidden">.</span></span>
+  }
+
+  <span class="end">
+    @if (item.grade; as grade) {
       <ui-grade [points]="grade.points" [maxPoints]="grade.maxPoints" />
     } @else {
-      <ui-icon class="chevron" name="chevron-right" [size]="18" [strokeWidth]="2" />
+      <span class="chevron" aria-hidden="true">
+        <ui-icon name="chevron-right" [size]="16" [strokeWidth]="2" />
+      </span>
     }
   </span>
 </a>

@@ -1,0 +1,112 @@
+<app-week-banner
+  [label]="label()"
+  [shortLabel]="shortLabel()"
+  [relative]="relative()"
+  [hasPrevious]="hasPrevious()"
+  [hasNext]="hasNext()"
+  [isCurrent]="isCurrent()"
+  [wide]="wide()"
+  [view]="view()"
+  [announcement]="announcement()"
+  (step)="step($event)"
+  (current)="goCurrent()"
+  (viewChange)="pickView($event)"
+>
+  <app-filter-pills
+    label="Filtrer par jour"
+    [options]="dayOptions()"
+    [checked]="dayFilter()"
+    (pick)="pickDay($event)"
+  />
+  <app-filter-pills
+    label="Filtrer par statut"
+    [options]="statusOptions()"
+    [checked]="statusFilter()?.id ?? null"
+    (pick)="pickStatus($event)"
+  />
+</app-week-banner>
+
+@if (!wide()) {
+  <div class="menus">
+    <app-filter-menu
+      caption="Filtrer par jour"
+      [options]="dayOptions()"
+      [checked]="dayFilter()"
+      [open]="openMenu() === 'day'"
+      (openChange)="setMenu('day', $event)"
+      (pick)="pickDay($event)"
+    />
+    <app-filter-menu
+      caption="Filtrer par statut"
+      [options]="statusOptions()"
+      [checked]="statusFilter()?.id ?? null"
+      [open]="openMenu() === 'status'"
+      (openChange)="setMenu('status', $event)"
+      (pick)="pickStatus($event)"
+    />
+  </div>
+}
+
+<section class="board" [attr.aria-label]="labels().region">
+  @for (key of [monday()]; track key) {
+    <div class="slide" [attr.data-direction]="direction()">
+      @if (empty(); as empty) {
+        <ui-empty-period [heading]="empty.heading" [message]="empty.message" />
+      } @else if (view() === 'grid') {
+        <div class="grid" [class.single]="dayFilter()">
+          @for (group of groups(); track group.day) {
+            <section class="column" [class.today]="group.day === today()">
+              <h2 class="column-head">
+                <span class="column-day">{{ group.weekday }}</span>
+                <span class="column-date">{{ group.date }}</span>
+                @if (group.near === 'aujourd’hui') {
+                  <span class="visually-hidden">, aujourd’hui</span>
+                }
+              </h2>
+              @if (group.cards.length) {
+                <ul class="cards">
+                  @for (card of group.cards; track card.id) {
+                    <li>
+                      <app-assignment-card
+                        [card]="card"
+                        [compact]="!dayFilter()"
+                        [link]="cardLink(card)"
+                        [queryParams]="cardParams()"
+                      />
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="column-empty">{{ labels().emptyColumn }}</p>
+              }
+            </section>
+          }
+        </div>
+      } @else {
+        <div class="days">
+          @for (group of busyGroups(); track group.day) {
+            <section class="day">
+              <h2 class="day-head">
+                {{ group.label }}
+                @if (group.near; as near) {
+                  <span class="near">· {{ near }}</span>
+                }
+              </h2>
+              <ul class="cards">
+                @for (card of group.cards; track card.id) {
+                  <li>
+                    <app-assignment-card
+                      [card]="card"
+                      [link]="cardLink(card)"
+                      [queryParams]="cardParams()"
+                    />
+                  </li>
+                }
+              </ul>
+            </section>
+          }
+        </div>
+      }
+    </div>
+  }
+</section>

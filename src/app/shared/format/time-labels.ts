@@ -12,6 +12,12 @@ export function timeLabel(time: string): string {
   return `${Number(hours)} h ${minutes}`;
 }
 
+/** « 8 h », « 18 h 30 » : une heure ronde sans ses minutes (heure limite, créneau). */
+export function hourLabel(time: string): string {
+  const [hours, minutes] = time.split(':');
+  return minutes === '00' ? `${Number(hours)} h` : `${Number(hours)} h ${minutes}`;
+}
+
 /** « 7 h 40 » : l'heure d'un instant. */
 export function instantTime(instant: string, locale: string): string {
   return timeLabel(formatDate(instant, 'HH:mm', locale));

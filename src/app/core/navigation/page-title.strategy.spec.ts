@@ -63,6 +63,21 @@ describe('PageTitleStrategy', () => {
     expect(strategy.back().queryParams).toEqual({});
   });
 
+  it('rend à la liste sa semaine, ses filtres et sa vue', async () => {
+    const router = TestBed.inject(Router);
+    const strategy = TestBed.inject(PageTitleStrategy);
+
+    await router.navigateByUrl(
+      '/assessments/41e0?week=2026-09-28&day=2026-09-30&status=GRADED&view=list&other=1',
+    );
+    expect(strategy.back().queryParams).toEqual({
+      week: '2026-09-28',
+      day: '2026-09-30',
+      status: 'GRADED',
+      view: 'list',
+    });
+  });
+
   it('ramène une fiche à la page de Mes notes d’où elle a été ouverte, dans son état', async () => {
     const router = TestBed.inject(Router);
     const strategy = TestBed.inject(PageTitleStrategy);
