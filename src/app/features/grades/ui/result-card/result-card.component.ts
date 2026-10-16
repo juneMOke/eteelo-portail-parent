@@ -12,18 +12,13 @@ import { GradeCard } from '../../../../core/api/grades.contract';
 import { spokenDay } from '../../../../shared/format/day-labels';
 import { BadgeComponent } from '../../../../shared/ui/badge/badge.component';
 import { IconComponent } from '../../../../shared/ui/icon/icon.component';
-import {
-  capitalized,
-  kindLabel,
-  pointsLabel,
-  shortDayLabel,
-} from '../../data-access/grade-formats';
+import { capitalized, pointsLabel, shortDayLabel } from '../../data-access/grade-formats';
 import { displayedScore, gradeStateView } from '../../data-access/grade-state';
 import { subjectTone } from '../../data-access/subject-tone';
 
 /**
  * ② Carte de résultat de Ma semaine : ce qui a été évalué, comment ça s'est passé, puis la fiche.
- * En-tête (pastille de matière, type d'épreuve, sujet), note à droite sur sa jauge, frise des
+ * En-tête (pastille de matière, puis le titre tel que l'école l'a saisi), note à droite sur sa jauge, frise des
  * dates, notions en étiquettes et statut en pied. Filet gauche au ton de l'état ; toute la
  * carte ouvre la fiche.
  */
@@ -48,7 +43,6 @@ export class ResultCardComponent {
 
   protected readonly state = computed(() => gradeStateView(this.evaluation().state));
   protected readonly subject = computed(() => subjectTone(this.evaluation().subjectCode));
-  protected readonly kind = computed(() => kindLabel(this.evaluation().kind));
   protected readonly topic = computed(() => capitalized(this.evaluation().title));
   protected readonly day = computed(() => shortDayLabel(this.evaluation().date, this.locale));
   protected readonly pending = computed(() => this.evaluation().state === 'PENDING');
@@ -81,7 +75,7 @@ export class ResultCardComponent {
     const parts = [
       spokenDay(evaluation.date, this.locale),
       evaluation.subjectLabel,
-      `${this.kind()} ${evaluation.title}`,
+      evaluation.title,
       value,
       this.state().word.toLowerCase(),
     ].filter((part): part is string => !!part);

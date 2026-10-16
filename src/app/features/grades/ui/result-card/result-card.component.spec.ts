@@ -34,11 +34,11 @@ describe('ResultCardComponent', () => {
     };
   }
 
-  it('dit la matière, le type d’épreuve, le sujet, la note sur sa jauge, et mène à la fiche', async () => {
+  it('dit la matière, le titre tel quel, la note sur sa jauge, et mène à la fiche', async () => {
     const { el, link, text, texts } = await render(MATHS_HOMEWORK_PASSED);
 
     expect(text('.subject')).toBe('MATHMathématiques');
-    expect(text('.kind')).toBe('Devoir');
+    expect(el.querySelector('.kind')).toBeNull();
     expect(text('.topic')).toBe('Devoir de Mathématiques — les fractions');
     expect(text('.value')).toBe('15/20');
     expect(el.querySelector<HTMLElement>('.fill')?.style.width).toBe('75%');
@@ -48,7 +48,7 @@ describe('ResultCardComponent', () => {
       `/c/c1/homework/${MATHS_HOMEWORK_PASSED.evaluationId}?from=grades-week&date=2026-09-14`,
     );
     expect(link.getAttribute('aria-label')).toBe(
-      'Lundi 14 septembre, Mathématiques, Devoir Devoir de Mathématiques — les fractions, 15 sur 20, réussie.',
+      'Lundi 14 septembre, Mathématiques, Devoir de Mathématiques — les fractions, 15 sur 20, réussie.',
     );
   });
 

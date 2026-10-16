@@ -4,7 +4,6 @@ import { GRADE_PERIODS, TERM } from '../../../../testing/grades-terms.fixture';
 import {
   capitalized,
   evolutionLabel,
-  kindLabel,
   percentLabel,
   periodUnit,
   pointsLabel,
@@ -44,11 +43,7 @@ describe('grade-formats', () => {
     expect(shortWeekLabel('2026-09-28', '2026-10-03', 'fr')).toBe('28 sept. – 3 oct.');
   });
 
-  it('écrit le type d’épreuve, une date de frise et un sujet à initiale capitale', () => {
-    expect(kindLabel('TEST')).toBe('Interrogation');
-    expect(kindLabel('EXAM')).toBe('Examen');
-    expect(kindLabel('HOMEWORK')).toBe('Devoir');
-    expect(kindLabel('ORAL')).toBe('Évaluation');
+  it('écrit une date de frise et un titre à initiale capitale', () => {
     expect(shortDayLabel('2026-09-22', 'fr')).toBe('Mar. 22 sept.');
     expect(capitalized('les acides')).toBe('Les acides');
   });

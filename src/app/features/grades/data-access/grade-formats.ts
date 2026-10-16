@@ -1,7 +1,6 @@
 import { formatDate, formatNumber } from '@angular/common';
 import {
   Evolution,
-  GradeCard,
   GradePeriod,
   GradeSelection,
   GradeSummary,
@@ -42,17 +41,6 @@ export function shortWeekLabel(from: CivilDate, to: CivilDate, locale: string): 
   const end = `${dayOfMonth(to)} ${month(to)}`;
   if (from.slice(0, 7) === to.slice(0, 7)) return `${dayOfMonth(from)} – ${end}`;
   return `${dayOfMonth(from)} ${month(from)} – ${end}`;
-}
-
-const KINDS: Readonly<Record<string, string>> = {
-  TEST: 'Interrogation',
-  EXAM: 'Examen',
-  HOMEWORK: 'Devoir',
-};
-
-/** Type d'épreuve, écrit en petites capitales au-dessus du sujet : « Interrogation ». */
-export function kindLabel(kind: GradeCard['kind']): string {
-  return KINDS[kind] ?? 'Évaluation';
 }
 
 /** « Lun. 22 sept. » : une date de la frise d'une carte de résultat. */
