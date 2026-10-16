@@ -9,18 +9,19 @@ import {
   output,
   viewChild,
 } from '@angular/core';
-import { IconComponent } from '../../../../shared/ui/icon/icon.component';
-import { RelativeWeek } from '../../data-access/school-week';
-import { WeekView } from '../../data-access/week-board';
+import { RelativeWeek } from '../../format/relative-week';
+import { IconComponent } from '../icon/icon.component';
+
+export type WeekView = 'grid' | 'list';
 
 /**
- * ① Bandeau de semaine, aplat Bleu Ardoise au motif kuba : dit de quelle semaine on parle et
- * passe à la voisine d'un pouce. Au téléphone, une seule ligne ; au grand écran, la bascule
- * Liste / Grille en haut à droite. À la borne, la flèche reste visible à 35 % et garde le
- * focus (`aria-disabled`).
+ * Bandeau de semaine, aplat Bleu Ardoise au motif kuba (Mes devoirs, Mes évaluations, Ma
+ * semaine) : dit de quelle semaine on parle et passe à la voisine d'un pouce. Au téléphone, une
+ * seule ligne ; au grand écran, la bascule Liste / Grille en haut à droite quand la page en a
+ * une (`view`). À la borne, la flèche reste visible à 35 % et garde le focus (`aria-disabled`).
  */
 @Component({
-  selector: 'app-week-banner',
+  selector: 'ui-week-banner',
   imports: [IconComponent],
   templateUrl: './week-banner.component.html',
   styleUrl: './week-banner.component.css',
@@ -38,7 +39,10 @@ export class WeekBannerComponent {
   readonly isCurrent = input.required<boolean>();
   /** Grand écran : intitulé long, bascule de vue et pastilles. */
   readonly wide = input(false);
-  readonly view = input<WeekView>('grid');
+  /** Vue affichée ; null quand la page n'a pas de bascule Liste / Grille. */
+  readonly view = input<WeekView | null>(null);
+  /** Pilule de retour au grand écran ; « Revenir » au téléphone. */
+  readonly currentLabel = input('Revenir à cette semaine');
   /** Annoncé par les lecteurs d'écran à chaque changement. */
   readonly announcement = input('');
 

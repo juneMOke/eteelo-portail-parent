@@ -1,4 +1,4 @@
-@if (wide()) {
+@if (wide() && view()) {
   <div class="views" role="radiogroup" aria-label="Affichage">
     <button
       type="button"
@@ -39,7 +39,7 @@
 
   @if (!isCurrent()) {
     <button type="button" class="current" (click)="goCurrent()">
-      {{ wide() ? 'Revenir à cette semaine' : 'Revenir' }}
+      {{ wide() ? currentLabel() : 'Revenir' }}
     </button>
   }
 

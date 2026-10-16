@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { FilterOption } from '../../data-access/week-board';
-import { FilterMenuComponent } from './filter-menu.component';
+import { FilterMenuComponent, FilterOption } from './filter-menu.component';
 
 const OPTIONS: FilterOption[] = [
   { id: null, label: 'Tous', count: 3, tone: null },
@@ -68,5 +67,20 @@ describe('FilterMenuComponent', () => {
     );
     expect(picks).toEqual([]);
     expect(opens).toEqual([false]);
+  });
+
+  it('ajoute l’unité au compteur, et s’en passe quand il n’y en a pas', async () => {
+    const { fixture, el } = await render();
+    fixture.componentRef.setInput('options', [
+      { id: 'T1', label: '1er trimestre', count: 12, unit: 'éval.', tone: null },
+      { id: 'T2', label: '2e trimestre', count: null, tone: null },
+    ]);
+    fixture.componentRef.setInput('checked', 'T1');
+    await fixture.whenStable();
+    expect(el.querySelector('.value-count')?.textContent).toBe('· 12 éval.');
+
+    fixture.componentRef.setInput('checked', 'T2');
+    await fixture.whenStable();
+    expect(el.querySelector('.value-count')).toBeNull();
   });
 });

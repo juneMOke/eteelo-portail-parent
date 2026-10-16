@@ -1,4 +1,4 @@
-<app-week-banner
+<ui-week-banner
   [label]="label()"
   [shortLabel]="shortLabel()"
   [relative]="relative()"
@@ -14,7 +14,7 @@
 />
 
 <div class="menus">
-  <app-filter-menu
+  <ui-filter-menu
     caption="Filtrer par jour"
     [options]="dayOptions()"
     [checked]="dayFilter()"
@@ -22,7 +22,7 @@
     (openChange)="setMenu('day', $event)"
     (pick)="pickDay($event)"
   />
-  <app-filter-menu
+  <ui-filter-menu
     caption="Filtrer par statut"
     [options]="statusOptions()"
     [checked]="statusFilter()?.id ?? null"
@@ -52,7 +52,7 @@
                 <ul class="cards">
                   @for (card of group.cards; track card.id) {
                     <li>
-                      <app-assignment-card
+                      <ui-assignment-card
                         [card]="card"
                         [compact]="!dayFilter()"
                         [link]="cardLink(card)"
@@ -82,7 +82,7 @@
               <ul class="cards">
                 @for (card of group.cards; track card.id) {
                   <li>
-                    <app-assignment-card
+                    <ui-assignment-card
                       [card]="card"
                       [link]="cardLink(card)"
                       [queryParams]="cardParams()"

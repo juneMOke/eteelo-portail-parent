@@ -75,20 +75,6 @@ export function weekOffset(monday: CivilDate, today: CivilDate): number {
   return Math.round(daysBetween(schoolWeekOf(today), monday) / 7);
 }
 
-/** Position relative, en entier (grand écran) et abrégée (téléphone, une seule ligne). */
-export interface RelativeWeek {
-  readonly long: string;
-  readonly short: string;
-}
-
-export function relativeWeek(offset: number): RelativeWeek {
-  if (offset === 0) return { long: 'cette semaine', short: 'cette sem.' };
-  if (offset === 1) return { long: 'semaine prochaine', short: 'sem. prochaine' };
-  if (offset === -1) return { long: 'semaine passée', short: 'sem. passée' };
-  if (offset > 1) return { long: `dans ${offset} semaines`, short: `dans ${offset} sem.` };
-  return { long: `il y a ${-offset} semaines`, short: `il y a ${-offset} sem.` };
-}
-
 /** « 1er », « 2 » : le quantième à la française. */
 function dayOfMonth(day: CivilDate): string {
   const value = civilToDate(day).getUTCDate();

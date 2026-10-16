@@ -15,8 +15,8 @@ test.describe('Mes devoirs', () => {
 
     await expect(page).toHaveURL(LIST);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mes devoirs');
-    await expect(page.locator('app-week-banner .relative')).toHaveText(/cette sem/i);
-    await expect(page.locator('app-assignment-card')).toHaveCount(3);
+    await expect(page.locator('ui-week-banner .relative')).toHaveText(/cette sem/i);
+    await expect(page.locator('ui-assignment-card')).toHaveCount(3);
     await expect(page.getByText('À rendre demain avant 18 h')).toBeVisible();
   });
 
@@ -26,7 +26,7 @@ test.describe('Mes devoirs', () => {
 
     await chooseFilter(page, 'Filtrer par statut', /^À rendre/);
     await expect(page).toHaveURL(`${LIST}?status=DUE`);
-    await expect(page.locator('app-assignment-card')).toHaveCount(2);
+    await expect(page.locator('ui-assignment-card')).toHaveCount(2);
 
     await chooseFilter(page, 'Filtrer par jour', /^Lundi 21/);
     await expect(page).toHaveURL(`${LIST}?status=DUE&day=2026-09-21`);
@@ -41,15 +41,15 @@ test.describe('Mes devoirs', () => {
     await page.getByRole('button', { name: 'Semaine suivante' }).click();
 
     await expect(page).toHaveURL(`${LIST}?week=2026-09-28`);
-    await expect(page.locator('app-assignment-card')).toHaveCount(1);
-    await expect(page.locator('app-assignment-card')).toContainText('Géographie');
+    await expect(page.locator('ui-assignment-card')).toHaveCount(1);
+    await expect(page.locator('ui-assignment-card')).toContainText('Géographie');
   });
 
   test('ouvre un devoir à rendre et dit comment le remettre', async ({ page }) => {
     await mockParentApi(page);
     await page.goto(LIST);
 
-    await page.locator('app-assignment-card a').filter({ hasText: 'Physique' }).click();
+    await page.locator('ui-assignment-card a').filter({ hasText: 'Physique' }).click();
 
     await expect(page).toHaveURL(`${LIST}/${PHYSICS_DUE.evaluationId}?week=2026-09-21`);
     await expect(
@@ -118,7 +118,7 @@ test.describe('Mes devoirs', () => {
     await mockParentApi(page);
     await page.goto(`${LIST}?week=2026-09-14`);
 
-    await page.locator('app-assignment-card a').filter({ hasText: 'Mathématiques' }).click();
+    await page.locator('ui-assignment-card a').filter({ hasText: 'Mathématiques' }).click();
 
     await expect(page).toHaveURL(`${LIST}/${MATHS_GRADED.evaluationId}?week=2026-09-14`);
     await expect(page.locator('app-result-block')).toContainText('15/20');
@@ -129,7 +129,7 @@ test.describe('Mes devoirs', () => {
 
     await page.locator('app-top-bar').getByRole('link', { name: 'Mes devoirs' }).click();
     await expect(page).toHaveURL(`${LIST}?week=2026-09-14`);
-    await expect(page.locator('app-assignment-card')).toHaveCount(2);
+    await expect(page.locator('ui-assignment-card')).toHaveCount(2);
   });
 
   test('dit un devoir introuvable', async ({ page }) => {
@@ -152,7 +152,7 @@ test.describe('Mes devoirs', () => {
       route.fulfill({ json: homeworkListFixture() }),
     );
     await page.getByRole('button', { name: 'Réessayer' }).click();
-    await expect(page.locator('app-assignment-card')).toHaveCount(3);
+    await expect(page.locator('ui-assignment-card')).toHaveCount(3);
   });
 
   test("dit une semaine vide quand l'enfant n'a aucun devoir", async ({ page }) => {
