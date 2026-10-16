@@ -1,0 +1,63 @@
+<ui-sheet [heading]="fee()?.label ?? ''" (closed)="closed.emit()">
+  @if (fee(); as fee) {
+    @let amounts = money()!;
+    <p class="meta">
+      @if (state(); as state) {
+        <ui-badge [tone]="state.tone">{{ state.label }}</ui-badge>
+      }
+      @if (fee.section; as section) {
+        <span>{{ section.title }}</span>
+      }
+      @if (due()) {
+        <span>Échéance : {{ due() }}</span>
+      }
+    </p>
+
+    <dl class="facts">
+      @if (reduction()) {
+        <div>
+          <dt>Montant</dt>
+          <dd class="money">{{ amounts.gross | amount }}</dd>
+        </div>
+        <div>
+          <dt>Réduction</dt>
+          <dd>{{ reduction() }}</dd>
+        </div>
+        <div>
+          <dt>À payer</dt>
+          <dd class="money">{{ amounts.expected | amount }}</dd>
+        </div>
+      } @else {
+        <div>
+          <dt>Montant</dt>
+          <dd class="money">{{ amounts.expected | amount }}</dd>
+        </div>
+      }
+      <div>
+        <dt>Versé</dt>
+        <dd class="money">{{ amounts.paid | amount }}</dd>
+      </div>
+      <div>
+        <dt>Reste</dt>
+        <dd class="money">{{ amounts.remaining | amount }}</dd>
+      </div>
+    </dl>
+
+    <h3 class="section-title">Versements reçus</h3>
+    <div class="rows">
+      @for (payment of payments(); track payment.id) {
+        <app-ledger-row
+          [row]="payment.row"
+          [link]="paymentsLink()"
+          [queryParams]="payment.params"
+        />
+      } @empty {
+        <p class="none">Aucun versement pour ce frais.</p>
+      }
+    </div>
+
+    @if (fee.remainingInCents > 0) {
+      <button type="button" class="button" (click)="pay.emit(fee)">Comment payer</button>
+    }
+  }
+</ui-sheet>

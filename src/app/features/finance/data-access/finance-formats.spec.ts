@@ -1,0 +1,115 @@
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+import {
+  AIRTEL_PAYMENT,
+  CASH_PAYMENT,
+  DUE_FEE,
+  OVERDUE_FEE,
+  PAID_FEE,
+  PARTIAL_FEE,
+  REGISTRATION_PAYMENT,
+  TRANSPORT_PAYMENT,
+  feesFixture,
+  paymentsFixture,
+} from '../../../../testing/finance.fixture';
+import {
+  asOfLabel,
+  feeStateView,
+  feeStatusLine,
+  methodView,
+  overdueHeadline,
+  paidOverExpectedLabel,
+  payerName,
+  paymentMeta,
+  paymentMonths,
+  paymentTitle,
+  receiptMeta,
+  receivedLabel,
+  spokenFee,
+} from './finance-formats';
+
+registerLocaleData(localeFr);
+
+/** Les espaces fines des montants, écrites en espaces simples pour lire les attentes. */
+const plain = (label: string | null) => label?.replaceAll(' ', ' ');
+
+describe('finance-formats', () => {
+  it('donne à chaque état son mot et son ton, et laisse neutre un état inconnu', () => {
+    expect(feeStateView('OVERDUE')).toEqual({ label: 'En retard', tone: 'alert' });
+    expect(feeStateView('PARTIAL')).toEqual({ label: 'Partiellement payé', tone: 'pending' });
+    expect(feeStateView('DUE')).toEqual({ label: 'À payer', tone: 'info' });
+    expect(feeStateView('PAID')).toEqual({ label: 'Payé', tone: 'success' });
+    expect(feeStateView('WAIVED')).toBeNull();
+  });
+
+  it('écrit l’état d’un frais avec ce qui reste, sans cacher ce qui est déjà versé', () => {
+    expect(plain(feeStatusLine(OVERDUE_FEE, 'fr'))).toBe(
+      'En retard depuis le 15/09 · 80 $ restant · 180 $ déjà versés',
+    );
+    expect(plain(feeStatusLine(PARTIAL_FEE, 'fr'))).toBe('100 000 FC restant avant le 10/10');
+    expect(plain(feeStatusLine(DUE_FEE, 'fr'))).toBe('234 $ avant le 15/12');
+    expect(feeStatusLine(PAID_FEE, 'fr')).toBe('Payé le 03/09');
+    expect(plain(feeStatusLine({ ...DUE_FEE, dueDate: null }, 'fr'))).toBe('234 $ à payer');
+  });
+
+  it('dit une ligne de frais en entier pour un lecteur d’écran', () => {
+    expect(plain(spokenFee(OVERDUE_FEE, 'fr'))).toBe(
+      'Frais scolaires, 1re tranche, 260 dollars, en retard depuis le mardi 15 septembre, 80 dollars restant.',
+    );
+    expect(spokenFee(PAID_FEE, 'fr')).toBe('Frais d’inscription, 100 dollars, payé.');
+  });
+
+  it('écrit le bilan d’une devise et sa date de situation', () => {
+    const [usd] = feesFixture().totals;
+
+    expect(plain(paidOverExpectedLabel(usd, 'fr'))).toBe('280 $ versés sur 594 $');
+    expect(asOfLabel('2026-09-23T06:40:00Z', 'fr')).toMatch(/^Situation au 23\/09 à \d+ h 40$/);
+  });
+
+  it('nomme un frais en retard, et compte plusieurs frais avec leur reste par devise', () => {
+    const { totals } = feesFixture();
+
+    expect(plain(overdueHeadline([OVERDUE_FEE], totals, 'fr'))).toBe(
+      'Frais scolaires · 1re tranche · 80 $ en retard depuis le 15/09',
+    );
+    const twoCurrencies = [
+      { ...totals[0], overdueInCents: 22_000, overdueCount: 1 },
+      { ...totals[1], overdueInCents: 10_000_000, overdueCount: 1 },
+    ];
+    expect(plain(overdueHeadline([OVERDUE_FEE, PARTIAL_FEE], twoCurrencies, 'fr'))).toBe(
+      '2 frais · 220 $ · 100 000 FC en retard',
+    );
+  });
+
+  it('écrit un versement : jour, moyen, frais couverts et payeur', () => {
+    expect(paymentTitle(AIRTEL_PAYMENT, 'fr')).toBe('Mardi 22/09 · Mobile money');
+    expect(paymentMeta(AIRTEL_PAYMENT)).toBe('Frais scolaires · 1re tranche · Léonie Kabila');
+    expect(paymentMeta({ ...CASH_PAYMENT, allocations: [] })).toBe('Léonie Kabila');
+    expect(
+      payerName({ payerFirstName: null, payerLastName: null, payerMiddleName: null }),
+    ).toBeNull();
+    expect(methodView('CASH')).toEqual({ label: 'Espèces', icon: 'wallet' });
+    expect(methodView('CHEQUE').label).toBe('Autre moyen');
+  });
+
+  it('montre le perçu au taux du guichet seulement quand il diffère de l’imputé', () => {
+    expect(plain(receivedLabel(REGISTRATION_PAYMENT.received, 'fr'))).toBe(
+      '280 000 FC au taux de 2 800 FC pour 1 $',
+    );
+    expect(receivedLabel(TRANSPORT_PAYMENT.received, 'fr')).toBeNull();
+  });
+
+  it('écrit la ligne d’un reçu', () => {
+    expect(plain(receiptMeta(CASH_PAYMENT, 'fr'))).toBe('05/09 · 140 $');
+  });
+
+  it('range le journal par mois, dans l’ordre du serveur, sans total calculé', () => {
+    const months = paymentMonths(
+      [...paymentsFixture(), { ...CASH_PAYMENT, paidAt: '2026-08-28T10:00:00Z' }],
+      'fr',
+    );
+
+    expect(months.map((month) => month.label)).toEqual(['Septembre 2026', 'Août 2026']);
+    expect(months[0].payments).toHaveLength(4);
+  });
+});

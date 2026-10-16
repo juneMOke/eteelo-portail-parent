@@ -1,0 +1,44 @@
+@if (data(); as data) {
+  @for (month of months(); track month.month) {
+    <section
+      class="list"
+      [attr.aria-labelledby]="'month-' + month.month"
+      [attr.aria-busy]="resource.isLoading()"
+    >
+      <h2 class="list-title" [id]="'month-' + month.month">{{ month.label }}</h2>
+      @for (item of month.rows; track item.id) {
+        <app-ledger-row [row]="item.row" (activate)="fiche.show(item.id)" />
+      }
+    </section>
+  } @empty {
+    <ui-empty-period
+      heading="Aucun versement enregistré cette année."
+      linkLabel="Voir les frais à payer"
+      [link]="feesLink()"
+    />
+  }
+
+  <app-payment-sheet
+    [childId]="childId()"
+    [payment]="openPayment()"
+    [receiptHref]="receiptHref()"
+    [sharing]="sharing()"
+    [failure]="failure()"
+    (closed)="fiche.dismiss()"
+    (share)="share($event)"
+  />
+} @else if (resource.error()) {
+  <ui-load-error
+    heading="Impossible d’afficher les paiements"
+    message="Mes paiements nécessite une connexion. Vérifiez-la, puis réessayez."
+    (retry)="resource.reload()"
+  />
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement des paiements…</span>
+    <ui-skeleton width="140px" height="16px" />
+    <ui-skeleton height="64px" />
+    <ui-skeleton height="64px" />
+    <ui-skeleton height="64px" />
+  </div>
+}

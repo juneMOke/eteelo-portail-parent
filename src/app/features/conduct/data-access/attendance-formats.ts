@@ -10,6 +10,7 @@ import {
 import { CivilDate } from '../../../shared/date/civil-date';
 import { countLabel } from '../../../shared/format/count';
 import { shortDate } from '../../../shared/format/day-labels';
+import { instantTime, timeLabel } from '../../../shared/format/time-labels';
 
 /** Mise en forme de Ma présence (spec 06 §6) ; tous les chiffres viennent du serveur. */
 
@@ -31,17 +32,6 @@ export function monthSummary(month: AttendanceMonth | undefined): string {
     countLabel(month.absences, 'absence', 'absences', 'aucune absence'),
     countLabel(month.lates, 'retard', 'retards', 'aucun retard'),
   ].join(' · ');
-}
-
-/** « 7 h 52 », depuis `HH:mm`. */
-export function timeLabel(time: string): string {
-  const [hours, minutes] = time.split(':');
-  return `${Number(hours)} h ${minutes}`;
-}
-
-/** « 7 h 40 » : l'heure d'un instant, au fuseau du téléphone (celui de l'école). */
-function instantTime(instant: string, locale: string): string {
-  return timeLabel(formatDate(instant, 'HH:mm', locale));
 }
 
 /** Le moment du jour : l'heure d'arrivée d'un retard, sinon la journée (appel à la journée). */

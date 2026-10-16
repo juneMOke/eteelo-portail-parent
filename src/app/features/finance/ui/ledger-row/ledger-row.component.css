@@ -1,0 +1,85 @@
+:host {
+  display: block;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tile-min-height);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  /* Filet de 3 px au ton de l'état ; transparent pour une ligne neutre. */
+  border-left: 3px solid var(--row-tone);
+  border-radius: var(--radius-tile);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.row:hover {
+  background: var(--color-accent-soft);
+}
+
+.icon {
+  display: grid;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-soft);
+  color: var(--color-text-secondary);
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.title {
+  color: var(--color-heading);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.detail {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.gauge {
+  height: 4px;
+  margin-top: var(--space-1);
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--color-border-soft);
+}
+
+.filled {
+  display: block;
+  height: 100%;
+  background: var(--row-tone);
+}
+
+/* Montants à droite, en Lora et chiffres tabulaires : la même colonne sur les trois pages. */
+.amount {
+  flex: none;
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-amount);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-semibold);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.chevron {
+  flex: none;
+  color: var(--color-text-muted);
+}

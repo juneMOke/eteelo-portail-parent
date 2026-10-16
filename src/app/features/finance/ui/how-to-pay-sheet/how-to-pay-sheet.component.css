@@ -1,0 +1,67 @@
+.context {
+  color: var(--color-text-secondary);
+  font-size: var(--text-md);
+}
+
+.amount {
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-semibold);
+}
+
+.method {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-tile);
+}
+
+.icon {
+  display: grid;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  font-size: var(--text-md);
+}
+
+h3 {
+  color: var(--color-heading);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.call {
+  display: inline-flex;
+  min-height: var(--tap-target);
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--weight-semibold);
+}
+
+/* Annoncé, pas encore actif : grisé, et dit en toutes lettres. */
+.upcoming {
+  border-style: dashed;
+  color: var(--color-text-muted);
+}
+
+.upcoming .icon {
+  background: var(--color-surface-soft);
+  color: var(--color-text-muted);
+}
+
+.upcoming h3 {
+  color: var(--color-text-muted);
+}

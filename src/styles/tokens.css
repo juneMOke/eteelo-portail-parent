@@ -107,6 +107,9 @@
     --text-lg: 1.125rem; /* 18px */
     --text-xl: 1.375rem; /* 22px */
     --text-2xl: 1.75rem; /* 28px */
+    /* Montants (Lora, chiffres tabulaires) : ligne de liste, chiffre qu'on cherche au bilan. */
+    --text-amount: 1.0625rem; /* 17px */
+    --text-amount-hero: 2.5rem; /* 40px */
     --weight-regular: 400;
     --weight-medium: 500;
     --weight-semibold: 600;

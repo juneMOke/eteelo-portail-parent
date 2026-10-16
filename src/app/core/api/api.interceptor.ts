@@ -3,14 +3,16 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { SessionStore } from '../session/session.store';
+import { CHILD_NOT_VISIBLE, detailCodeOf } from './api-error';
 import { PARENT_AUTH_API, PARENT_CHILDREN_API } from './parent-api';
 
 /**
  * Seul endroit où les refus de session sont traités :
  * - 401 : session réinitialisée, retour à la connexion (sauf sur les routes d'authentification,
  *   dont les pages gèrent l'échec elles-mêmes) ;
- * - 403 sur une route d'enfant : l'enfant n'est plus visible, session rechargée et renvoi
- *   au premier enfant.
+ * - 403 du garde par enfant (`CHILD_NOT_VISIBLE`) : l'enfant n'est plus visible, session
+ *   rechargée et renvoi au premier enfant. Un autre 403 (jeton CSRF absent ou périmé sur un
+ *   POST) reste à la page qui l'a provoqué.
  */
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
   const session = inject(SessionStore);
@@ -22,7 +24,7 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
         if (error.status === 401 && !req.url.startsWith(PARENT_AUTH_API)) {
           session.reset();
           void router.navigateByUrl('/login');
-        } else if (error.status === 403 && req.url.startsWith(PARENT_CHILDREN_API)) {
+        } else if (isChildRefusal(error) && req.url.startsWith(PARENT_CHILDREN_API)) {
           session.reset();
           void router.navigateByUrl('/');
         }
@@ -31,3 +33,7 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
     }),
   );
 };
+
+function isChildRefusal(error: HttpErrorResponse): boolean {
+  return error.status === 403 && detailCodeOf(error) === CHILD_NOT_VISIBLE;
+}

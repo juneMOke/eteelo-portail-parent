@@ -1,0 +1,28 @@
+@if (link(); as link) {
+  <a class="row" [routerLink]="link" [queryParams]="queryParams()" [attr.aria-label]="row().spoken">
+    <ng-container [ngTemplateOutlet]="content" />
+  </a>
+} @else {
+  <button type="button" class="row" [attr.aria-label]="row().spoken" (click)="activate.emit()">
+    <ng-container [ngTemplateOutlet]="content" />
+  </button>
+}
+
+<ng-template #content>
+  @if (row().icon; as icon) {
+    <span class="icon"><ui-icon [name]="icon" [size]="18" /></span>
+  }
+  <span class="body">
+    <span class="title">{{ row().title }}</span>
+    @if (row().detail; as detail) {
+      <span class="detail">{{ detail }}</span>
+    }
+    @if (row().progress !== null) {
+      <span class="gauge"
+        ><span class="filled" [style.width.%]="row().progress! * 100"></span
+      ></span>
+    }
+  </span>
+  <span class="amount">{{ row().amounts | amount }}</span>
+  <ui-icon class="chevron" name="chevron-right" [size]="18" [strokeWidth]="2" />
+</ng-template>

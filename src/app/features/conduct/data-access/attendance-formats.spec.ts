@@ -10,7 +10,6 @@ import {
   rateLabel,
   reasonLabel,
   recordedLabel,
-  timeLabel,
 } from './attendance-formats';
 
 registerLocaleData(localeFr);
@@ -40,8 +39,7 @@ describe('attendance-formats', () => {
     expect(monthSummary(undefined)).toBe('Aucun jour d’école enregistré');
   });
 
-  it('écrit les heures à la française', () => {
-    expect(timeLabel('07:52')).toBe('7 h 52');
+  it('écrit le moment du jour', () => {
     expect(momentLabel(attendanceDay('2026-09-18', { status: 'LATE', arrivalTime: '07:52' }))).toBe(
       'Arrivé à 7 h 52',
     );

@@ -1,0 +1,41 @@
+@if (data(); as data) {
+  @if (data.fees.length) {
+    @if (overdue().length) {
+      <app-overdue-banner [headline]="headline()" [fees]="overdue()" (pay)="showHowToPay(null)" />
+    }
+
+    <app-balance-summary [yearLabel]="yearLabel()" [totals]="data.totals" [asOf]="data.asOf" />
+
+    <section class="list" aria-label="Frais de l’année" [attr.aria-busy]="resource.isLoading()">
+      @for (item of rows(); track item.id) {
+        <app-ledger-row [row]="item.row" (activate)="fiche.show(item.id)" />
+      }
+    </section>
+  } @else {
+    <ui-empty-period
+      [heading]="'Les frais de l’année ' + yearLabel() + ' seront publiés par l’école.'"
+    />
+  }
+
+  <app-fee-sheet
+    [childId]="childId()"
+    [fee]="openFee()"
+    (closed)="fiche.dismiss()"
+    (pay)="showHowToPay($event)"
+  />
+  <app-how-to-pay-sheet [fee]="payingFee()" [phone]="schoolPhone()" />
+} @else if (resource.error()) {
+  <ui-load-error
+    heading="Impossible d’afficher les frais"
+    message="Mes frais nécessite une connexion. Vérifiez-la, puis réessayez."
+    (retry)="resource.reload()"
+  />
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement des frais…</span>
+    <ui-skeleton height="170px" />
+    <ui-skeleton height="64px" />
+    <ui-skeleton height="64px" />
+    <ui-skeleton height="64px" />
+  </div>
+}

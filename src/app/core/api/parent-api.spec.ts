@@ -67,4 +67,27 @@ describe('ParentApi', () => {
     http.expectOne('/api/v1/parent/children/c1/grades/courses').flush({});
     http.expectOne('/api/v1/parent/children/c1/grades/report-card?periodId=t1').flush({});
   });
+
+  it('lit les frais et les versements de l’année courante, ou de l’année demandée', () => {
+    api.fees('c1').subscribe();
+    api.payments('c1', 'y1').subscribe();
+    api.academicYears('c1').subscribe();
+
+    http.expectOne('/api/v1/parent/children/c1/fees').flush({});
+    http.expectOne('/api/v1/parent/children/c1/payments?academicYearId=y1').flush([]);
+    http.expectOne('/api/v1/parent/children/c1/academic-years').flush([]);
+  });
+
+  it('lit un reçu en PDF et génère le relevé de l’année par un POST', () => {
+    api.receipt('c1', 'p1').subscribe();
+    api.statement('c1', 'y1').subscribe();
+
+    const receipt = http.expectOne('/api/v1/parent/children/c1/payments/p1/receipt');
+    expect(receipt.request.responseType).toBe('blob');
+    receipt.flush(new Blob());
+    const statement = http.expectOne('/api/v1/parent/children/c1/statement?academicYearId=y1');
+    expect(statement.request.method).toBe('POST');
+    expect(statement.request.responseType).toBe('blob');
+    statement.flush(new Blob());
+  });
 });

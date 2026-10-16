@@ -1,0 +1,19 @@
+<p class="band">Année {{ yearLabel() }}</p>
+<div class="content">
+  @for (block of blocks(); track block.currency) {
+    <div class="block">
+      @if (block.settled) {
+        <p class="settled">Rien à payer pour le moment.</p>
+      } @else {
+        <p class="remaining">
+          <span class="figure">{{ block.remaining }}</span>&ngsp;<span class="word">restant</span>
+        </p>
+      }
+      <span class="gauge" aria-hidden="true">
+        <span class="filled" [style.width.%]="block.share * 100"></span>
+      </span>
+      <p class="paid">{{ block.paid }}</p>
+    </div>
+  }
+  <p class="as-of">{{ asOfText() }}</p>
+</div>

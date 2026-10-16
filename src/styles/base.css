@@ -138,6 +138,17 @@
     opacity: 0.5;
   }
 
+  /* Action secondaire (« Ouvrir », « Copier ») : contour bleu ardoise, fond blanc. */
+  .button.secondary {
+    border: 1px solid var(--color-accent);
+    background: var(--color-surface);
+    color: var(--color-accent);
+  }
+
+  .button.secondary:hover:not(:disabled) {
+    background: var(--color-accent-soft);
+  }
+
   .button-link {
     min-height: var(--tap-target);
     padding: 0;

@@ -1,0 +1,17 @@
+<div class="text">
+  <p class="name">Relevé de l’année {{ yearLabel() }}</p>
+  <p class="meta">Tous les versements en un PDF</p>
+</div>
+<button
+  type="button"
+  class="button secondary"
+  [attr.aria-label]="'Ouvrir le relevé de l’année ' + yearLabel()"
+  [attr.aria-busy]="opening()"
+  [disabled]="opening()"
+  (click)="open.emit()"
+>
+  Ouvrir
+</button>
+@if (failure(); as failure) {
+  <p class="failure" role="alert">{{ failure }}</p>
+}

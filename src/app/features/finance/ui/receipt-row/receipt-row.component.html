@@ -1,0 +1,12 @@
+<div class="text">
+  <p class="name">
+    Reçu n° <span class="number">{{ receiptNumber() }}</span>
+  </p>
+  <p class="meta">{{ meta() }}</p>
+</div>
+<app-receipt-actions
+  [href]="href()"
+  [receiptNumber]="receiptNumber()"
+  [sharing]="sharing()"
+  (share)="share.emit()"
+/>
