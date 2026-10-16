@@ -11,41 +11,26 @@
   (step)="step($event)"
   (current)="goCurrent()"
   (viewChange)="pickView($event)"
->
-  <app-filter-pills
-    label="Filtrer par jour"
+/>
+
+<div class="menus">
+  <app-filter-menu
+    caption="Filtrer par jour"
     [options]="dayOptions()"
     [checked]="dayFilter()"
+    [open]="openMenu() === 'day'"
+    (openChange)="setMenu('day', $event)"
     (pick)="pickDay($event)"
   />
-  <app-filter-pills
-    label="Filtrer par statut"
+  <app-filter-menu
+    caption="Filtrer par statut"
     [options]="statusOptions()"
     [checked]="statusFilter()?.id ?? null"
+    [open]="openMenu() === 'status'"
+    (openChange)="setMenu('status', $event)"
     (pick)="pickStatus($event)"
   />
-</app-week-banner>
-
-@if (!wide()) {
-  <div class="menus">
-    <app-filter-menu
-      caption="Filtrer par jour"
-      [options]="dayOptions()"
-      [checked]="dayFilter()"
-      [open]="openMenu() === 'day'"
-      (openChange)="setMenu('day', $event)"
-      (pick)="pickDay($event)"
-    />
-    <app-filter-menu
-      caption="Filtrer par statut"
-      [options]="statusOptions()"
-      [checked]="statusFilter()?.id ?? null"
-      [open]="openMenu() === 'status'"
-      (openChange)="setMenu('status', $event)"
-      (pick)="pickStatus($event)"
-    />
-  </div>
-}
+</div>
 
 <section class="board" [attr.aria-label]="labels().region">
   @for (key of [monday()]; track key) {
@@ -59,8 +44,8 @@
               <h2 class="column-head">
                 <span class="column-day">{{ group.weekday }}</span>
                 <span class="column-date">{{ group.date }}</span>
-                @if (group.near === 'aujourd’hui') {
-                  <span class="visually-hidden">, aujourd’hui</span>
+                @if (group.day === today()) {
+                  <span class="today-pill"><span class="visually-hidden">, </span>aujourd’hui</span>
                 }
               </h2>
               @if (group.cards.length) {
@@ -85,10 +70,12 @@
       } @else {
         <div class="days">
           @for (group of busyGroups(); track group.day) {
-            <section class="day">
+            <section class="day" [class.today]="group.day === today()">
               <h2 class="day-head">
                 {{ group.label }}
-                @if (group.near; as near) {
+                @if (group.day === today()) {
+                  <span class="today-pill"><span class="visually-hidden">, </span>aujourd’hui</span>
+                } @else if (group.near; as near) {
                   <span class="near">· {{ near }}</span>
                 }
               </h2>

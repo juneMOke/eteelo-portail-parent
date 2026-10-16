@@ -16,8 +16,8 @@ import { WeekView } from '../../data-access/week-board';
 /**
  * ① Bandeau de semaine, aplat Bleu Ardoise au motif kuba : dit de quelle semaine on parle et
  * passe à la voisine d'un pouce. Au téléphone, une seule ligne ; au grand écran, la bascule
- * Liste / Grille en tête et, sous un filet, les pastilles des filtres (projetées par la page).
- * À la borne, la flèche reste visible à 35 % et garde le focus (`aria-disabled`).
+ * Liste / Grille en haut à droite. À la borne, la flèche reste visible à 35 % et garde le
+ * focus (`aria-disabled`).
  */
 @Component({
   selector: 'app-week-banner',

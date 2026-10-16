@@ -38,11 +38,11 @@ test.describe('Mes évaluations', () => {
     await expect(page.locator('app-assignment-card')).toHaveCount(3);
   });
 
-  test('filtre les absences de la semaine', async ({ page }, testInfo) => {
+  test('filtre les absences de la semaine', async ({ page }) => {
     await mockParentApi(page);
     await page.goto(`${LIST}?week=2026-09-14`);
 
-    await chooseFilter(page, testInfo, 'Filtrer par statut', /^Absences/);
+    await chooseFilter(page, 'Filtrer par statut', /^Absences/);
 
     await expect(page).toHaveURL(`${LIST}?week=2026-09-14&status=ABSENT`);
     await expect(page.locator('app-assignment-card')).toHaveCount(1);

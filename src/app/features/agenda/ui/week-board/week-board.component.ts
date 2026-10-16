@@ -29,7 +29,6 @@ import {
 import { FilterOption, WeekBoardLabels, WeekCard, WeekView } from '../../data-access/week-board';
 import { AssignmentCardComponent } from '../assignment-card/assignment-card.component';
 import { FilterMenuComponent } from '../filter-menu/filter-menu.component';
-import { FilterPillsComponent } from '../filter-pills/filter-pills.component';
 import { WeekBannerComponent } from '../week-banner/week-banner.component';
 
 type Menu = 'day' | 'status';
@@ -53,7 +52,8 @@ interface Empty {
 
 /**
  * Squelette commun de Mes devoirs et Mes évaluations (spec 03 v2) : ① le bandeau de semaine,
- * ③ les filtres par jour et par statut, ② la semaine en grille (grand écran, par défaut) ou en
+ * ③ les filtres par jour et par statut, en menus déroulants sous le bandeau sur tous les
+ * écrans, ② la semaine en grille (grand écran, par défaut) ou en
  * liste de cartes de jour (seule vue au téléphone), ⑪ le vide. Semaine, filtres et vue vivent
  * dans l'URL (`?week=&day=&status=&view=`) : la fiche y ramène « même semaine, mêmes filtres,
  * même vue ». Changer de semaine remet le filtre jour à « Toute la semaine » et garde le statut.
@@ -64,7 +64,6 @@ interface Empty {
     AssignmentCardComponent,
     EmptyPeriodComponent,
     FilterMenuComponent,
-    FilterPillsComponent,
     WeekBannerComponent,
   ],
   templateUrl: './week-board.component.html',

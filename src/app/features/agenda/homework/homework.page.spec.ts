@@ -68,6 +68,15 @@ describe('HomeworkPage', () => {
     ]);
   });
 
+  it('colore l’en-tête du jour même et y écrit « aujourd’hui »', async () => {
+    const { el } = await render({}, () => of({ ...homeworkListFixture(), today: '2026-09-23' }));
+    const today = el.querySelector('.day.today');
+
+    expect(el.querySelectorAll('.day.today')).toHaveLength(1);
+    expect(today?.querySelector('.day-head')?.textContent).toContain('Mercredi 23/09');
+    expect(today?.querySelector('.today-pill')?.textContent).toBe(', aujourd’hui');
+  });
+
   it('signale en rouge un devoir à rendre demain, avec son heure limite', async () => {
     const { el } = await render();
 
@@ -172,6 +181,7 @@ describe('HomeworkPage', () => {
     );
     expect(el.querySelectorAll('.column')).toHaveLength(5);
     expect(el.querySelector('.column.today .column-date')?.textContent).toBe('22/09');
+    expect(el.querySelector('.column.today .today-pill')).not.toBeNull();
     expect(texts(el, '.column-empty')).toEqual(['Rien à rendre', 'Rien à rendre', 'Rien à rendre']);
     expect(el.querySelectorAll('app-assignment-card.compact')).toHaveLength(3);
   });

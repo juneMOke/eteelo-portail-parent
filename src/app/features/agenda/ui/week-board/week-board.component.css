@@ -10,6 +10,15 @@
   gap: var(--space-2);
 }
 
+/* Grand écran : les deux menus côte à côte. */
+@media (min-width: 905px) {
+  .menus {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+}
+
 .cards {
   display: flex;
   flex-direction: column;
@@ -77,6 +86,36 @@
   padding: var(--space-2);
 }
 
+/*
+ * Le jour même : en-tête à l'aplat Bleu Ardoise du bandeau, et « aujourd'hui » en terre cuite
+ * dans une pastille crème (la terre cuite ne tient que 2:1 sur le bleu, 5,9:1 sur crème).
+ */
+.day.today .day-head,
+.column.today .column-head {
+  border-bottom-color: var(--color-bar-bg);
+  background: var(--color-bar-bg) var(--texture-banner);
+  color: var(--color-bar-text);
+}
+
+.column.today .column-day,
+.column.today .column-date {
+  color: var(--color-bar-text);
+}
+
+.today-pill {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-on-tone);
+  color: var(--color-greeting);
+  font-family: var(--font-ui);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
 @media (min-width: 905px) {
   .day .cards {
     gap: var(--space-3);
@@ -115,7 +154,8 @@
 
 .column-head {
   display: flex;
-  align-items: baseline;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
   padding: var(--space-3);

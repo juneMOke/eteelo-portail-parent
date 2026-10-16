@@ -17,7 +17,7 @@ import { FilterOption } from '../../data-access/week-board';
 let nextId = 0;
 
 /**
- * ③ Un filtre en menu déroulant, sous le bandeau du téléphone : un déclencheur de 48 px (petit
+ * ③ Un filtre en menu déroulant, sous le bandeau : un déclencheur de 48 px (petit
  * intitulé, valeur active, compteur), puis une liste sur mesure ancrée sous lui. Pas de
  * sélecteur natif : il ne porte ni couleur, ni compteur, ni séparateur. L'option active est en
  * bleu clair avec une coche, jamais à la couleur du statut. La page garantit qu'un seul menu

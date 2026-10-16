@@ -20,15 +20,15 @@ test.describe('Mes devoirs', () => {
     await expect(page.getByText('À rendre demain avant 18 h')).toBeVisible();
   });
 
-  test('filtre les devoirs à rendre, puis un jour', async ({ page }, testInfo) => {
+  test('filtre les devoirs à rendre, puis un jour', async ({ page }) => {
     await mockParentApi(page);
     await page.goto(LIST);
 
-    await chooseFilter(page, testInfo, 'Filtrer par statut', /^À rendre/);
+    await chooseFilter(page, 'Filtrer par statut', /^À rendre/);
     await expect(page).toHaveURL(`${LIST}?status=DUE`);
     await expect(page.locator('app-assignment-card')).toHaveCount(2);
 
-    await chooseFilter(page, testInfo, 'Filtrer par jour', /^Lundi 21/);
+    await chooseFilter(page, 'Filtrer par jour', /^Lundi 21/);
     await expect(page).toHaveURL(`${LIST}?status=DUE&day=2026-09-21`);
     await expect(page.getByRole('heading', { name: 'Aucun devoir à rendre' })).toBeVisible();
     await expect(page.getByText('Choisissez « Tous » pour tout revoir.')).toBeVisible();
