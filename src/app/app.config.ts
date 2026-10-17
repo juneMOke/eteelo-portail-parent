@@ -11,12 +11,14 @@ import {
   provideRouter,
   withComponentInputBinding,
   withInMemoryScrolling,
+  withPreloading,
   withRouterConfig,
 } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
 import { apiInterceptor } from './core/api/api.interceptor';
 import { DEV_BACKEND_INTERCEPTORS } from './core/api/dev-backend';
+import { IntentPreloading } from './core/navigation/intent-preloading';
 import { PageTitleStrategy } from './core/navigation/page-title.strategy';
 
 export const appConfig: ApplicationConfig = {
@@ -29,6 +31,8 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
       // childId (c/:childId) descend jusqu'aux pages imbriquées, comme assessments/:evaluationId.
       withRouterConfig({ paramsInheritanceStrategy: 'always' }),
+      // Le code d'une page se télécharge au survol, au focus ou au toucher de son lien.
+      withPreloading(IntentPreloading),
     ),
     // Pas de withFetch() : le backend fetch ne remonte pas la progression d'upload (dépôt de devoir).
     provideHttpClient(

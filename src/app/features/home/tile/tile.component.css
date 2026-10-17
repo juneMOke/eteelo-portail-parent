@@ -25,8 +25,12 @@
   transform: translateY(-2px);
 }
 
+/* Retour immédiat au toucher : la tuile s'enfonce, sur fond Bleu Brume. */
 .tile:active {
-  transform: none;
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  transform: scale(0.98);
+  transition-duration: 80ms;
 }
 
 .icon {
