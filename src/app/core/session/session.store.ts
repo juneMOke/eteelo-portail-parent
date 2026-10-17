@@ -1,6 +1,7 @@
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { firstValueFrom } from 'rxjs';
+import { SessionCache } from '../../shared/resource/session-cache';
 import { ParentApi } from '../api/parent-api';
 import { Bootstrap, Child } from './bootstrap.schema';
 
@@ -27,7 +28,7 @@ export const SessionStore = signalStore(
     academicYear: computed(() => bootstrap()?.academicYear ?? null),
     children: computed(() => bootstrap()?.children ?? []),
   })),
-  withMethods((store, api = inject(ParentApi)) => {
+  withMethods((store, api = inject(ParentApi), cache = inject(SessionCache)) => {
     let pending: Promise<SessionStatus> | null = null;
 
     async function load(): Promise<SessionStatus> {
@@ -43,8 +44,10 @@ export const SessionStore = signalStore(
       return store.status();
     }
 
+    /** Ferme la session côté client : la mémoire des lectures part avec elle. */
     function reset(): void {
       pending = null;
+      cache.clear();
       patchState(store, initialState);
     }
 

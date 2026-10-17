@@ -100,7 +100,10 @@ describe('FileUploadComponent', () => {
     const fixture = await render();
     await pick(fixture, pdf);
 
-    fixture.componentRef.setInput('failure', { message: 'L’envoi n’a pas abouti.', retryable: true });
+    fixture.componentRef.setInput('failure', {
+      message: 'L’envoi n’a pas abouti.',
+      retryable: true,
+    });
     await fixture.whenStable();
     expect(text(fixture)).toContain('L’envoi n’a pas abouti.');
     expect(button(fixture, 'Réessayer')).toBeDefined();

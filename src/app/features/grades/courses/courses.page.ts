@@ -32,6 +32,8 @@ import { TermPickerComponent } from '../ui/term-picker/term-picker.component';
  * bulletin. Tout est replié, sauf le cours ciblé (`?course=`, depuis une fiche ou une ligne du
  * bulletin), qui s'ouvre et vient à l'écran.
  */
+import { StaleNoticeComponent } from '../../../shared/ui/stale-notice/stale-notice.component';
+import { RefreshHighlightDirective } from '../../../shared/resource/refresh-highlight.directive';
 @Component({
   selector: 'app-courses-page',
   imports: [
@@ -39,8 +41,10 @@ import { TermPickerComponent } from '../ui/term-picker/term-picker.component';
     CourseRowComponent,
     EmptyPeriodComponent,
     LoadErrorComponent,
+    RefreshHighlightDirective,
     RouterLink,
     SkeletonComponent,
+    StaleNoticeComponent,
     TermPickerComponent,
   ],
   templateUrl: './courses.page.html',

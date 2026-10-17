@@ -51,7 +51,7 @@
               @if (group.cards.length) {
                 <ul class="cards">
                   @for (card of group.cards; track card.id) {
-                    <li>
+                    <li [uiRefreshHighlight]="card" [refreshed]="refreshed()">
                       <ui-assignment-card
                         [card]="card"
                         [compact]="!dayFilter()"
@@ -81,7 +81,7 @@
               </h2>
               <ul class="cards">
                 @for (card of group.cards; track card.id) {
-                  <li>
+                  <li [uiRefreshHighlight]="card" [refreshed]="refreshed()">
                     <ui-assignment-card
                       [card]="card"
                       [link]="cardLink(card)"

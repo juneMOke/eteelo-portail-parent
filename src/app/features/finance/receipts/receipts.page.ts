@@ -39,15 +39,19 @@ import { YearBannerComponent } from '../ui/year-banner/year-banner.component';
  * le relevé de l'année à télécharger (E). Un téléchargement est confirmé en bas d'écran (H1).
  * Imputation détaillée et payeur restent dans Mes paiements.
  */
+import { StaleNoticeComponent } from '../../../shared/ui/stale-notice/stale-notice.component';
+import { RefreshHighlightDirective } from '../../../shared/resource/refresh-highlight.directive';
 @Component({
   selector: 'app-receipts-page',
   imports: [
     EmptyPeriodComponent,
     LoadErrorComponent,
     ReceiptRowComponent,
+    RefreshHighlightDirective,
     SavedToastComponent,
     SectionCardComponent,
     SkeletonComponent,
+    StaleNoticeComponent,
     StatementFooterComponent,
     YearBannerComponent,
   ],

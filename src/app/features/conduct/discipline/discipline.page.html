@@ -1,4 +1,7 @@
 @if (data(); as data) {
+  @if (resource.stale()) {
+    <ui-stale-notice (retry)="resource.reload()" />
+  }
   <ui-pill-group
     label="Trimestre"
     [options]="terms()"
@@ -10,7 +13,13 @@
 
   <section class="cases" aria-label="Faits consignés" [attr.aria-busy]="resource.isLoading()">
     @for (item of cases(); track item.id) {
-      <app-case-card [item]="item" [childId]="childId()" [targeted]="item.id === case()" />
+      <app-case-card
+        [item]="item"
+        [childId]="childId()"
+        [targeted]="item.id === case()"
+        [uiRefreshHighlight]="item"
+        [refreshed]="resource.refreshed()"
+      />
     } @empty {
       <ui-empty-period heading="Aucun fait consigné ce trimestre." />
     }

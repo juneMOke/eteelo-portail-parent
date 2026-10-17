@@ -60,7 +60,11 @@ export function weekIndicators(
       tone: 'success',
     },
     { label: 'Justifiées', value: value((s) => String(s.justifiedAbsenceDays)), tone: 'info' },
-    { label: 'Non justifiées', value: value((s) => String(s.unjustifiedAbsenceDays)), tone: 'alert' },
+    {
+      label: 'Non justifiées',
+      value: value((s) => String(s.unjustifiedAbsenceDays)),
+      tone: 'alert',
+    },
     { label: 'Retards', value: value((s) => String(s.lateDays)), tone: 'pending' },
   ];
 }

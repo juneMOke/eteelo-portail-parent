@@ -1,4 +1,10 @@
-<ui-section-card heading="Les indicateurs de la semaine" icon="chart" [count]="pill()" [level]="3" [lift]="true">
+<ui-section-card
+  heading="Les indicateurs de la semaine"
+  icon="chart"
+  [count]="pill()"
+  [level]="3"
+  [lift]="true"
+>
   <dl class="indicators">
     @for (indicator of indicators(); track indicator.label) {
       <div [class]="'indicator tone-' + indicator.tone">

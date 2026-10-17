@@ -26,6 +26,7 @@ import {
   weekRange,
 } from '../../data-access/school-week';
 import { relativeWeek } from '../../../../shared/format/relative-week';
+import { RefreshHighlightDirective } from '../../../../shared/resource/refresh-highlight.directive';
 import { AssignmentCardComponent } from '../../../../shared/ui/assignment-card/assignment-card.component';
 import {
   FilterMenuComponent,
@@ -68,6 +69,7 @@ interface Empty {
   selector: 'app-week-board',
   imports: [
     AssignmentCardComponent,
+    RefreshHighlightDirective,
     EmptyPeriodComponent,
     FilterMenuComponent,
     WeekBannerComponent,
@@ -90,6 +92,8 @@ export class WeekBoardComponent {
   readonly viewParam = input<string>();
   /** Jour d'un lien venu d'ailleurs (`?date=`) : ouvre sa semaine. */
   readonly date = input<string>();
+  /** La liste vient d'être mise à jour par le serveur : ce qui change est surligné. */
+  readonly refreshed = input(false);
 
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);

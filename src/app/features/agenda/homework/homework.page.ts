@@ -11,6 +11,7 @@ import { childLink, navEntry } from '../../../core/navigation/nav';
 import { dayLabel } from '../../../shared/format/day-labels';
 import { hourLabel } from '../../../shared/format/time-labels';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { StaleNoticeComponent } from '../../../shared/ui/stale-notice/stale-notice.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { statusView } from '../data-access/assignment-status';
 import { nearDay } from '../data-access/school-week';
@@ -47,7 +48,7 @@ const LABELS: WeekBoardLabels = {
  */
 @Component({
   selector: 'app-homework-page',
-  imports: [EmptyStateComponent, SkeletonComponent, WeekBoardComponent],
+  imports: [EmptyStateComponent, SkeletonComponent, StaleNoticeComponent, WeekBoardComponent],
   templateUrl: './homework.page.html',
   styleUrl: './homework.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

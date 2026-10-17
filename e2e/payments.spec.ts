@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { GRACE } from '../src/testing/bootstrap.fixture';
-import { FEE_ID, PAYMENT_ID, YEAR } from '../src/testing/finance.fixture';
+import { FEE_ID, PAYMENT_ID, YEAR, paymentsFixture } from '../src/testing/finance.fixture';
 import { mockParentApi } from './support/parent-api';
 
 const PAYMENTS = `/c/${GRACE.childId}/finance/payments`;
@@ -74,5 +74,46 @@ test.describe('Mes paiements', () => {
     ).toBeVisible();
     await page.getByRole('link', { name: 'Voir les frais à payer' }).click();
     await expect(page).toHaveURL(`/c/${GRACE.childId}/finance/fees`);
+  });
+
+  test('au retour, montre les versements déjà lus, puis surligne ce qui a changé', async ({
+    page,
+  }) => {
+    await mockParentApi(page);
+    await page.goto(PAYMENTS);
+    await expect(page.locator('app-finance-line')).toHaveCount(4);
+    await page.getByRole('link', { name: 'Accueil' }).first().click();
+    await expect(page).toHaveURL(`/c/${GRACE.childId}`);
+
+    let release!: () => void;
+    const answered = new Promise<void>((resolve) => (release = resolve));
+    const [latest, ...others] = paymentsFixture();
+    await page.route('**/api/v1/parent/children/*/payments', async (route) => {
+      await answered;
+      await route.fulfill({
+        json: [{ ...latest, amounts: [{ amountInCents: 6_000, currency: 'USD' }] }, ...others],
+      });
+    });
+    await page.locator('app-tile').getByRole('link', { name: 'Mes paiements' }).click();
+
+    await expect(page.locator('app-finance-line')).toHaveCount(4);
+    await expect(page.locator('.loading')).toHaveCount(0);
+    release();
+    await expect(page.locator('app-finance-line .amount').first()).toHaveText('60 $');
+    await expect(page.locator('.refresh-highlight')).toHaveCount(1);
+  });
+
+  test('garde les versements déjà lus quand le réseau manque au retour', async ({ page }) => {
+    await mockParentApi(page);
+    await page.goto(PAYMENTS);
+    await expect(page.locator('app-finance-line')).toHaveCount(4);
+    await page.getByRole('link', { name: 'Accueil' }).first().click();
+    await expect(page).toHaveURL(`/c/${GRACE.childId}`);
+
+    await page.route('**/api/v1/parent/children/*/payments', (route) => route.abort());
+    await page.locator('app-tile').getByRole('link', { name: 'Mes paiements' }).click();
+
+    await expect(page.locator('ui-stale-notice')).toContainText('Pas à jour');
+    await expect(page.locator('app-finance-line')).toHaveCount(4);
   });
 });

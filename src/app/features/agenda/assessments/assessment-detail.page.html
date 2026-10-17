@@ -1,4 +1,7 @@
 @if (data(); as evaluation) {
+  @if (this.evaluation.stale()) {
+    <ui-stale-notice (retry)="this.evaluation.reload()" />
+  }
   <app-identity-banner
     [heading]="evaluation.title"
     [subtitle]="subtitle()"

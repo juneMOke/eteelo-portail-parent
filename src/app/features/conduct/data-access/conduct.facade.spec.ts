@@ -1,6 +1,6 @@
 import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { settle } from '../../../../testing/async';
 import { attendanceFixture } from '../../../../testing/attendance.fixture';
 import { GRACE, bootstrapFixture } from '../../../../testing/bootstrap.fixture';
@@ -72,5 +72,20 @@ describe('ConductFacade', () => {
     expect(facade.schoolPhone()).toBeNull();
     await TestBed.inject(SessionStore).ensureLoaded();
     expect(facade.schoolPhone()).toBe('+243998877665');
+  });
+
+  it('montre la présence déjà lue au retour, le temps que le serveur réponde', async () => {
+    const { api, facade } = setup();
+    const open = () =>
+      TestBed.runInInjectionContext(() => facade.attendanceResource(() => GRACE.childId));
+    open();
+    await settle();
+
+    api.attendance.mockReturnValue(NEVER);
+    const back = open();
+    await settle();
+
+    expect(back.value()).toBeDefined();
+    expect(back.refreshing()).toBe(true);
   });
 });

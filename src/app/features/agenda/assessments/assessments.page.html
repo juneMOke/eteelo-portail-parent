@@ -1,5 +1,9 @@
 @if (data(); as list) {
+  @if (this.list.stale()) {
+    <ui-stale-notice (retry)="this.list.reload()" />
+  }
   <app-week-board
+    [refreshed]="this.list.refreshed()"
     [window]="list"
     [cards]="cards()"
     [labels]="labels"

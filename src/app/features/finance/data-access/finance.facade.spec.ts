@@ -1,6 +1,6 @@
 import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { settle } from '../../../../testing/async';
 import { GRACE, bootstrapFixture } from '../../../../testing/bootstrap.fixture';
 import {
@@ -75,5 +75,29 @@ describe('FinanceFacade', () => {
     expect(facade.receiptHref(GRACE.childId, PAYMENT_ID.cash)).toBe(
       `/api/v1/parent/children/${GRACE.childId}/payments/${PAYMENT_ID.cash}/receipt`,
     );
+  });
+
+  it('garde la dernière réponse par enfant et par année, pour la session', async () => {
+    const { api, facade } = setup();
+    const open = (year?: string) =>
+      TestBed.runInInjectionContext(() =>
+        facade.paymentsResource(() => ({ childId: GRACE.childId, academicYearId: year })),
+      );
+    open();
+    await flush();
+
+    api.payments.mockReturnValue(NEVER);
+    const back = open();
+    const past = open(YEAR.past);
+    await flush();
+
+    expect(back.value()).toHaveLength(4);
+    expect(back.refreshing()).toBe(true);
+    expect(past.value()).toBeUndefined();
+
+    TestBed.inject(SessionStore).reset();
+    const afterLogout = open();
+    await flush();
+    expect(afterLogout.value()).toBeUndefined();
   });
 });

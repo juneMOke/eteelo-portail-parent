@@ -95,6 +95,33 @@
     border: 0;
   }
 
+  /*
+   * Ce que la réponse du serveur vient d'ajouter ou de changer sur une page affichée depuis la
+   * mémoire de la session (RefreshHighlightDirective) : un voile Bleu Brume posé sur l'élément,
+   * même opaque, qui s'éteint en 2 s. Une couleur qui pâlit, pas un mouvement.
+   */
+  .refresh-highlight {
+    position: relative;
+  }
+
+  .refresh-highlight::after {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-tile);
+    background: var(--color-accent-soft);
+    mix-blend-mode: multiply;
+    content: '';
+    opacity: 0;
+    pointer-events: none;
+    animation: refresh-highlight 2s var(--ease-out-cubic);
+  }
+
+  @keyframes refresh-highlight {
+    from {
+      opacity: 1;
+    }
+  }
+
   /* Écran affiché par index.html pendant le chargement du bundle et du bootstrap. */
   .boot-splash {
     display: grid;

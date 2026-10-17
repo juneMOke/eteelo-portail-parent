@@ -17,6 +17,8 @@ import { SchoolContactComponent } from '../ui/school-contact/school-contact.comp
  * seul curseur de temps : le trimestre, partagé avec Mes notes. Le fait ciblé (`?case=`,
  * depuis Ma présence) se place en tête.
  */
+import { StaleNoticeComponent } from '../../../shared/ui/stale-notice/stale-notice.component';
+import { RefreshHighlightDirective } from '../../../shared/resource/refresh-highlight.directive';
 @Component({
   selector: 'app-discipline-page',
   imports: [
@@ -25,8 +27,10 @@ import { SchoolContactComponent } from '../ui/school-contact/school-contact.comp
     EmptyPeriodComponent,
     LoadErrorComponent,
     PillGroupComponent,
+    RefreshHighlightDirective,
     SchoolContactComponent,
     SkeletonComponent,
+    StaleNoticeComponent,
   ],
   templateUrl: './discipline.page.html',
   styleUrl: './discipline.page.css',

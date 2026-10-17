@@ -1,6 +1,10 @@
-import { Injectable, ResourceRef, Signal, computed, inject } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { Injectable, Signal, computed, inject } from '@angular/core';
 import { AcademicYear, ChildFees, Payment } from '../../../core/api/finance.contract';
+import {
+  SessionCache,
+  SessionResource,
+  sessionResource,
+} from '../../../shared/resource/session-cache';
 import { ParentApi, receiptUrl } from '../../../core/api/parent-api';
 import { childName } from '../../../core/session/child-format';
 import { SessionStore } from '../../../core/session/session.store';
@@ -14,12 +18,15 @@ export interface PaymentsRequest {
 /**
  * Façade de Mes finances en lecture. Chaque page relit ses données à l'ouverture : un
  * versement enregistré entre-temps apparaît au retour. États, restes, totaux et ordres viennent
- * du serveur ; rien n'est gardé sur le téléphone (invariant 5). Les documents (partage d'un
+ * du serveur. La dernière réponse reste en mémoire pour la session (`sessionResource`) et
+ * s'affiche au retour le temps que le serveur réponde ; rien n'est stocké sur le téléphone
+ * (invariant 5). Les documents (partage d'un
  * reçu, relevé de l'année) passent par `FinanceDocumentsStore`.
  */
 @Injectable({ providedIn: 'root' })
 export class FinanceFacade {
   private readonly api = inject(ParentApi);
+  private readonly cache = inject(SessionCache);
   private readonly session = inject(SessionStore);
 
   /** Téléphone du secrétariat de l'école ; null s'il n'est pas saisi. */
@@ -39,20 +46,32 @@ export class FinanceFacade {
   }
 
   /** À créer dans un contexte d'injection (initialiseur de champ d'une page). */
-  feesResource(childId: () => string): ResourceRef<ChildFees | undefined> {
-    return rxResource({ params: childId, stream: ({ params }) => this.api.fees(params) });
+  feesResource(childId: () => string): SessionResource<ChildFees> {
+    return sessionResource({
+      cache: this.cache,
+      name: 'finance.fees',
+      params: childId,
+      stream: ({ params }) => this.api.fees(params),
+    });
   }
 
-  paymentsResource(request: () => PaymentsRequest): ResourceRef<Payment[] | undefined> {
-    return rxResource({
+  paymentsResource(request: () => PaymentsRequest): SessionResource<Payment[]> {
+    return sessionResource({
+      cache: this.cache,
+      name: 'finance.payments',
       params: request,
       stream: ({ params }) => this.api.payments(params.childId, params.academicYearId),
     });
   }
 
   /** Années où l'enfant a été inscrit : relues au changement d'enfant seulement. */
-  academicYearsResource(childId: () => string): ResourceRef<AcademicYear[] | undefined> {
-    return rxResource({ params: childId, stream: ({ params }) => this.api.academicYears(params) });
+  academicYearsResource(childId: () => string): SessionResource<AcademicYear[]> {
+    return sessionResource({
+      cache: this.cache,
+      name: 'finance.academicYears',
+      params: childId,
+      stream: ({ params }) => this.api.academicYears(params),
+    });
   }
 
   /** Le reçu scellé d'un versement, ouvrable dans un nouvel onglet. */

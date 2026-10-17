@@ -1,6 +1,14 @@
 @if (view(); as view) {
+  @if (resource.stale()) {
+    <ui-stale-notice (retry)="resource.reload()" />
+  }
   @if (view.pending.length) {
-    <app-pending-absences [entries]="view.pending" (justify)="startJustification($event)" />
+    <app-pending-absences
+      [entries]="view.pending"
+      [uiRefreshHighlight]="view.pending"
+      [refreshed]="resource.refreshed()"
+      (justify)="startJustification($event)"
+    />
   }
 
   @if (view.empty) {
@@ -10,7 +18,11 @@
     />
   } @else {
     @if (attendance(); as attendance) {
-      <app-attendance-header [summary]="attendance.summary" />
+      <app-attendance-header
+        [summary]="attendance.summary"
+        [uiRefreshHighlight]="attendance.summary"
+        [refreshed]="resource.refreshed()"
+      />
     }
 
     @if (weekView(); as week) {
