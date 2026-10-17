@@ -114,6 +114,16 @@ export const ICONS = {
     'M9 22v-4h6v4',
     'M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01',
   ],
+  eye: [
+    'M2.1 12.3a1 1 0 0 1 0-.6 10.8 10.8 0 0 1 19.8 0 1 1 0 0 1 0 .6 10.8 10.8 0 0 1-19.8 0',
+    'M12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6z',
+  ],
+  files: [
+    'M15 2h-4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8',
+    'M16.7 2a2.4 2.4 0 0 1 1.7.7l1.9 1.9a2.4 2.4 0 0 1 .7 1.7',
+    'M5 7a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h8a2 2 0 0 0 1.7-1',
+  ],
+  'check-circle': ['M21.8 10A10 10 0 1 1 17 3.3', 'm9 11 3 3L22 4'],
 } as const satisfies Record<string, readonly string[]>;
 
 export type IconName = keyof typeof ICONS;

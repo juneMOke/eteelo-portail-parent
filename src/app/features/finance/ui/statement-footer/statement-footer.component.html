@@ -1,16 +1,20 @@
+<span class="tile" aria-hidden="true"
+  ><ui-icon name="files" [size]="20" [strokeWidth]="1.9"
+/></span>
 <div class="text">
   <p class="name">Relevé de l’année {{ yearLabel() }}</p>
-  <p class="meta">Tous les versements en un PDF</p>
+  <p class="meta">Un seul PDF avec tous les versements enregistrés</p>
 </div>
 <button
   type="button"
-  class="button secondary"
-  [attr.aria-label]="'Ouvrir le relevé de l’année ' + yearLabel()"
-  [attr.aria-busy]="opening()"
-  [disabled]="opening()"
-  (click)="open.emit()"
+  class="button secondary download"
+  [attr.aria-label]="'Télécharger le relevé de l’année ' + yearLabel()"
+  [attr.aria-busy]="loading()"
+  [disabled]="loading()"
+  (click)="download.emit()"
 >
-  Ouvrir
+  <ui-icon name="download" [size]="16" [strokeWidth]="2" />
+  Télécharger
 </button>
 @if (failure(); as failure) {
   <p class="failure" role="alert">{{ failure }}</p>

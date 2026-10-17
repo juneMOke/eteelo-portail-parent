@@ -26,7 +26,11 @@ import {
   allocationsLabel,
   paymentMonths,
   paymentTitle,
+  latestReceiptLabel,
+  receiptFees,
   receiptMeta,
+  recordedOnLabel,
+  statementFileName,
   receivedLabel,
   spokenFee,
 } from './finance-formats';
@@ -119,6 +123,18 @@ describe('finance-formats', () => {
 
   it('écrit la ligne d’un reçu', () => {
     expect(receiptMeta(CASH_PAYMENT, 'fr')).toBe('Sam. 5 sept. · Espèces');
+    expect(receiptFees(AIRTEL_PAYMENT)).toBe('Frais scolaires · 1re tranche');
+    expect(receiptFees({ ...AIRTEL_PAYMENT, allocations: [] })).toBeNull();
+    expect(
+      receiptFees({
+        ...AIRTEL_PAYMENT,
+        allocations: [...AIRTEL_PAYMENT.allocations, ...AIRTEL_PAYMENT.allocations],
+      }),
+    ).toBe('2 frais');
+    expect(recordedOnLabel(AIRTEL_PAYMENT, 'fr')).toBe('Versement enregistré le 22/09');
+    expect(latestReceiptLabel([AIRTEL_PAYMENT, CASH_PAYMENT], 'fr')).toBe('dernier le 22/09');
+    expect(latestReceiptLabel([], 'fr')).toBeNull();
+    expect(statementFileName('2026-2027')).toBe('Releve-2026-2027.pdf');
   });
 
   it('range le journal par mois, dans l’ordre du serveur, sans total calculé', () => {

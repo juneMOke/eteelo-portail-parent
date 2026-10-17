@@ -6,7 +6,7 @@
   [attr.aria-label]="'Ouvrir le ' + name()"
   [title]="'Ouvrir le ' + name()"
 >
-  <ui-icon name="external-link" [size]="18" />
+  <ui-icon name="eye" [size]="18" [strokeWidth]="2" />
 </a>
 <button
   type="button"
@@ -17,5 +17,5 @@
   [disabled]="sharing()"
   (click)="share.emit()"
 >
-  <ui-icon name="share" [size]="18" />
+  <ui-icon name="share" [size]="18" [strokeWidth]="2" />
 </button>

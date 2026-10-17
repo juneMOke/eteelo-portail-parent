@@ -1,27 +1,18 @@
-@if (yearOptions().length) {
-  @if (wide()) {
-    <ui-pill-group
-      label="Année scolaire"
-      [options]="yearOptions()"
+@if (data(); as data) {
+  @if (showBanner()) {
+    <app-year-banner
+      [years]="yearChoices()"
       [checked]="checkedYear()"
-      (pick)="pickYear($event)"
-    />
-  } @else {
-    <ui-filter-menu
-      caption="Année scolaire"
-      icon="calendar"
-      [options]="yearMenu()"
-      [checked]="checkedYear() ?? null"
-      [open]="yearMenuOpen()"
-      (openChange)="yearMenuOpen.set($event)"
+      [countLabel]="receiptsCount()"
+      [latestLabel]="latestReceipt()"
+      [count]="receipts().length"
+      [wide]="wide()"
       (pick)="pickYear($event)"
     />
   }
-}
 
-@if (data(); as data) {
   @if (receipts().length) {
-    <ui-section-card heading="Reçus de l’année" icon="file-text" [count]="receiptsCount()">
+    <ui-section-card [heading]="receiptsHeading()" icon="file-text" [count]="receiptsCount()">
       <ul class="rows" [attr.aria-busy]="resource.isLoading()">
         @for (payment of receipts(); track payment.paymentId) {
           <li>
@@ -38,21 +29,15 @@
         }
       </ul>
     </ui-section-card>
-  } @else {
-    <ui-empty-period
-      [heading]="emptyHeading()"
-      [linkLabel]="feesLinkLabel()"
-      [link]="feesLink()"
-    />
-  }
 
-  @if (data.length) {
     <app-statement-footer
       [yearLabel]="yearLabel()"
-      [opening]="statementOpening()"
+      [loading]="statementLoading()"
       [failure]="statementFailure()"
-      (open)="openStatement()"
+      (download)="downloadStatement()"
     />
+  } @else {
+    <ui-empty-period [heading]="emptyHeading()" [linkLabel]="feesLinkLabel()" [link]="feesLink()" />
   }
 } @else if (resource.error()) {
   <ui-load-error
@@ -63,8 +48,18 @@
 } @else {
   <div class="loading" role="status" aria-busy="true">
     <span class="visually-hidden">Chargement des reçus…</span>
-    <ui-skeleton height="64px" />
-    <ui-skeleton height="64px" />
-    <ui-skeleton height="64px" />
+    <ui-skeleton class="banner" height="68px" />
+    <ui-skeleton height="72px" />
+    <ui-skeleton height="72px" />
+    <ui-skeleton height="72px" />
   </div>
 }
+
+<div class="saved-region" role="status">
+  @if (saved(); as message) {
+    <p class="saved">
+      <ui-icon name="check-circle" [size]="18" [strokeWidth]="2" />
+      {{ message }}
+    </p>
+  }
+</div>

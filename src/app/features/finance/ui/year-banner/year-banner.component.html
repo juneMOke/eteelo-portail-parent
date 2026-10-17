@@ -1,0 +1,91 @@
+@if (wide()) {
+  <div class="summary">
+    <span class="tile" aria-hidden="true"
+      ><ui-icon name="calendar" [size]="20" [strokeWidth]="1.9"
+    /></span>
+    <div class="text">
+      <p class="caption">Année scolaire</p>
+      @if (countLabel(); as count) {
+        <p class="count">
+          {{ count }}
+          @if (latestLabel(); as latest) {
+            <span class="latest">· {{ latest }}</span>
+          }
+        </p>
+      }
+    </div>
+  </div>
+  @if (years().length > 1) {
+    <div class="rail" role="radiogroup" aria-label="Année scolaire">
+      @for (year of recent(); track year.id; let index = $index) {
+        <button
+          #pill
+          type="button"
+          role="radio"
+          class="pill"
+          [attr.aria-checked]="year.id === checked()"
+          [attr.tabindex]="year.id === checked() || (!checked() && index === 0) ? 0 : -1"
+          (click)="choose(year.id)"
+          (keydown)="move($event, index)"
+        >
+          {{ year.label }}
+        </button>
+      }
+      @if (older().length) {
+        <div class="older">
+          <button
+            type="button"
+            class="pill"
+            aria-haspopup="true"
+            [attr.aria-expanded]="olderOpen()"
+            [attr.aria-checked]="!!checkedOlder()"
+            (click)="olderOpen.set(!olderOpen())"
+          >
+            {{ checkedOlder()?.label ?? 'Plus ancien' }}
+            <ui-icon name="chevron-down" [size]="14" [strokeWidth]="2.2" />
+          </button>
+          @if (olderOpen()) {
+            <div class="scrim" aria-hidden="true" (click)="olderOpen.set(false)"></div>
+            <ul class="older-list" (keydown.escape)="olderOpen.set(false)">
+              @for (year of older(); track year.id) {
+                <li>
+                  <button
+                    type="button"
+                    class="older-option"
+                    [attr.aria-current]="year.id === checked() ? 'true' : null"
+                    (click)="choose(year.id)"
+                  >
+                    {{ year.label }}
+                    @if (year.id === checked()) {
+                      <ui-icon name="check" [size]="16" [strokeWidth]="2.4" />
+                    }
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="single">{{ checkedLabel() }}</p>
+  }
+} @else if (years().length > 1) {
+  <ui-filter-menu
+    caption="Année scolaire"
+    icon="calendar"
+    [options]="menuOptions()"
+    [checked]="checked() ?? null"
+    [open]="menuOpen()"
+    (openChange)="menuOpen.set($event)"
+    (pick)="choose($event)"
+  />
+} @else {
+  <p class="single">
+    <span class="caption">Année scolaire</span>
+    {{ checkedLabel() }}
+    @if (countLabel(); as count) {
+      <span class="phone-summary">· {{ count }}</span>
+    }
+  </p>
+}

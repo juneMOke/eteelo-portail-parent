@@ -1,13 +1,28 @@
-<span class="icon" aria-hidden="true"><ui-icon name="file-text" [size]="20" /></span>
+<span class="tile" aria-hidden="true"
+  ><ui-icon name="file-text" [size]="21" [strokeWidth]="1.8"
+/></span>
 <p class="name">
-  Reçu n° <span class="number">{{ receiptNumber() }}</span>
+  @if (receiptNumber(); as number) {
+    Reçu n° <span class="number">{{ number }}</span>
+  } @else {
+    Reçu en préparation
+  }
+</p>
+<p class="meta">
+  {{ meta() }}
+  @if (fees(); as fees) {
+    <span class="fees">· {{ fees }}</span>
+  }
 </p>
 <p class="amount">{{ payment().amounts | amount }}</p>
-<p class="meta">{{ meta() }}</p>
-<app-receipt-actions
-  class="actions"
-  [href]="href()"
-  [receiptNumber]="receiptNumber()"
-  [sharing]="sharing()"
-  (share)="share.emit()"
-/>
+@if (receiptNumber(); as number) {
+  <app-receipt-actions
+    class="actions"
+    [href]="href()"
+    [receiptNumber]="number"
+    [sharing]="sharing()"
+    (share)="share.emit()"
+  />
+} @else {
+  <p class="recorded">{{ recordedOn() }}</p>
+}

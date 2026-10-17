@@ -259,6 +259,28 @@ export function receiptMeta(payment: Payment, locale: string): string {
   return `${day.charAt(0).toUpperCase()}${day.slice(1)} · ${methodView(payment.method).label}`;
 }
 
+/** « 2e tranche » tel que libellé, « 2 frais » : ce que couvre un reçu, en fin de sous-ligne. */
+export function receiptFees({ allocations }: Payment): string | null {
+  if (!allocations.length) return null;
+  return allocations.length === 1 ? allocations[0].label : `${allocations.length} frais`;
+}
+
+/** « Versement enregistré le 26/09 » : un reçu pas encore scellé, à la place de ses boutons. */
+export function recordedOnLabel(payment: Payment, locale: string): string {
+  return `Versement enregistré le ${shortDate(instantDay(payment.paidAt, locale), locale)}`;
+}
+
+/** « dernier le 22/09 » : le reçu le plus récent de l'année (le serveur le met en tête). */
+export function latestReceiptLabel(payments: readonly Payment[], locale: string): string | null {
+  const [latest] = payments;
+  return latest ? `dernier le ${shortDate(instantDay(latest.paidAt, locale), locale)}` : null;
+}
+
+/** « Releve-2026-2027.pdf ». */
+export function statementFileName(yearLabel: string): string {
+  return `Releve-${yearLabel}.pdf`;
+}
+
 export interface PaymentMonth {
   readonly month: CivilMonth;
   /** « Septembre 2026 ». */
