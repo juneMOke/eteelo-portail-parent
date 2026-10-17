@@ -1,55 +1,76 @@
 /*
- * Téléphone : pastille d'icône, numéro, montant dessous, date et moyen ; les deux boutons ronds
- * à droite, toujours 44 px.
+ * Téléphone : numéro, date et moyen, montant dessous ; les deux boutons ronds à droite,
+ * toujours 44 px. Pas de liseré : un reçu n'a pas d'urgence.
  */
 :host {
   display: grid;
   grid-template-areas:
-    'icon name actions'
-    'icon amount actions'
-    'icon meta actions';
-  grid-template-columns: auto minmax(0, 1fr) auto;
+    'name actions'
+    'meta actions'
+    'amount actions';
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   column-gap: var(--space-3);
-  padding: var(--space-2);
+  padding: var(--space-3) 10px var(--space-3) 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-tile);
+  background: var(--color-surface);
+  transition:
+    translate 200ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 200ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-color 200ms;
 }
 
-.icon {
-  display: grid;
-  grid-area: icon;
-  width: 40px;
-  height: 40px;
+.tile {
+  display: none;
+  grid-area: tile;
+  width: 44px;
+  height: 44px;
   place-items: center;
-  border-radius: var(--radius-md);
+  border-radius: 13px;
   background: var(--color-accent-soft);
   color: var(--color-accent);
 }
 
+/* Le numéro se lit en entier : il passe à la ligne plutôt que d'être coupé. */
 .name {
   grid-area: name;
   color: var(--color-heading);
   font-size: var(--text-card-title);
   font-weight: var(--weight-semibold);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .number {
   font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
 }
 
 .meta {
   grid-area: meta;
-  color: var(--color-text-secondary);
-  font-size: var(--text-sm);
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 0.78125rem;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Le frais couvert, au-delà du téléphone seulement : la sous-ligne tient sur une ligne. */
+.fees {
+  display: none;
 }
 
 .amount {
   grid-area: amount;
+  margin-top: var(--space-1);
   color: var(--color-heading);
   font-family: var(--font-title);
-  font-size: var(--text-lg);
+  font-size: var(--text-amount);
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-semibold);
+  line-height: 1.1;
   white-space: nowrap;
 }
 
@@ -57,22 +78,74 @@
   grid-area: actions;
 }
 
-/* Grand écran : le montant rejoint la colonne de droite, avant les boutons. */
-@media (min-width: 905px) {
+/* Au téléphone, sous le montant, sur toute la largeur. */
+.recorded {
+  grid-area: recorded;
+  margin-top: var(--space-1);
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+}
+
+/* En préparation : filet pointillé, tuile Papier, pas de bouton grisé. */
+:host(.pending) {
+  grid-template-areas:
+    'name'
+    'meta'
+    'amount'
+    'recorded';
+  grid-template-columns: minmax(0, 1fr);
+  border: 1px dashed var(--color-border-strong);
+}
+
+:host(.pending) .tile {
+  background: var(--color-page);
+  color: var(--color-text-muted);
+}
+
+@media (hover: hover) {
+  :host(:hover) {
+    border-color: var(--color-accent-line);
+    box-shadow: var(--shadow-lift);
+    translate: 0 -2px;
+  }
+}
+
+/* Tablette et bureau : tuile à gauche, montant à droite de la colonne centrale, puis les boutons. */
+@media (min-width: 600px) {
   :host {
     grid-template-areas:
-      'icon name amount actions'
-      'icon meta amount actions';
+      'tile name amount actions'
+      'tile meta amount actions';
     grid-template-columns: auto minmax(0, 1fr) auto auto;
+    column-gap: 14px;
     padding: var(--space-3);
   }
 
-  .icon {
-    width: 44px;
-    height: 44px;
+  :host(.pending) {
+    grid-template-areas:
+      'tile name amount recorded'
+      'tile meta amount recorded';
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+  }
+
+  .recorded {
+    max-width: 11rem;
+    margin-top: 0;
+    text-align: right;
+  }
+
+  .tile {
+    display: grid;
+  }
+
+  .fees {
+    display: inline;
   }
 
   .amount {
+    min-width: 64px;
+    margin-top: 0;
+    font-size: var(--text-lg);
     text-align: right;
   }
 }

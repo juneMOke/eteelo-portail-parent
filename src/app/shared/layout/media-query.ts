@@ -3,6 +3,9 @@ import { DestroyRef, Signal, inject, signal } from '@angular/core';
 /** Point de rupture principal (grille Material) : au-dessus, menu latéral et vues larges. */
 export const WIDE_SCREEN = '(min-width: 905px)';
 
+/** Seuil secondaire : tablette, tuiles et pilules sur plusieurs colonnes. */
+export const TABLET_SCREEN = '(min-width: 600px)';
+
 /**
  * Vrai tant que la media query correspond ; suit le redimensionnement et la rotation. À créer
  * dans un contexte d'injection. Sans `matchMedia` (rendu de test), répond faux : la mise en

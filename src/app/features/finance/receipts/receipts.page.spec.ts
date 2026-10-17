@@ -48,19 +48,27 @@ describe('ReceiptsPage', () => {
 
   const names = (el: HTMLElement) => [...el.querySelectorAll('app-receipt-row .name')].map(text);
 
-  it('liste un reçu par ligne pour l’année en cours, sans les reçus en préparation', async () => {
+  it('liste un reçu par ligne pour l’année en cours, en préparation compris', async () => {
     const { el } = await render();
 
-    expect(text(el.querySelector('ui-filter-menu .value-label'))).toBe('2026-2027');
-    expect(text(el.querySelector('ui-filter-menu .value-count'))).toBe('· 3 reçus');
-    expect(text(el.querySelector('ui-section-card .count'))).toBe('3 reçus');
+    expect(text(el.querySelector('app-year-banner ui-filter-menu .value-label'))).toBe('2026-2027');
+    expect(text(el.querySelector('ui-filter-menu .value-count'))).toBe('· 4 reçus');
+    expect(text(el.querySelector('ui-section-card h2'))).toBe('Reçus de l’année');
+    expect(text(el.querySelector('ui-section-card .count'))).toBe('4 reçus');
     expect(names(el)).toEqual([
+      'Reçu en préparation',
       'Reçu n° ETL-RC-2627-001061',
       'Reçu n° ETL-RC-2627-001042',
       'Reçu n° ETL-RC-2627-001031',
     ]);
-    expect(text(el.querySelector('app-receipt-row .meta'))).toBe('Sam. 12 sept. · Espèces');
-    expect(text(el.querySelector('app-receipt-row .amount'))).toBe('50 000 FC');
+    const [pending, sealed] = el.querySelectorAll('app-receipt-row');
+    expect(text(pending.querySelector('.recorded'))).toBe('Versement enregistré le 22/09');
+    expect(pending.querySelector('app-receipt-actions')).toBeNull();
+    expect(text(sealed.querySelector('.meta'))).toMatch(/^Sam\. 12 sept\. · Espèces · /);
+    expect(text(sealed.querySelector('.amount'))).toBe('50 000 FC');
+    expect(sealed.querySelector('app-receipt-actions a')?.getAttribute('aria-label')).toBe(
+      'Ouvrir le reçu n° ETL-RC-2627-001061',
+    );
     expect(text(el.querySelector('app-statement-footer .name'))).toBe(
       'Relevé de l’année 2026-2027',
     );
@@ -70,6 +78,7 @@ describe('ReceiptsPage', () => {
     const { el, api } = await render({ year: YEAR.past });
 
     expect(api.payments).toHaveBeenCalledExactlyOnceWith(GRACE.childId, YEAR.past);
+    expect(text(el.querySelector('ui-section-card h2'))).toBe('Reçus 2025-2026');
     expect(names(el)).toEqual(['Reçu n° ETL-RC-2526-000912', 'Reçu n° ETL-RC-2526-000415']);
     expect(text(el.querySelector('app-statement-footer .name'))).toBe(
       'Relevé de l’année 2025-2026',
@@ -90,24 +99,30 @@ describe('ReceiptsPage', () => {
     );
   });
 
-  it('n’offre pas de choix d’année sans année précédente', async () => {
+  it('n’offre pas de choix d’année sans année précédente : le libellé seul', async () => {
     const { el } = await render({ years: [ACADEMIC_YEARS[0]] });
 
-    expect(el.querySelector('ui-pill-group')).toBeNull();
     expect(el.querySelector('ui-filter-menu')).toBeNull();
+    expect(text(el.querySelector('app-year-banner .single'))).toBe(
+      'Année scolaire 2026-2027 · 4 reçus',
+    );
   });
 
-  it('génère le relevé de l’année affichée au geste', async () => {
-    const tab = { location: { href: '' }, close: vi.fn() };
-    vi.spyOn(window, 'open').mockReturnValue(tab as unknown as Window);
+  it('télécharge le relevé de l’année affichée au geste, et le confirme', async () => {
     URL.createObjectURL = vi.fn(() => 'blob:releve');
-    const { el, api } = await render({ year: YEAR.past });
+    URL.revokeObjectURL = vi.fn();
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => undefined);
+    const { el, api, fixture } = await render({ year: YEAR.past });
 
     el.querySelector<HTMLButtonElement>('app-statement-footer button')!.click();
     await settle();
+    await fixture.whenStable();
 
     expect(api.statement).toHaveBeenCalledExactlyOnceWith(GRACE.childId, YEAR.past);
-    expect(tab.location.href).toBe('blob:releve');
+    expect(click).toHaveBeenCalledOnce();
+    expect(text(el.querySelector('.saved'))).toBe('Relevé de l’année 2025-2026 enregistré');
     vi.restoreAllMocks();
   });
 
@@ -120,12 +135,11 @@ describe('ReceiptsPage', () => {
     expect(el.querySelector('app-statement-footer')).toBeNull();
   });
 
-  it('dit des reçus encore en préparation', async () => {
+  it('montre un reçu encore en préparation, sans bouton', async () => {
     const { el } = await render({ payments: [AIRTEL_PAYMENT] });
 
-    expect(text(el.querySelector('ui-empty-period h2'))).toBe(
-      'Les reçus de vos versements sont en préparation.',
-    );
-    expect(el.querySelector('ui-empty-period a')).toBeNull();
+    expect(names(el)).toEqual(['Reçu en préparation']);
+    expect(el.querySelector('app-receipt-row button')).toBeNull();
+    expect(el.querySelector('ui-empty-period')).toBeNull();
   });
 });

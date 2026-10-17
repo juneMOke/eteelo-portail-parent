@@ -19,6 +19,7 @@
 .action {
   transition:
     translate var(--duration-hover) var(--ease-out),
+    scale 130ms,
     background-color var(--duration-hover);
 }
 
@@ -27,6 +28,11 @@
     background: var(--color-accent-soft);
     translate: 0 -1px;
   }
+}
+
+.action:active:not(:disabled) {
+  background: var(--color-accent-soft);
+  scale: 0.96;
 }
 
 .action:disabled {

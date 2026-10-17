@@ -8,7 +8,6 @@ import { FinanceDocumentsStore, receiptKey, statementKey } from './finance-docum
 
 describe('FinanceDocumentsStore', () => {
   const pdf = new Blob(['%PDF'], { type: 'application/pdf' });
-  const tab = { location: { href: '' }, close: vi.fn() };
 
   function setup(statement: () => Observable<Blob> = () => of(pdf)) {
     const api = { receipt: vi.fn(() => of(pdf)), statement: vi.fn(statement) };
@@ -19,10 +18,9 @@ describe('FinanceDocumentsStore', () => {
   }
 
   beforeEach(() => {
-    tab.close.mockClear();
     URL.createObjectURL = vi.fn(() => 'blob:document');
     URL.revokeObjectURL = vi.fn();
-    vi.spyOn(window, 'open').mockReturnValue(tab as unknown as Window);
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
     Object.assign(navigator, { canShare: () => true, share: vi.fn(async () => undefined) });
   });
 
@@ -35,35 +33,46 @@ describe('FinanceDocumentsStore', () => {
   it('partage le reçu scellé sous son numéro', async () => {
     const { api, store } = setup();
 
-    await store.shareReceipt(GRACE.childId, PAYMENT_ID.cash, 'ETL-RC-2627-001042');
+    const outcome = await store.shareReceipt(GRACE.childId, PAYMENT_ID.cash, 'ETL-RC-2627-001042');
 
+    expect(outcome).toBe('shared');
     expect(api.receipt).toHaveBeenCalledWith(GRACE.childId, PAYMENT_ID.cash);
     const [{ files }] = vi.mocked(navigator.share).mock.calls[0] as [{ files: File[] }];
     expect(files[0].name).toBe('ETL-RC-2627-001042.pdf');
     expect(store.pending()).toBeNull();
   });
 
-  it('ne régénère pas le relevé déjà ouvert pendant la visite', async () => {
-    const { api, store } = setup();
+  it('télécharge un reçu quand le navigateur ne sait pas le partager', async () => {
+    const { store } = setup();
+    Object.assign(navigator, { canShare: () => false });
 
-    await store.openStatement(GRACE.childId, YEAR.past);
-    await store.openStatement(GRACE.childId, YEAR.past);
+    const outcome = await store.shareReceipt(GRACE.childId, PAYMENT_ID.cash, 'ETL-RC-2627-001042');
 
-    expect(api.statement).toHaveBeenCalledExactlyOnceWith(GRACE.childId, YEAR.past);
-    expect(window.open).toHaveBeenCalledTimes(2);
-    expect(tab.location.href).toBe('blob:document');
+    expect(outcome).toBe('downloaded');
+    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledOnce();
   });
 
-  it('dit le plafond atteint, et referme l’onglet ouvert pour rien', async () => {
+  it('ne régénère pas le relevé déjà téléchargé pendant la visite', async () => {
+    const { api, store } = setup();
+
+    expect(await store.downloadStatement(GRACE.childId, 'Releve-2025-2026.pdf', YEAR.past)).toBe(
+      true,
+    );
+    await store.downloadStatement(GRACE.childId, 'Releve-2025-2026.pdf', YEAR.past);
+
+    expect(api.statement).toHaveBeenCalledExactlyOnceWith(GRACE.childId, YEAR.past);
+    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(2);
+  });
+
+  it('dit le plafond atteint', async () => {
     const { store } = setup(() => throwError(() => new HttpErrorResponse({ status: 429 })));
 
-    await store.openStatement(GRACE.childId);
+    expect(await store.downloadStatement(GRACE.childId, 'Releve-2026-2027.pdf')).toBe(false);
 
     expect(store.failure()).toEqual({
       key: statementKey(undefined),
       message: 'Trop de demandes en peu de temps. Réessayez dans quelques minutes.',
     });
-    expect(tab.close).toHaveBeenCalledOnce();
   });
 
   it('dit un document qui ne vient pas, et l’efface au geste suivant', async () => {

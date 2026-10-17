@@ -5,7 +5,7 @@ import { mockParentApi } from './support/parent-api';
 
 const RECEIPTS = `/c/${GRACE.childId}/finance/receipts`;
 
-/** Choisit une année : pilule au grand écran, menu déroulant au téléphone et à la tablette. */
+/** Choisit une année : pilule dès la tablette, menu déroulant au téléphone. */
 async function pickYear(page: Page, label: string): Promise<void> {
   const pill = page.getByRole('radio', { name: label });
   if (await pill.isVisible()) return pill.click();
@@ -23,23 +23,28 @@ test.describe('Mes reçus', () => {
     await expect(page).toHaveURL(RECEIPTS);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mes reçus');
     await expect(
-      page.locator('ui-pill-group [aria-checked="true"], ui-filter-menu .value-label'),
+      page.locator('app-year-banner [aria-checked="true"], ui-filter-menu .value-label'),
     ).toHaveText('2026-2027');
-    await expect(page.locator('ui-section-card .count')).toHaveText('3 reçus');
+    await expect(page.locator('ui-section-card .count')).toHaveText('4 reçus');
     await expect(page.locator('app-receipt-row .name')).toHaveText([
+      'Reçu en préparation',
       'Reçu n° ETL-RC-2627-001061',
       'Reçu n° ETL-RC-2627-001042',
       'Reçu n° ETL-RC-2627-001031',
     ]);
+    await expect(page.getByText('Versement enregistré le 22/09')).toBeVisible();
     await expect(
-      page.getByRole('button', { name: 'Ouvrir le relevé de l’année 2026-2027' }),
+      page.getByRole('link', { name: 'Ouvrir le reçu n° ETL-RC-2627-001061' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Télécharger le relevé de l’année 2026-2027' }),
     ).toBeVisible();
   });
 
   test('ouvre une année précédente', async ({ page }) => {
     await mockParentApi(page);
     await page.goto(RECEIPTS);
-    await expect(page.locator('app-receipt-row')).toHaveCount(3);
+    await expect(page.locator('app-receipt-row')).toHaveCount(4);
 
     await pickYear(page, '2025-2026');
 
@@ -50,18 +55,21 @@ test.describe('Mes reçus', () => {
     ]);
   });
 
-  test('ouvre le relevé de l’année dans un nouvel onglet', async ({ page }) => {
+  test('télécharge le relevé de l’année et le confirme', async ({ page }) => {
     await mockParentApi(page);
     await page.goto(RECEIPTS);
 
     const statement = page.waitForRequest(
       (request) => request.method() === 'POST' && request.url().endsWith('/statement'),
     );
-    const tab = page.waitForEvent('popup');
-    await page.getByRole('button', { name: 'Ouvrir le relevé de l’année 2026-2027' }).click();
+    const file = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'Télécharger le relevé de l’année 2026-2027' }).click();
 
     await statement;
-    await expect((await tab).url()).toMatch(/^(blob:|about:blank)/);
+    expect((await file).suggestedFilename()).toBe('Releve-2026-2027.pdf');
+    await expect(page.getByRole('status').filter({ hasText: 'enregistré' })).toHaveText(
+      'Relevé de l’année 2026-2027 enregistré',
+    );
   });
 
   test('dit une année sans versement, sans relevé', async ({ page }) => {

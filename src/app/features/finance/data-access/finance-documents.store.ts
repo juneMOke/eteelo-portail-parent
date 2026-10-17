@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { Observable, firstValueFrom } from 'rxjs';
 import { ParentApi } from '../../../core/api/parent-api';
-import { openInNewTab, shareOrDownload } from '../../../shared/files/document-actions';
+import { ShareOutcome, download, shareOrDownload } from '../../../shared/files/document-actions';
 import { receiptFileName } from './finance-formats';
 
 /** Un échec de document, rattaché au geste qui l'a provoqué. */
@@ -34,9 +34,9 @@ export function statementKey(academicYearId: string | undefined): string {
 }
 
 /**
- * Les documents de Mes finances : partager un reçu, ouvrir le relevé de l'année. Un store par
+ * Les documents de Mes finances : partager un reçu, télécharger le relevé de l'année. Un store par
  * page. Chaque document chargé reste en mémoire le temps de la visite, jamais sur le téléphone
- * (invariant 5) : rouvrir le relevé ne le régénère pas, et chaque génération prend un numéro
+ * (invariant 5) : retélécharger le relevé ne le régénère pas, et chaque génération prend un numéro
  * de pièce à l'école (POST, plafond d'écriture du portail).
  */
 export const FinanceDocumentsStore = signalStore(
@@ -67,29 +67,45 @@ export const FinanceDocumentsStore = signalStore(
     }
 
     return {
-      /** Partage le reçu scellé (WhatsApp, courriel), ou le télécharge à défaut. */
-      async shareReceipt(childId: string, paymentId: string, receiptNumber: string): Promise<void> {
-        if (busy()) return;
+      /**
+       * Partage le reçu scellé (WhatsApp, courriel), ou le télécharge à défaut : la page confirme
+       * un téléchargement. Null si rien ne s'est fait (geste en cours, échec, partage refusé).
+       */
+      async shareReceipt(
+        childId: string,
+        paymentId: string,
+        receiptNumber: string,
+      ): Promise<ShareOutcome | null> {
+        if (busy()) return null;
         const key = receiptKey(paymentId);
         try {
           const blob = await load(key, () => api.receipt(childId, paymentId));
           const name = receiptFileName(receiptNumber);
-          await shareOrDownload(new File([blob], name, { type: 'application/pdf' }));
+          return await shareOrDownload(new File([blob], name, { type: 'application/pdf' }));
         } catch {
           // Échec de chargement déjà dans `failure` ; un partage refusé n'a rien à dire.
+          return null;
         }
       },
 
-      /** Ouvre le relevé de l'année dans un nouvel onglet ; sans année, l'année courante. */
-      async openStatement(childId: string, academicYearId?: string): Promise<void> {
-        if (busy()) return;
+      /**
+       * Télécharge le relevé de l'année sous `fileName` ; sans année, l'année courante. Vrai
+       * une fois le fichier remis au navigateur.
+       */
+      async downloadStatement(
+        childId: string,
+        fileName: string,
+        academicYearId?: string,
+      ): Promise<boolean> {
+        if (busy()) return false;
         const key = statementKey(academicYearId);
         try {
-          await openInNewTab('Releve.pdf', () =>
-            load(key, () => api.statement(childId, academicYearId)),
-          );
+          const blob = await load(key, () => api.statement(childId, academicYearId));
+          download(new File([blob], fileName, { type: 'application/pdf' }));
+          return true;
         } catch {
           // Échec déjà dans `failure`.
+          return false;
         }
       },
     };
