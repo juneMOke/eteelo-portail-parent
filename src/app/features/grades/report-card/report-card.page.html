@@ -1,4 +1,7 @@
 @if (report(); as report) {
+  @if (resource.stale()) {
+    <ui-stale-notice (retry)="resource.reload()" />
+  }
   @if (report.selection; as current) {
     @if (periods(); as periods) {
       <app-term-picker
@@ -16,13 +19,17 @@
         heading="Le bulletin de cette période sera publié par l’école en fin de période."
       />
     } @else {
-      <app-average-header [report]="report" />
+      <app-average-header
+        [report]="report"
+        [uiRefreshHighlight]="report"
+        [refreshed]="resource.refreshed()"
+      />
 
       <section class="lines" aria-labelledby="report-lines-title">
         <h2 id="report-lines-title" class="lines-title">Moyenne par cours</h2>
         <ul>
           @for (line of report.lines; track line.courseId) {
-            <li>
+            <li [uiRefreshHighlight]="line" [refreshed]="resource.refreshed()">
               <app-report-line
                 [line]="line"
                 [link]="coursesLink()"

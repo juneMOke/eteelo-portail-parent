@@ -1,6 +1,11 @@
 @if (data(); as data) {
+  @if (resource.stale()) {
+    <ui-stale-notice (retry)="resource.reload()" />
+  }
   @if (data.fees.length) {
     <app-balance-summary
+      [uiRefreshHighlight]="data.totals"
+      [refreshed]="resource.refreshed()"
       [yearLabel]="yearLabel()"
       [totals]="data.totals"
       [asOf]="data.asOf"
@@ -25,7 +30,9 @@
     >
       <ul class="rows" [attr.aria-busy]="resource.isLoading()">
         @for (item of lines(); track item.id) {
-          <li><app-finance-line [line]="item.line" (activate)="fiche.show(item.id)" /></li>
+          <li [uiRefreshHighlight]="item.line" [refreshed]="resource.refreshed()">
+            <app-finance-line [line]="item.line" (activate)="fiche.show(item.id)" />
+          </li>
         }
       </ul>
     </ui-section-card>

@@ -1,4 +1,7 @@
 @if (week(); as week) {
+  @if (resource.stale()) {
+    <ui-stale-notice (retry)="resource.reload()" />
+  }
   <ui-week-banner
     [label]="label()"
     [shortLabel]="shortLabel()"
@@ -25,7 +28,7 @@
         <h2 class="day-heading" [id]="'day-' + day.date">{{ day.label }}</h2>
         <ul class="cards">
           @for (item of day.items; track item.evaluationId) {
-            <li>
+            <li [uiRefreshHighlight]="item" [refreshed]="resource.refreshed()">
               <app-result-card
                 [evaluation]="item"
                 [link]="cardLink(item)"

@@ -64,7 +64,9 @@ describe('AttendancePage', () => {
 
     expect(texts(el, 'app-pending-absences .day')).toEqual(['Mardi 29/09', 'Vendredi 02/10']);
     expect(el.querySelector('app-pending-absences .more')?.textContent).toContain('et 1 autre');
-    expect(el.querySelector('app-attendance-header .days')?.textContent).toBe('20 jours présents sur 25');
+    expect(el.querySelector('app-attendance-header .days')?.textContent).toBe(
+      '20 jours présents sur 25',
+    );
     expect(el.querySelector('app-month-navigator .title')?.textContent).toBe('Octobre 2026');
     expect(el.querySelector('app-month-navigator .meta')?.textContent).toBe(
       '3 jours d’école · 2 absences · aucun retard',

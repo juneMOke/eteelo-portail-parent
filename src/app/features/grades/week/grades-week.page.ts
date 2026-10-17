@@ -32,13 +32,17 @@ import { ResultCardComponent } from '../ui/result-card/result-card.component';
  * (`?date=`) : la fiche y ramène, le changement d'enfant la garde. La semaine affichée reste à
  * l'écran pendant que la suivante arrive, plutôt qu'un squelette à chaque flèche.
  */
+import { StaleNoticeComponent } from '../../../shared/ui/stale-notice/stale-notice.component';
+import { RefreshHighlightDirective } from '../../../shared/resource/refresh-highlight.directive';
 @Component({
   selector: 'app-grades-week-page',
   imports: [
     EmptyPeriodComponent,
     LoadErrorComponent,
+    RefreshHighlightDirective,
     ResultCardComponent,
     SkeletonComponent,
+    StaleNoticeComponent,
     SwipePagerComponent,
     WeekBannerComponent,
   ],

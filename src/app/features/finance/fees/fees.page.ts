@@ -32,6 +32,8 @@ import { OverdueBannerComponent } from '../ui/overdue-banner/overdue-banner.comp
  * (`?fee=`) : un versement de Mes paiements y mène, et le retour la rouvre. « Comment payer »
  * (G) s'ouvre de l'alerte ou de la fiche, et ramène à la fiche par sa flèche.
  */
+import { StaleNoticeComponent } from '../../../shared/ui/stale-notice/stale-notice.component';
+import { RefreshHighlightDirective } from '../../../shared/resource/refresh-highlight.directive';
 @Component({
   selector: 'app-fees-page',
   imports: [
@@ -42,8 +44,10 @@ import { OverdueBannerComponent } from '../ui/overdue-banner/overdue-banner.comp
     HowToPaySheetComponent,
     LoadErrorComponent,
     OverdueBannerComponent,
+    RefreshHighlightDirective,
     SectionCardComponent,
     SkeletonComponent,
+    StaleNoticeComponent,
   ],
   templateUrl: './fees.page.html',
   styleUrls: ['../finance-page.css', './fees.page.css'],

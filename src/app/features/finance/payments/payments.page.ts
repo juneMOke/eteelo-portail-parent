@@ -33,6 +33,8 @@ import { YearBannerComponent } from '../ui/year-banner/year-banner.component';
  * (`?payment=`) : un frais de Mes frais y mène, et le retour la rouvre. Pas de bilan ni de
  * total ici : ils sont dans Mes frais, et le front n'additionne pas les versements.
  */
+import { StaleNoticeComponent } from '../../../shared/ui/stale-notice/stale-notice.component';
+import { RefreshHighlightDirective } from '../../../shared/resource/refresh-highlight.directive';
 @Component({
   selector: 'app-payments-page',
   imports: [
@@ -40,9 +42,11 @@ import { YearBannerComponent } from '../ui/year-banner/year-banner.component';
     FinanceLineComponent,
     LoadErrorComponent,
     PaymentSheetComponent,
+    RefreshHighlightDirective,
     SavedToastComponent,
     SectionCardComponent,
     SkeletonComponent,
+    StaleNoticeComponent,
     YearBannerComponent,
   ],
   templateUrl: './payments.page.html',

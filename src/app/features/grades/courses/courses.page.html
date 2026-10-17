@@ -1,4 +1,7 @@
 @if (data(); as data) {
+  @if (resource.stale()) {
+    <ui-stale-notice (retry)="resource.reload()" />
+  }
   @if (data.selection; as current) {
     @if (periods(); as periods) {
       <app-term-picker
@@ -14,7 +17,11 @@
     @if (graded()) {
       <ul class="courses">
         @for (course of data.courses; track course.courseId) {
-          <li [id]="'course-' + course.courseId">
+          <li
+            [id]="'course-' + course.courseId"
+            [uiRefreshHighlight]="course"
+            [refreshed]="resource.refreshed()"
+          >
             <app-course-row
               [course]="course"
               [expanded]="expanded().has(course.courseId)"

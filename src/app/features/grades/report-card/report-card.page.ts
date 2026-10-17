@@ -18,15 +18,19 @@ import { TermPickerComponent } from '../ui/term-picker/term-picker.component';
  * provisoire), le rang s'il est publié, une ligne par cours qui ouvre Mes cours, et le PDF signé
  * de l'école. Le détail des évaluations n'y figure pas : c'est Mes cours.
  */
+import { StaleNoticeComponent } from '../../../shared/ui/stale-notice/stale-notice.component';
+import { RefreshHighlightDirective } from '../../../shared/resource/refresh-highlight.directive';
 @Component({
   selector: 'app-report-card-page',
   imports: [
     AverageHeaderComponent,
     EmptyPeriodComponent,
     LoadErrorComponent,
+    RefreshHighlightDirective,
     ReportDocumentComponent,
     ReportLineComponent,
     SkeletonComponent,
+    StaleNoticeComponent,
     TermPickerComponent,
   ],
   templateUrl: './report-card.page.html',

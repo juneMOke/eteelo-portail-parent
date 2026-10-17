@@ -1,10 +1,14 @@
-import { Injectable, ResourceRef, Signal, computed, inject } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { Injectable, Signal, computed, inject } from '@angular/core';
 import {
   AttendanceRange,
   ChildAttendance,
   ChildDiscipline,
 } from '../../../core/api/conduct.contract';
+import {
+  SessionCache,
+  SessionResource,
+  sessionResource,
+} from '../../../shared/resource/session-cache';
 import { ParentApi } from '../../../core/api/parent-api';
 import { SessionStore } from '../../../core/session/session.store';
 
@@ -23,12 +27,14 @@ export interface DisciplineRequest {
  * jours) : changer de mois ne relance rien, et l'en-tête, le calendrier et la liste lisent la
  * même réponse. Seuls les indicateurs de la semaine ont leur appel, borné à la semaine : le
  * serveur en fait le résumé (invariant 2). Ma discipline lit un trimestre. Taux, comptes, délais et gravités viennent du
- * serveur ; rien n'est gardé sur le téléphone (invariant 5). La justification, seule écriture,
+ * serveur. La dernière réponse reste en mémoire pour la session (`sessionResource`) ; rien
+ * n'est stocké sur le téléphone (invariant 5). La justification, seule écriture,
  * passe par `AbsenceJustificationStore`.
  */
 @Injectable({ providedIn: 'root' })
 export class ConductFacade {
   private readonly api = inject(ParentApi);
+  private readonly cache = inject(SessionCache);
   private readonly session = inject(SessionStore);
 
   /** Téléphone du secrétariat de l'école ; null s'il n'est pas saisi. */
@@ -37,22 +43,31 @@ export class ConductFacade {
   );
 
   /** À créer dans un contexte d'injection (initialiseur de champ d'une page). */
-  attendanceResource(childId: () => string): ResourceRef<ChildAttendance | undefined> {
-    return rxResource({ params: childId, stream: ({ params }) => this.api.attendance(params) });
+  attendanceResource(childId: () => string): SessionResource<ChildAttendance> {
+    return sessionResource({
+      cache: this.cache,
+      name: 'conduct.attendance',
+      params: childId,
+      stream: ({ params }) => this.api.attendance(params),
+    });
   }
 
   /** Résumé de la semaine affichée ; au repos tant que la page n'a pas de semaine. */
   attendanceWeekResource(
     request: () => AttendanceWeekRequest | undefined,
-  ): ResourceRef<ChildAttendance | undefined> {
-    return rxResource({
+  ): SessionResource<ChildAttendance> {
+    return sessionResource({
+      cache: this.cache,
+      name: 'conduct.attendanceWeek',
       params: request,
       stream: ({ params: { childId, from, to } }) => this.api.attendance(childId, { from, to }),
     });
   }
 
-  disciplineResource(request: () => DisciplineRequest): ResourceRef<ChildDiscipline | undefined> {
-    return rxResource({
+  disciplineResource(request: () => DisciplineRequest): SessionResource<ChildDiscipline> {
+    return sessionResource({
+      cache: this.cache,
+      name: 'conduct.discipline',
       params: request,
       stream: ({ params }) => this.api.discipline(params.childId, params.periodId),
     });

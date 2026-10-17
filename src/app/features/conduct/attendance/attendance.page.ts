@@ -45,6 +45,8 @@ import { WeekIndicatorsComponent } from '../ui/week-indicators/week-indicators.c
  * (`?week=`) et le mois (`?month=`) vivent dans l'URL, le jour ciblé aussi (`?date=`, depuis
  * Ma discipline) : sa fiche s'ouvre alors d'elle-même.
  */
+import { StaleNoticeComponent } from '../../../shared/ui/stale-notice/stale-notice.component';
+import { RefreshHighlightDirective } from '../../../shared/resource/refresh-highlight.directive';
 @Component({
   selector: 'app-attendance-page',
   imports: [
@@ -57,7 +59,9 @@ import { WeekIndicatorsComponent } from '../ui/week-indicators/week-indicators.c
     MonthCalendarComponent,
     MonthNavigatorComponent,
     PendingAbsencesComponent,
+    RefreshHighlightDirective,
     SkeletonComponent,
+    StaleNoticeComponent,
     SwipePagerComponent,
     WeekBannerComponent,
     WeekDaysComponent,

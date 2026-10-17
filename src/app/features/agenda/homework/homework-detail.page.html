@@ -1,4 +1,7 @@
 @if (data(); as homework) {
+  @if (this.homework.stale()) {
+    <ui-stale-notice (retry)="this.homework.reload()" />
+  }
   <app-identity-banner
     [heading]="homework.title"
     [subtitle]="subtitle()"

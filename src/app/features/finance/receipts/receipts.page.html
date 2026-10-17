@@ -1,4 +1,7 @@
 @if (data(); as data) {
+  @if (resource.stale()) {
+    <ui-stale-notice (retry)="resource.reload()" />
+  }
   @if (showBanner()) {
     <app-year-banner
       [years]="years.choices()"
@@ -16,7 +19,7 @@
     <ui-section-card [heading]="receiptsHeading()" icon="file-text" [count]="receiptsCount()">
       <ul class="rows" [attr.aria-busy]="resource.isLoading()">
         @for (payment of receipts(); track payment.paymentId) {
-          <li>
+          <li [uiRefreshHighlight]="payment" [refreshed]="resource.refreshed()">
             <app-receipt-row
               [payment]="payment"
               [href]="receiptHref(payment)"

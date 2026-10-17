@@ -1,4 +1,7 @@
 @if (data(); as data) {
+  @if (resource.stale()) {
+    <ui-stale-notice (retry)="resource.reload()" />
+  }
   @if (showBanner()) {
     <app-year-banner
       [years]="years.choices()"
@@ -17,7 +20,9 @@
       <ui-section-card [heading]="month.label" icon="calendar" [count]="month.count">
         <ul class="rows">
           @for (item of month.lines; track item.id) {
-            <li><app-finance-line [line]="item.line" (activate)="fiche.show(item.id)" /></li>
+            <li [uiRefreshHighlight]="item.line" [refreshed]="resource.refreshed()">
+              <app-finance-line [line]="item.line" (activate)="fiche.show(item.id)" />
+            </li>
           }
         </ul>
       </ui-section-card>

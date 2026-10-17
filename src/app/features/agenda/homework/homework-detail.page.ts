@@ -44,6 +44,7 @@ const SUBMISSION_MAX_FILES = 20;
  * remettre, puis l'énoncé. Rendu : la copie déposée, puis les questions en rappel. Corrigé :
  * la note située et la parole de l'enseignant, puis le corrigé et la copie.
  */
+import { StaleNoticeComponent } from '../../../shared/ui/stale-notice/stale-notice.component';
 @Component({
   selector: 'app-homework-detail-page',
   imports: [
@@ -56,6 +57,7 @@ const SUBMISSION_MAX_FILES = 20;
     ResultBlockComponent,
     RouterLink,
     SkeletonComponent,
+    StaleNoticeComponent,
   ],
   templateUrl: './homework-detail.page.html',
   styleUrl: './homework-detail.page.css',

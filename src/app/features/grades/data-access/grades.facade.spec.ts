@@ -1,6 +1,6 @@
 import { Injector, runInInjectionContext, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { settle } from '../../../../testing/async';
 import { GRACE } from '../../../../testing/bootstrap.fixture';
 import { gradeCoursesFixture } from '../../../../testing/grade-courses.fixture';
@@ -72,5 +72,18 @@ describe('GradesFacade', () => {
     expect(api.reportCard).toHaveBeenCalledWith(GRACE.childId, query);
     expect(courses.value()?.selection?.label).toBe('1er trimestre · 1re période');
     expect(report.value()?.status).toBe('PROVISIONAL');
+  });
+
+  it('montre la semaine déjà lue au retour, le temps que le serveur réponde', async () => {
+    const { facade, api, inContext } = setup();
+    inContext(() => facade.weekResource(() => ({ childId: GRACE.childId })));
+    await settle();
+
+    api.gradesWeek.mockReturnValue(NEVER);
+    const back = inContext(() => facade.weekResource(() => ({ childId: GRACE.childId })));
+    await settle();
+
+    expect(back.value()).toBeDefined();
+    expect(back.refreshing()).toBe(true);
   });
 });

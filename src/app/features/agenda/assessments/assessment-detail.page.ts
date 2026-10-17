@@ -41,6 +41,7 @@ type Layout = 'result-first' | 'instructions-first';
  * parole de l'enseignant, puis le corrigé. Absent : la marche à suivre. Les questions ne
  * descendent qu'une fois le corrigé publié (règle du serveur).
  */
+import { StaleNoticeComponent } from '../../../shared/ui/stale-notice/stale-notice.component';
 @Component({
   selector: 'app-assessment-detail-page',
   imports: [
@@ -51,6 +52,7 @@ type Layout = 'result-first' | 'instructions-first';
     ResultBlockComponent,
     RouterLink,
     SkeletonComponent,
+    StaleNoticeComponent,
   ],
   templateUrl: './assessment-detail.page.html',
   styleUrl: './assessment-detail.page.css',

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, LOCALE_ID, computed, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  LOCALE_ID,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { AttendanceSummary } from '../../../../core/api/conduct.contract';
 import { SectionCardComponent } from '../../../../shared/ui/section-card/section-card.component';
 import { weekIndicators, weekSummaryLabel } from '../../data-access/attendance-formats';

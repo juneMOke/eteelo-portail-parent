@@ -124,6 +124,15 @@ export const ICONS = {
     'M5 7a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h8a2 2 0 0 0 1.7-1',
   ],
   'check-circle': ['M21.8 10A10 10 0 1 1 17 3.3', 'm9 11 3 3L22 4'],
+  'wifi-off': [
+    'M12 20h.01',
+    'M8.5 16.429a5 5 0 0 1 7 0',
+    'M5 12.859a10 10 0 0 1 5.17-2.69',
+    'M19 12.859a10 10 0 0 0-2.007-1.523',
+    'M2 8.82a15 15 0 0 1 4.177-2.643',
+    'M22 8.82a15 15 0 0 0-11.288-3.764',
+    'm2 2 20 20',
+  ],
 } as const satisfies Record<string, readonly string[]>;
 
 export type IconName = keyof typeof ICONS;
