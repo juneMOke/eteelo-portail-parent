@@ -68,7 +68,8 @@
   background: currentColor;
 }
 
-.heading {
+.heading,
+.compact-heading {
   grid-area: heading;
   color: var(--color-heading);
   font-size: var(--text-card-title);
@@ -84,6 +85,11 @@
   color: var(--color-text-muted);
   font-size: var(--text-xs);
   line-height: 1.4;
+}
+
+/* Au téléphone, le titre d'un versement prend son jour abrégé (« Lun. 22/09 »). */
+.heading.full {
+  display: none;
 }
 
 .progress {
@@ -218,8 +224,34 @@
   }
 }
 
-/* Grand écran, un versement : pastille d'icône neutre du moyen, état sous le montant. */
-@media (min-width: 905px) {
+/* Un versement au téléphone : la sous-ligne tient sur une ligne, le montant en 17 px. */
+:host(.aside) .details > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:host(.aside) .amount {
+  font-size: var(--text-amount);
+}
+
+/*
+ * Au-delà du téléphone, un versement : tuile neutre du moyen (jamais de couleur par moyen),
+ * titre en toutes lettres, montant en 18 px et état dessous.
+ */
+@media (min-width: 600px) {
+  .heading.full {
+    display: block;
+  }
+
+  .compact-heading {
+    display: none;
+  }
+
+  :host(.aside) .amount {
+    font-size: var(--text-lg);
+  }
+
   :host(.aside) .line {
     grid-template-areas:
       'icon heading money chevron'
@@ -234,7 +266,7 @@
     width: 44px;
     height: 44px;
     place-items: center;
-    border-radius: var(--radius-md);
+    border-radius: 13px;
     background: var(--color-page);
     color: var(--color-accent);
   }

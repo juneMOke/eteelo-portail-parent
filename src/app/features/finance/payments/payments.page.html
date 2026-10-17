@@ -1,4 +1,17 @@
 @if (data(); as data) {
+  @if (showBanner()) {
+    <app-year-banner
+      [years]="years.choices()"
+      [checked]="years.checked()"
+      [countLabel]="paymentsCount()"
+      [latestLabel]="latestPayment()"
+      [count]="payments().length"
+      unit="versements"
+      [wide]="years.wide()"
+      (pick)="years.pick($event)"
+    />
+  }
+
   <div class="cards" [attr.aria-busy]="resource.isLoading()">
     @for (month of months(); track month.month) {
       <ui-section-card [heading]="month.label" icon="calendar" [count]="month.count">
@@ -10,8 +23,8 @@
       </ui-section-card>
     } @empty {
       <ui-empty-period
-        heading="Aucun versement enregistré cette année."
-        linkLabel="Voir les frais à payer"
+        [heading]="emptyHeading()"
+        [linkLabel]="feesLinkLabel()"
         [link]="feesLink()"
       />
     }
@@ -35,9 +48,12 @@
 } @else {
   <div class="loading" role="status" aria-busy="true">
     <span class="visually-hidden">Chargement des paiements…</span>
-    <ui-skeleton width="140px" height="16px" />
-    <ui-skeleton height="64px" />
-    <ui-skeleton height="64px" />
-    <ui-skeleton height="64px" />
+    <ui-skeleton class="banner" height="68px" />
+    <ui-skeleton class="month" height="48px" />
+    <ui-skeleton height="68px" />
+    <ui-skeleton height="68px" />
+    <ui-skeleton height="68px" />
   </div>
 }
+
+<app-saved-toast />

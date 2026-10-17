@@ -11,7 +11,13 @@ import {
 } from '../../../core/api/finance.contract';
 import { CivilDate, CivilMonth, civilToDate, monthOf } from '../../../shared/date/civil-date';
 import { Money, amountLabel, currencySymbol, spokenAmount } from '../../../shared/format/amount';
-import { dayLabel, monthLabel, shortDate, spokenDay } from '../../../shared/format/day-labels';
+import {
+  compactDayLabel,
+  dayLabel,
+  monthLabel,
+  shortDate,
+  spokenDay,
+} from '../../../shared/format/day-labels';
 import { instantDay, instantTime } from '../../../shared/format/time-labels';
 import { IconName } from '../../../shared/ui/icon/icons';
 import { Tone } from '../../../shared/ui/tone';
@@ -202,15 +208,20 @@ export function paymentTitle(payment: Payment, locale: string): string {
   return `${dayLabel(instantDay(payment.paidAt, locale), locale)} · ${methodView(payment.method).label}`;
 }
 
+/** « Lun. 22/09 · Mobile money » : le titre d'une ligne au téléphone, jour abrégé. */
+export function compactPaymentTitle(payment: Payment, locale: string): string {
+  return `${compactDayLabel(instantDay(payment.paidAt, locale), locale)} · ${methodView(payment.method).label}`;
+}
+
 /** « Imputé sur : 2e tranche », « Imputé sur : 2 frais ». */
 export function allocationsLabel({ allocations }: Payment): string {
   return `Imputé sur : ${allocations.length === 1 ? allocations[0].label : `${allocations.length} frais`}`;
 }
 
-/** « Lundi 22 septembre à 11 h 05 » : le moment du versement, sur sa fiche. */
+/** « Lundi 22 septembre 2026 · 10 h 52 » : le moment du versement, sous son montant (E1). */
 export function paidAtLabel(payment: Payment, locale: string): string {
-  const day = spokenDay(instantDay(payment.paidAt, locale), locale);
-  return `${day} à ${instantTime(payment.paidAt, locale)}`;
+  const day = instantDay(payment.paidAt, locale);
+  return `${spokenDay(day, locale)} ${day.slice(0, 4)} · ${instantTime(payment.paidAt, locale)}`;
 }
 
 /** Nom lu d'une ligne de versement : « Lundi 22 septembre, mobile money, 40 dollars. » */
@@ -270,8 +281,8 @@ export function recordedOnLabel(payment: Payment, locale: string): string {
   return `Versement enregistré le ${shortDate(instantDay(payment.paidAt, locale), locale)}`;
 }
 
-/** « dernier le 22/09 » : le reçu le plus récent de l'année (le serveur le met en tête). */
-export function latestReceiptLabel(payments: readonly Payment[], locale: string): string | null {
+/** « dernier le 22/09 » : le versement le plus récent de l'année (le serveur le met en tête). */
+export function latestPaymentLabel(payments: readonly Payment[], locale: string): string | null {
   const [latest] = payments;
   return latest ? `dernier le ${shortDate(instantDay(latest.paidAt, locale), locale)}` : null;
 }

@@ -26,8 +26,9 @@ export interface YearChoice {
 const VISIBLE_PILLS = 3;
 
 /**
- * C Le bandeau d'année de Mes reçus, de la famille du bandeau de semaine : aplat Bleu Ardoise au
- * motif kuba. Au-delà du téléphone, le résumé (« 4 reçus · dernier le 22/09 ») à gauche et les
+ * C Le bandeau d'année de Mes reçus et de Mes paiements, de la famille du bandeau de semaine :
+ * aplat Bleu Ardoise au motif kuba. Au-delà du téléphone, le résumé (« 4 reçus · dernier le
+ * 22/09 », « 5 versements · dernier le 22/09 ») à gauche et les
  * pilules d'année à droite, trois au plus puis « Plus ancien ». Au téléphone, un menu déroulant
  * qui reprend le résumé. Une seule année : son libellé, sans geste. Seules les pilules se
  * touchent.
@@ -47,8 +48,10 @@ export class YearBannerComponent {
   readonly countLabel = input<string | null>(null);
   /** « dernier le 22/09 » ; null sans reçu. */
   readonly latestLabel = input<string | null>(null);
-  /** Nombre de reçus de l'année affichée, dans le menu du téléphone. */
+  /** Nombre de reçus ou de versements de l'année affichée, dans le menu du téléphone. */
   readonly count = input<number | null>(null);
+  /** Ce que compte `count` : « reçus », « versements ». */
+  readonly unit = input.required<string>();
   readonly wide = input(false);
   readonly pick = output<string>();
 
@@ -71,7 +74,7 @@ export class YearBannerComponent {
       id: year.id,
       label: year.label,
       count: year.id === this.checked() ? this.count() : null,
-      unit: 'reçus',
+      unit: this.unit(),
       tone: null,
     })),
   );

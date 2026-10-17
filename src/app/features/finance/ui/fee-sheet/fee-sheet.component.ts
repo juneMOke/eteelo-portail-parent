@@ -34,7 +34,7 @@ import { LedgerRowComponent } from '../ledger-row/ledger-row.component';
   selector: 'app-fee-sheet',
   imports: [AmountPipe, BadgeComponent, IconComponent, LedgerRowComponent, SheetComponent],
   templateUrl: './fee-sheet.component.html',
-  styleUrls: ['../fact-list.css', './fee-sheet.component.css'],
+  styleUrls: ['../finance-sheet.css', './fee-sheet.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FeeSheetComponent {

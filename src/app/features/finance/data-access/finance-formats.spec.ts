@@ -26,7 +26,9 @@ import {
   allocationsLabel,
   paymentMonths,
   paymentTitle,
-  latestReceiptLabel,
+  compactPaymentTitle,
+  paidAtLabel,
+  latestPaymentLabel,
   receiptFees,
   receiptMeta,
   recordedOnLabel,
@@ -106,6 +108,8 @@ describe('finance-formats', () => {
 
   it('écrit un versement : jour, moyen, frais couverts et payeur', () => {
     expect(paymentTitle(AIRTEL_PAYMENT, 'fr')).toBe('Mardi 22/09 · Mobile money');
+    expect(compactPaymentTitle(AIRTEL_PAYMENT, 'fr')).toBe('Mar. 22/09 · Mobile money');
+    expect(paidAtLabel(AIRTEL_PAYMENT, 'fr')).toMatch(/^Mardi 22 septembre 2026 · \d+ h \d\d$/);
     expect(allocationsLabel(AIRTEL_PAYMENT)).toBe('Imputé sur : Frais scolaires · 1re tranche');
     expect(
       payerName({ payerFirstName: null, payerLastName: null, payerMiddleName: null }),
@@ -132,8 +136,8 @@ describe('finance-formats', () => {
       }),
     ).toBe('2 frais');
     expect(recordedOnLabel(AIRTEL_PAYMENT, 'fr')).toBe('Versement enregistré le 22/09');
-    expect(latestReceiptLabel([AIRTEL_PAYMENT, CASH_PAYMENT], 'fr')).toBe('dernier le 22/09');
-    expect(latestReceiptLabel([], 'fr')).toBeNull();
+    expect(latestPaymentLabel([AIRTEL_PAYMENT, CASH_PAYMENT], 'fr')).toBe('dernier le 22/09');
+    expect(latestPaymentLabel([], 'fr')).toBeNull();
     expect(statementFileName('2026-2027')).toBe('Releve-2026-2027.pdf');
   });
 

@@ -1,0 +1,36 @@
+/* Mes paiements : 14 px entre sections au téléphone, 18 en tablette, 20 au bureau ; cartes de mois à 12 puis 16 px. */
+:host {
+  gap: 14px;
+}
+
+.cards {
+  gap: var(--space-3);
+}
+
+.loading ui-skeleton {
+  border-radius: var(--radius-tile);
+}
+
+.loading .banner {
+  border-radius: 16px;
+}
+
+.loading .month {
+  margin-top: 6px;
+}
+
+@media (min-width: 600px) {
+  :host {
+    gap: 18px;
+  }
+
+  .cards {
+    gap: var(--space-4);
+  }
+}
+
+@media (min-width: 905px) {
+  :host {
+    gap: var(--space-5);
+  }
+}

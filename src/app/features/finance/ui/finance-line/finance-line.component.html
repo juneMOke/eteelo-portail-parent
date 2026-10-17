@@ -8,7 +8,10 @@
       ><span class="dot"></span>{{ status.label }}</ui-badge
     >
   }
-  <span class="heading">{{ item.heading }}</span>
+  <span class="heading" [class.full]="!!item.compactHeading">{{ item.heading }}</span>
+  @if (item.compactHeading; as compact) {
+    <span class="compact-heading" aria-hidden="true">{{ compact }}</span>
+  }
   @if (item.details.length) {
     <span class="details">
       @for (detail of item.details; track detail) {

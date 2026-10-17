@@ -1,9 +1,6 @@
-.amount {
-  color: var(--color-heading);
-  font-family: var(--font-title);
-  font-size: var(--text-2xl);
-  font-variant-numeric: tabular-nums;
-  font-weight: var(--weight-semibold);
+/* E1 : le montant en titre, Lora 28 px. */
+ui-sheet {
+  --sheet-heading-size: 1.75rem;
 }
 
 .reference {
@@ -11,22 +8,60 @@
   overflow-wrap: anywhere;
 }
 
+/* Le perçu au taux du guichet est une phrase : il passe sous son libellé. */
+.card-facts > .received {
+  flex-wrap: wrap;
+  padding: var(--space-2) 0;
+}
+
+.received dd {
+  flex: 1 1 14rem;
+  justify-content: flex-end;
+}
+
+/* E5 : le pied du reçu, sur Bleu Brume. */
 .receipt {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding-top: var(--space-2);
+  gap: var(--space-2) 10px;
+  padding: var(--space-3) 14px;
+  border-radius: var(--radius-tile);
+  background: var(--color-accent-soft);
+}
+
+.receipt-icon {
+  flex: none;
+  color: var(--color-accent);
 }
 
 .receipt-name {
+  flex: 1 1 10rem;
   color: var(--color-heading);
-  font-size: var(--text-md);
+  font-size: var(--text-base);
   font-weight: var(--weight-semibold);
   overflow-wrap: anywhere;
+}
+
+.receipt:has(.pending) .receipt-icon {
+  color: var(--color-text-muted);
+}
+
+.pending {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
 }
 
 .failure {
   color: var(--color-tone-alert);
   font-size: var(--text-sm);
+}
+
+/* Au téléphone étroit, une valeur longue passe sous son libellé. */
+@media (max-width: 359px) {
+  .card-facts > div {
+    flex-wrap: wrap;
+    padding: var(--space-2) 0;
+  }
 }

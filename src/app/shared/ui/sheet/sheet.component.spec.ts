@@ -9,6 +9,7 @@ import { SheetComponent } from './sheet.component';
     heading="Choisir la période"
     [dismissible]="dismissible"
     [backLabel]="backLabel"
+    [label]="label"
     (closed)="closed = closed + 1"
     (back)="back = back + 1"
     ><span sheetLead class="lead">En retard</span><span sheetSub class="sub">Sous-titre</span>
@@ -19,6 +20,7 @@ class HostComponent {
   readonly sheet = viewChild.required(SheetComponent);
   dismissible = false;
   backLabel: string | null = null;
+  label: string | null = null;
   closed = 0;
   back = 0;
 }
@@ -41,6 +43,13 @@ describe('SheetComponent', () => {
     expect(heading.textContent).toBe('Choisir la période');
     expect(dialog.getAttribute('aria-labelledby')).toBe(heading.id);
     expect(el.querySelector('p')?.textContent).toBe('Contenu');
+  });
+
+  it('prend un nom lu distinct quand le titre affiché est un montant', async () => {
+    const { dialog } = await render({ label: 'Mardi 22/09 · Mobile money' });
+
+    expect(dialog.getAttribute('aria-label')).toBe('Mardi 22/09 · Mobile money');
+    expect(dialog.hasAttribute('aria-labelledby')).toBe(false);
   });
 
   it('s’ouvre, puis se ferme sur le voile mais pas sur le contenu', async () => {

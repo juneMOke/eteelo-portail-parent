@@ -16,17 +16,22 @@ import { LoadErrorComponent } from '../../../shared/ui/load-error/load-error.com
 import { SectionCardComponent } from '../../../shared/ui/section-card/section-card.component';
 import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
 import { FinanceDocumentsStore, receiptKey } from '../data-access/finance-documents.store';
-import { paymentMonths } from '../data-access/finance-formats';
+import { latestPaymentLabel, paymentMonths, receiptLabel } from '../data-access/finance-formats';
 import { feesLink } from '../data-access/finance-links';
 import { paymentLine } from '../data-access/finance-rows';
 import { FinanceFacade } from '../data-access/finance.facade';
+import { injectYearSelection } from '../data-access/year-selection';
 import { FinanceLineComponent } from '../ui/finance-line/finance-line.component';
 import { PaymentSheetComponent } from '../ui/payment-sheet/payment-sheet.component';
+import { SavedToastComponent } from '../ui/saved-toast/saved-toast.component';
+import { YearBannerComponent } from '../ui/year-banner/year-banner.component';
 
 /**
- * Mes paiements : « c'est arrivé ? ». Le journal des versements de l'année, par mois, le plus
- * récent en haut, une carte par mois (⑥, ⑦). La fiche d'un versement (⑧) vit dans l'URL (`?payment=`) : un frais
- * de Mes frais y mène, et le retour la rouvre. Pas de bilan ici : il est dans Mes frais.
+ * Mes paiements : « c'est arrivé ? » (spec 07 « Mes paiements · détail »). Le journal des
+ * versements de l'année : le bandeau d'année (C, `?year=`, le même que Mes reçus), puis une
+ * carte par mois, le plus récent en haut (D). La fiche d'un versement (E) vit dans l'URL
+ * (`?payment=`) : un frais de Mes frais y mène, et le retour la rouvre. Pas de bilan ni de
+ * total ici : ils sont dans Mes frais, et le front n'additionne pas les versements.
  */
 @Component({
   selector: 'app-payments-page',
@@ -35,29 +40,53 @@ import { PaymentSheetComponent } from '../ui/payment-sheet/payment-sheet.compone
     FinanceLineComponent,
     LoadErrorComponent,
     PaymentSheetComponent,
+    SavedToastComponent,
     SectionCardComponent,
     SkeletonComponent,
+    YearBannerComponent,
   ],
   templateUrl: './payments.page.html',
-  styleUrl: '../finance-page.css',
+  styleUrls: ['../finance-page.css', './payments.page.css'],
   providers: [FinanceDocumentsStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class PaymentsPage {
   readonly childId = input.required<string>();
+  /** Année affichée (`?year=`) ; absente ou inconnue, l'année courante. */
+  readonly year = input<string>();
   /** Versement dont la fiche est ouverte (`?payment=`). */
   readonly payment = input<string>();
 
   private readonly facade = inject(FinanceFacade);
   private readonly locale = inject(LOCALE_ID);
   private readonly paymentSheet = viewChild(PaymentSheetComponent);
+  /** « Reçu n° ETL-RC-2627-001078 enregistré » : confirmation d'un reçu téléchargé. */
+  private readonly saved = viewChild.required(SavedToastComponent);
 
   protected readonly documents = inject(FinanceDocumentsStore);
-  protected readonly resource = this.facade.paymentsResource(() => ({ childId: this.childId() }));
+  protected readonly years = injectYearSelection(this.childId, this.year);
+  protected readonly resource = this.facade.paymentsResource(() => ({
+    childId: this.childId(),
+    academicYearId: this.years.requested(),
+  }));
   protected readonly data = latestValue(this.resource);
 
+  protected readonly payments = computed(() => this.data() ?? []);
+  /** « 5 versements ». */
+  protected readonly paymentsCount = computed(() =>
+    countLabel(this.payments().length, 'versement', 'versements', 'Aucun versement'),
+  );
+  /** « dernier le 22/09 ». */
+  protected readonly latestPayment = computed(() =>
+    latestPaymentLabel(this.payments(), this.locale),
+  );
+  /** Le bandeau, dès qu'il y a des versements ou d'autres années à consulter. */
+  protected readonly showBanner = computed(
+    () => this.payments().length > 0 || this.years.choices().length > 1,
+  );
+
   protected readonly months = computed(() =>
-    paymentMonths(this.data() ?? [], this.locale).map((month) => ({
+    paymentMonths(this.payments(), this.locale).map((month) => ({
       ...month,
       /** « 3 versements » : pas de total du mois, le front n'additionne pas (invariant 2). */
       count: countLabel(month.payments.length, 'versement', 'versements', ''),
@@ -66,6 +95,15 @@ export default class PaymentsPage {
         line: paymentLine(payment, this.locale),
       })),
     })),
+  );
+  protected readonly emptyHeading = computed(() =>
+    this.years.pastYear()
+      ? `Aucun versement enregistré en ${this.years.label()}.`
+      : 'Aucun versement enregistré cette année.',
+  );
+  /** Depuis une année vide, le lien vers ce qui reste à payer, pour l'année courante seulement. */
+  protected readonly feesLinkLabel = computed(() =>
+    this.years.pastYear() ? null : 'Voir les frais à payer ›',
   );
   protected readonly feesLink = computed(() => feesLink(this.childId()));
 
@@ -94,9 +132,10 @@ export default class PaymentsPage {
     return failure?.key === this.openReceiptKey() ? failure.message : null;
   });
 
-  protected share(payment: Payment): void {
-    if (payment.receiptNumber) {
-      void this.documents.shareReceipt(this.childId(), payment.paymentId, payment.receiptNumber);
-    }
+  protected async share(payment: Payment): Promise<void> {
+    const number = payment.receiptNumber;
+    if (!number) return;
+    const outcome = await this.documents.shareReceipt(this.childId(), payment.paymentId, number);
+    if (outcome === 'downloaded') this.saved().show(`${receiptLabel(number)} enregistré`);
   }
 }

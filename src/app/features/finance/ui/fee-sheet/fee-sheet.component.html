@@ -11,7 +11,7 @@
     @let amounts = money()!;
     <section class="block" aria-labelledby="fee-calc">
       <h3 id="fee-calc" class="block-title">Le calcul</h3>
-      <dl class="calc">
+      <dl class="card-facts calc">
         <div>
           <dt>Montant</dt>
           <dd>{{ amounts.gross | amount }}</dd>
@@ -37,7 +37,7 @@
     <section class="block" aria-labelledby="fee-payments">
       <h3 id="fee-payments" class="block-title">Versements reçus · {{ payments().length }}</h3>
       @if (payments().length) {
-        <div class="payments">
+        <div class="card-rows">
           @for (payment of payments(); track payment.id) {
             <app-ledger-row
               flat

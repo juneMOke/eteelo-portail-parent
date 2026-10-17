@@ -1,58 +1,72 @@
-<ui-sheet [heading]="view()?.title ?? ''" (closed)="closed.emit()">
+<ui-sheet
+  [heading]="view()?.amount ?? ''"
+  [label]="view()?.title ?? null"
+  dismissible
+  (closed)="closed.emit()"
+>
+  @if (payment()) {
+    <ui-badge sheetLead class="status" tone="success"><span class="dot"></span>Enregistré</ui-badge>
+  }
+  @if (view(); as details) {
+    <p sheetSub class="sub">{{ details.paidAt }}</p>
+  }
   @if (payment(); as payment) {
     @let details = view()!;
-    <p class="amount">{{ payment.amounts | amount }}</p>
+    <section class="block" aria-labelledby="payment-facts">
+      <h3 id="payment-facts" class="block-title">Le versement</h3>
+      <dl class="card-facts">
+        <div>
+          <dt>Moyen</dt>
+          <dd>{{ details.method }}</dd>
+        </div>
+        @if (payment.externalReference; as reference) {
+          <div>
+            <dt>Référence</dt>
+            <dd>
+              <span class="reference">{{ reference }}</span>
+              <ui-copy-button [text]="reference" label="Copier la référence" />
+            </dd>
+          </div>
+        }
+        @if (details.payer; as payer) {
+          <div>
+            <dt>Versé par</dt>
+            <dd>{{ payer }}</dd>
+          </div>
+        }
+        @if (details.received; as received) {
+          <div class="received">
+            <dt>Perçu</dt>
+            <dd>{{ received }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
 
-    <dl class="facts">
-      <div>
-        <dt>Versé le</dt>
-        <dd>{{ details.paidAt }}</dd>
-      </div>
-      <div>
-        <dt>Moyen</dt>
-        <dd>{{ details.method }}</dd>
-      </div>
-      @if (payment.externalReference; as reference) {
-        <div>
-          <dt>Référence</dt>
-          <dd>
-            <span class="reference">{{ reference }}</span>
-            <ui-copy-button [text]="reference" label="Copier la référence" />
-          </dd>
+    @if (details.fees.length) {
+      <section class="block" aria-labelledby="payment-fees">
+        <h3 id="payment-fees" class="block-title">Imputé sur · {{ details.feesCount }}</h3>
+        <div class="card-rows">
+          @for (fee of details.fees; track fee.id) {
+            <app-ledger-row flat [row]="fee.row" [link]="feesLink()" [queryParams]="fee.params" />
+          }
         </div>
-      }
-      @if (details.payer; as payer) {
-        <div>
-          <dt>Versé par</dt>
-          <dd>{{ payer }}</dd>
-        </div>
-      }
-      @if (details.received; as received) {
-        <div>
-          <dt>Perçu</dt>
-          <dd>{{ received }}</dd>
-        </div>
-      }
-    </dl>
-
-    <h3 class="section-title">Imputé sur</h3>
-    <div class="rows">
-      @for (fee of details.fees; track fee.id) {
-        <app-ledger-row [row]="fee.row" [link]="feesLink()" [queryParams]="fee.params" />
-      }
-    </div>
+      </section>
+    }
 
     <div class="receipt">
+      <ui-icon class="receipt-icon" name="file-text" [size]="18" [strokeWidth]="2" />
       @if (receiptHref(); as href) {
         <p class="receipt-name">{{ details.receipt }}</p>
         <app-receipt-actions
+          labelled
           [href]="href"
           [receiptNumber]="payment.receiptNumber!"
           [sharing]="sharing()"
           (share)="share.emit(payment)"
         />
       } @else {
-        <p class="none">Reçu en préparation.</p>
+        <p class="pending">Reçu en préparation</p>
       }
     </div>
     @if (failure(); as failure) {
