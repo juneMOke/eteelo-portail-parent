@@ -19,6 +19,7 @@ import {
   spokenDay,
 } from '../../../shared/format/day-labels';
 import { instantDay, instantTime } from '../../../shared/format/time-labels';
+import { namePart } from '../../../shared/format/name-part';
 import { IconName } from '../../../shared/ui/icon/icons';
 import { Tone } from '../../../shared/ui/tone';
 
@@ -182,7 +183,7 @@ export function overdueAmounts(totals: readonly FeesTotal[], locale: string): st
 
 /** « Léonie Kabila » ; null si la caisse n'a pas saisi de nom. */
 export function payerName(payer: Payer): string | null {
-  const name = [payer.payerFirstName, payer.payerLastName].filter(Boolean).join(' ');
+  const name = [payer.payerFirstName, payer.payerLastName].map(namePart).filter(Boolean).join(' ');
   return name || null;
 }
 

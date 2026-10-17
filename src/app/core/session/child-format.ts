@@ -1,17 +1,18 @@
+import { namePart } from '../../shared/format/name-part';
 import { childPhotoUrl } from '../api/parent-api';
 import { Child } from './bootstrap.schema';
 
 /**
  * Mise en forme des données brutes d'un enfant (le back ne compose aucun libellé).
- * Prénom, à défaut le nom ; la classe peut manquer tant que l'élève n'est pas placé.
+ * Prénom, à défaut le nom ; un « N/A » d'import compte comme absent ; la classe peut manquer tant que l'élève n'est pas placé.
  */
 export function childName(child: Child): string {
-  return child.firstName?.trim() || child.lastName;
+  return namePart(child.firstName) ?? namePart(child.lastName) ?? child.lastName;
 }
 
 /** Nom complet : prénom, nom, postnom (« Grâce Mbala Nsimba ») ; les parties absentes sont omises. */
 export function childFullName(child: Child): string {
-  return [child.firstName?.trim(), child.lastName, child.surname?.trim()].filter(Boolean).join(' ');
+  return [child.firstName, child.lastName, child.surname].map(namePart).filter(Boolean).join(' ');
 }
 
 export function childClass(child: Child): string | null {

@@ -12,11 +12,13 @@ describe('mise en forme d’un enfant', () => {
 
   it('se rabat sur le nom quand le prénom manque', () => {
     expect(childName({ ...GRACE, firstName: '  ' })).toBe('Mbala');
+    expect(childName({ ...GRACE, firstName: 'N/A' })).toBe('Mbala');
   });
 
   it('compose le nom complet, sans les parties absentes', () => {
     expect(childFullName(GRACE)).toBe('Grâce Mbala Nsimba');
     expect(childFullName({ ...GRACE, firstName: null, surname: ' ' })).toBe('Mbala');
+    expect(childFullName({ ...GRACE, firstName: 'N/A', surname: '-' })).toBe('Mbala');
   });
 
   it("ne donne une photo que si l'enfant en a une", () => {
