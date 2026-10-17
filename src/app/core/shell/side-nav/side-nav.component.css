@@ -111,6 +111,9 @@ ul {
   background: var(--color-nav-hover-bg);
 }
 
+/* Retour immédiat : l'entrée touchée prend l'aspect actif avant même que sa page s'affiche. */
+.link:active,
+.link.pending,
 .link.active {
   background: var(--color-nav-active-bg);
   border-color: var(--color-nav-divider);
