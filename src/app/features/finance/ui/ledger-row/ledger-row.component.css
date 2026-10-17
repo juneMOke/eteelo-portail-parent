@@ -23,6 +23,12 @@
   background: var(--color-accent-soft);
 }
 
+:host(.flat) .row {
+  min-height: 56px;
+  border: none;
+  border-radius: 0;
+}
+
 .icon {
   display: grid;
   flex: none;

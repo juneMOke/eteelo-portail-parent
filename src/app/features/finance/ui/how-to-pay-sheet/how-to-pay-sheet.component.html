@@ -1,31 +1,48 @@
-<ui-sheet heading="Comment payer">
-  @if (fee(); as fee) {
-    <p class="context">
-      {{ fee.label }} · <span class="amount">{{ remaining()! | amount }}</span> restant
-    </p>
-  }
+<ui-sheet
+  heading="Comment payer"
+  dismissible
+  [backLabel]="fromFee() ? 'Retour à la fiche du frais' : null"
+  (back)="back.emit()"
+>
+  <p sheetSub class="sub">{{ subtitle() }}</p>
 
-  <section class="method" aria-label="Au secrétariat de l’école">
-    <span class="icon"><ui-icon name="wallet" [size]="18" /></span>
-    <div class="text">
-      <h3>Au secrétariat de l’école</h3>
-      <p>En espèces. Le reçu vous est remis sur place.</p>
-      @if (phone(); as phone) {
-        <a class="call" [href]="'tel:' + phone">
-          <ui-icon name="phone" [size]="16" />
-          Appeler le secrétariat
-        </a>
-      }
+  @if (remaining() ?? overdueAmount(); as amount) {
+    <div class="due">
+      <p class="caption">Montant à verser</p>
+      <p class="figure">
+        @if (remaining(); as money) {
+          {{ money | amount }}
+        } @else {
+          {{ amount }}
+        }
+      </p>
     </div>
-  </section>
-
-  @for (method of upcoming; track method.label) {
-    <section class="method upcoming" [attr.aria-label]="method.label + ', bientôt disponible'">
-      <span class="icon"><ui-icon [name]="method.icon" [size]="18" /></span>
-      <div class="text">
-        <h3>{{ method.label }}</h3>
-        <ui-badge tone="neutral">Bientôt disponible</ui-badge>
-      </div>
-    </section>
   }
+
+  <section class="block" aria-labelledby="pay-methods">
+    <h3 id="pay-methods" class="block-title">Moyens acceptés par l’école</h3>
+    <ul class="methods">
+      <li class="method">
+        <span class="icon"><ui-icon name="building" [size]="20" [strokeWidth]="2" /></span>
+        <div class="text">
+          <p class="name">Secrétariat de l’école</p>
+          <p class="detail">En espèces · reçu remis sur place</p>
+        </div>
+        @if (phone(); as phone) {
+          <a class="call" [href]="'tel:' + phone" aria-label="Appeler le secrétariat">
+            <ui-icon name="phone" [size]="15" [strokeWidth]="2.2" />
+          </a>
+        }
+      </li>
+      @for (method of upcoming; track method.label) {
+        <li class="method upcoming" [attr.aria-label]="method.label + ', bientôt disponible'">
+          <span class="icon"><ui-icon [name]="method.icon" [size]="20" [strokeWidth]="2" /></span>
+          <div class="text">
+            <p class="name">{{ method.label }}</p>
+          </div>
+          <ui-badge tone="neutral">Bientôt disponible</ui-badge>
+        </li>
+      }
+    </ul>
+  </section>
 </ui-sheet>

@@ -9,23 +9,30 @@ import {
   viewChild,
 } from '@angular/core';
 import { Fee } from '../../../../core/api/finance.contract';
-import { shortDate } from '../../../../shared/format/day-labels';
 import { AmountPipe } from '../../../../shared/pipes/amount.pipe';
 import { BadgeComponent } from '../../../../shared/ui/badge/badge.component';
+import { IconComponent } from '../../../../shared/ui/icon/icon.component';
 import { SheetComponent } from '../../../../shared/ui/sheet/sheet.component';
-import { feeMoney, feeStateView, reductionLabel } from '../../data-access/finance-formats';
+import {
+  feeMoney,
+  feeStatePill,
+  feeStateView,
+  longDate,
+  reductionLabel,
+} from '../../data-access/finance-formats';
 import { paymentParams, paymentsLink } from '../../data-access/finance-links';
 import { feeAllocationRow } from '../../data-access/finance-rows';
 import { LedgerRowComponent } from '../ledger-row/ledger-row.component';
 
 /**
- * ⑤ La fiche d'un frais, en feuille au téléphone et en fenêtre au bureau : le calcul en clair
- * tel que le serveur le donne (montant, réduction, versé, reste), puis chaque versement reçu,
+ * F La fiche d'un frais, en feuille au téléphone et en panneau de 560 px au-delà : sa pastille
+ * d'état, son nom, « catégorie · échéance le 15 septembre 2026 » ; « Le calcul » tel que le
+ * serveur le donne (montant, réduction nommée, déjà versé, reste), puis chaque versement reçu,
  * qui ouvre sa fiche dans Mes paiements. « Comment payer » tant qu'il reste quelque chose.
  */
 @Component({
   selector: 'app-fee-sheet',
-  imports: [AmountPipe, BadgeComponent, LedgerRowComponent, SheetComponent],
+  imports: [AmountPipe, BadgeComponent, IconComponent, LedgerRowComponent, SheetComponent],
   templateUrl: './fee-sheet.component.html',
   styleUrls: ['../fact-list.css', './fee-sheet.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,7 +48,8 @@ export class FeeSheetComponent {
 
   protected readonly state = computed(() => {
     const fee = this.fee();
-    return fee ? feeStateView(fee.state) : null;
+    const view = fee && feeStateView(fee.state);
+    return view ? { tone: view.tone, label: feeStatePill(fee, this.locale) } : null;
   });
   /** Le calcul en clair, chaque montant dans la devise du frais. */
   protected readonly money = computed(() => {
@@ -49,14 +57,16 @@ export class FeeSheetComponent {
     if (!fee) return null;
     return {
       gross: feeMoney(fee, fee.grossInCents),
-      expected: feeMoney(fee, fee.expectedInCents),
       paid: feeMoney(fee, fee.paidInCents),
       remaining: feeMoney(fee, fee.remainingInCents),
     };
   });
-  protected readonly due = computed(() => {
-    const dueDate = this.fee()?.dueDate;
-    return dueDate ? shortDate(dueDate, this.locale) : null;
+  /** « Frais scolaires · échéance le 15 septembre 2026 ». */
+  protected readonly subline = computed(() => {
+    const fee = this.fee();
+    if (!fee) return null;
+    const due = fee.dueDate ? `échéance le ${longDate(fee.dueDate, this.locale)}` : null;
+    return [fee.section?.title, due].filter(Boolean).join(' · ') || null;
   });
   protected readonly reduction = computed(() => {
     const reduction = this.fee()?.reduction;

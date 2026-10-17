@@ -2,20 +2,26 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  booleanAttribute,
   input,
   output,
   viewChild,
 } from '@angular/core';
+import { IconComponent } from '../icon/icon.component';
 
 let nextId = 0;
 
 /**
  * Feuille de choix : feuille basse au téléphone, fenêtre centrée au bureau. Élément <dialog>
  * natif : modal, fermeture par Échap ou par le voile, focus rendu au déclencheur à la
- * fermeture. Le contenu est projeté ; la page place le focus à l'ouverture.
+ * fermeture. Le contenu est projeté ; la page place le focus à l'ouverture. En option : un
+ * bouton ✕ (`dismissible`), une flèche de retour (`backLabel`), une pastille au-dessus du titre
+ * (`[sheetLead]`) et un sous-titre (`[sheetSub]`). La largeur au bureau se règle par
+ * `--sheet-width`.
  */
 @Component({
   selector: 'ui-sheet',
+  imports: [IconComponent],
   template: `
     <dialog
       #dialog
@@ -25,7 +31,28 @@ let nextId = 0;
     >
       <div class="sheet">
         <span class="handle" aria-hidden="true"></span>
-        <h2 [id]="headingId">{{ heading() }}</h2>
+        <div class="head">
+          @if (backLabel(); as label) {
+            <button
+              type="button"
+              class="round back"
+              [attr.aria-label]="label"
+              (click)="back.emit()"
+            >
+              <ui-icon name="arrow-left" [size]="18" [strokeWidth]="2" />
+            </button>
+          }
+          <div class="titles">
+            <ng-content select="[sheetLead]" />
+            <h2 [id]="headingId">{{ heading() }}</h2>
+            <ng-content select="[sheetSub]" />
+          </div>
+          @if (dismissible()) {
+            <button type="button" class="round close" aria-label="Fermer" (click)="close()">
+              <ui-icon name="x" [size]="18" [strokeWidth]="2" />
+            </button>
+          }
+        </div>
         <ng-content />
       </div>
     </dialog>
@@ -35,7 +62,12 @@ let nextId = 0;
 })
 export class SheetComponent {
   readonly heading = input.required<string>();
+  /** Bouton ✕ « Fermer » en haut à droite. */
+  readonly dismissible = input(false, { transform: booleanAttribute });
+  /** Nom lu de la flèche de retour ; null, pas de flèche. */
+  readonly backLabel = input<string | null>(null);
   readonly closed = output<void>();
+  readonly back = output<void>();
 
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 

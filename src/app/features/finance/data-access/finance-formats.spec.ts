@@ -17,8 +17,11 @@ import {
   feeStateView,
   feeStatePill,
   methodView,
+  feeCategoryIcon,
+  feeSubline,
+  longDate,
   overdueHeadline,
-  paidOverExpectedLabel,
+  shortFeeLabel,
   payerName,
   allocationsLabel,
   paymentMonths,
@@ -36,7 +39,7 @@ const plain = (label: string | null) => label?.replaceAll(' ', ' ');
 describe('finance-formats', () => {
   it('donne à chaque état son mot et son ton, et laisse neutre un état inconnu', () => {
     expect(feeStateView('OVERDUE')).toEqual({ label: 'En retard', tone: 'alert' });
-    expect(feeStateView('PARTIAL')).toEqual({ label: 'Partiellement payé', tone: 'pending' });
+    expect(feeStateView('PARTIAL')).toEqual({ label: 'Partiel', tone: 'pending' });
     expect(feeStateView('DUE')).toEqual({ label: 'À payer', tone: 'info' });
     expect(feeStateView('PAID')).toEqual({ label: 'Payé', tone: 'success' });
     expect(feeStateView('WAIVED')).toBeNull();
@@ -44,7 +47,7 @@ describe('finance-formats', () => {
 
   it('écrit la pastille d’état d’un frais : le mot et sa date', () => {
     expect(feeStatePill(OVERDUE_FEE, 'fr')).toBe('En retard depuis le 15/09');
-    expect(feeStatePill(PARTIAL_FEE, 'fr')).toBe('Partiellement payé · avant le 10/10');
+    expect(feeStatePill(PARTIAL_FEE, 'fr')).toBe('Partiel · avant le 10/10');
     expect(feeStatePill(DUE_FEE, 'fr')).toBe('À payer avant le 15/12');
     expect(feeStatePill(PAID_FEE, 'fr')).toBe('Payé le 03/09');
     expect(feeStatePill({ ...DUE_FEE, dueDate: null }, 'fr')).toBe('À payer');
@@ -60,23 +63,41 @@ describe('finance-formats', () => {
   it('écrit le bilan d’une devise et sa date de situation', () => {
     const [usd] = feesFixture().totals;
 
-    expect(plain(paidOverExpectedLabel(usd, 'fr'))).toBe('280 $ versés sur 594 $');
-    expect(asOfLabel('2026-09-23T06:40:00Z', 'fr')).toMatch(/^Situation au 23\/09 à \d+ h 40$/);
+    expect(usd.currency).toBe('USD');
+    expect(asOfLabel('2026-09-23T06:40:00Z', 'fr')).toMatch(
+      /^Situation au 23\/09 · \d{2}\u00a0h\u00a040$/,
+    );
   });
 
   it('nomme un frais en retard, et compte plusieurs frais avec leur reste par devise', () => {
     const { totals } = feesFixture();
 
     expect(plain(overdueHeadline([OVERDUE_FEE], totals, 'fr'))).toBe(
-      'Frais scolaires · 1re tranche · 80 $ en retard depuis le 15/09',
+      '1re tranche · 80 $ en retard depuis le 15/09',
     );
     const twoCurrencies = [
       { ...totals[0], overdueInCents: 22_000, overdueCount: 1 },
       { ...totals[1], overdueInCents: 10_000_000, overdueCount: 1 },
     ];
     expect(plain(overdueHeadline([OVERDUE_FEE, PARTIAL_FEE], twoCurrencies, 'fr'))).toBe(
-      '2 frais · 220 $ · 100 000 FC en retard',
+      '2 frais · 220 $ · 100 000 FC à payer',
     );
+  });
+
+  it('nomme un frais sans répéter sa catégorie, et lui donne l’icône de sa catégorie', () => {
+    expect(shortFeeLabel(OVERDUE_FEE)).toBe('1re tranche');
+    expect(shortFeeLabel({ ...OVERDUE_FEE, section: null })).toBe('Frais scolaires · 1re tranche');
+    expect(shortFeeLabel({ ...OVERDUE_FEE, label: 'Minerval' })).toBe('Minerval');
+    expect(feeSubline(OVERDUE_FEE, 'fr')).toBe('Frais scolaires · échéance le 15/09');
+    expect(feeSubline({ ...OVERDUE_FEE, section: null, dueDate: null }, 'fr')).toBeNull();
+    expect(longDate('2026-09-15', 'fr')).toBe('15 septembre 2026');
+    expect(
+      feeCategoryIcon({ ...OVERDUE_FEE, section: { code: 'TUITION', title: 'Minerval' } }),
+    ).toBe('graduation-cap');
+    expect(feeCategoryIcon({ ...OVERDUE_FEE, section: { code: 'BOOKS', title: 'Manuels' } })).toBe(
+      'book-open',
+    );
+    expect(feeCategoryIcon({ ...OVERDUE_FEE, section: null, feeCode: 'OTHER' })).toBe('receipt');
   });
 
   it('écrit un versement : jour, moyen, frais couverts et payeur', () => {
@@ -85,7 +106,7 @@ describe('finance-formats', () => {
     expect(
       payerName({ payerFirstName: null, payerLastName: null, payerMiddleName: null }),
     ).toBeNull();
-    expect(methodView('CASH')).toEqual({ label: 'Espèces', icon: 'wallet' });
+    expect(methodView('CASH')).toEqual({ label: 'Espèces', icon: 'banknote' });
     expect(methodView('CHEQUE').label).toBe('Autre moyen');
   });
 

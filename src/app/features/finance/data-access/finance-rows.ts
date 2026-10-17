@@ -6,9 +6,11 @@ import { IconName } from '../../../shared/ui/icon/icons';
 import { Tone } from '../../../shared/ui/tone';
 import {
   allocationsLabel,
+  feeCategoryIcon,
   feeMoney,
   feeStatePill as feeStatusPill,
   feeStateView,
+  feeSubline,
   methodView,
   paidShare,
   payerName,
@@ -56,31 +58,35 @@ export interface FinanceLine {
   readonly icon: IconName | null;
   /** Part versée, de 0 à 1 : jauge de 5 px sous le nom d'un frais entamé. */
   readonly progress: number | null;
+  /** « 180 $ déjà versés », à côté de la jauge au-delà du téléphone. */
+  readonly progressNote: string | null;
   readonly spoken: string;
 }
 
 /**
- * ④ Un frais : son état en pastille (« En retard depuis le 15/09 »), son nom, sa catégorie ; à
- * droite, ce qui reste « sur 260 $ », ou le montant réglé d'un frais payé.
+ * E Un frais (spec 07 « Mes frais · détail ») : son état en pastille (« En retard depuis le
+ * 15/09 »), son nom, « catégorie · échéance le 15/09 », la tuile de sa catégorie ; à droite, ce
+ * qui reste « sur 260 $ », ou le montant « réglé » d'un frais payé. Un frais entamé (en retard ou
+ * partiel) montre sa jauge et ce qui est déjà versé.
  */
 export function feeLine(fee: Fee, locale: string): FinanceLine {
   const state = feeStateView(fee.state);
   const paid = fee.state === 'PAID';
   const started = fee.paidInCents > 0 && fee.remainingInCents > 0;
-  const alreadyPaid =
-    fee.state === 'OVERDUE' && fee.paidInCents
-      ? `${amountLabel(feeMoney(fee, fee.paidInCents), locale)} déjà versés`
-      : null;
+  const subline = feeSubline(fee, locale);
   return {
     status: state ? { label: feeStatusPill(fee, locale), tone: state.tone } : null,
     heading: fee.label,
-    details: [fee.section?.title ?? null, alreadyPaid].filter((detail) => detail !== null),
+    details: subline ? [subline] : [],
     amounts: [feeMoney(fee, paid ? fee.expectedInCents : fee.remainingInCents)],
     amountTone: state?.tone ?? null,
-    amountNote: paid ? null : `sur ${amountLabel(feeMoney(fee, fee.expectedInCents), locale)}`,
+    amountNote: paid ? 'réglé' : `sur ${amountLabel(feeMoney(fee, fee.expectedInCents), locale)}`,
     edge: state?.tone ?? 'neutral',
-    icon: null,
+    icon: feeCategoryIcon(fee),
     progress: started ? paidShare(fee.paidInCents, fee.expectedInCents) : null,
+    progressNote: started
+      ? `${amountLabel(feeMoney(fee, fee.paidInCents), locale)} déjà versés`
+      : null,
     spoken: spokenFee(fee, locale),
   };
 }
@@ -97,6 +103,7 @@ export function paymentLine(payment: Payment, locale: string): FinanceLine {
     edge: null,
     icon: methodView(payment.method).icon,
     progress: null,
+    progressNote: null,
     spoken: spokenPayment(payment, locale),
   };
 }

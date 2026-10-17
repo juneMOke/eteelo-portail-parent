@@ -17,11 +17,12 @@ test.describe('Mes frais', () => {
     await expect(page).toHaveURL(FEES);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mes frais');
     await expect(page.locator('app-overdue-banner')).toContainText(
-      'Frais scolaires · 1re tranche · 80 $ en retard depuis le 15/09',
+      '1re tranche · 80 $ en retard depuis le 15/09',
     );
+    await expect(page.locator('app-balance-summary .year')).toHaveText('Année scolaire 2026-2027');
     await expect(page.locator('app-balance-summary .remaining')).toHaveText([
-      '314 $ restant sur l’année',
-      '100 000 FC restant sur l’année',
+      '314 $',
+      '100 000 FC',
     ]);
     await expect(page.locator('ui-section-card .count')).toHaveText('4 frais · 1 en retard');
     await expect(page.locator('app-finance-line .heading')).toHaveText([
@@ -40,11 +41,30 @@ test.describe('Mes frais', () => {
 
     const sheet = page.getByRole('dialog', { name: 'Comment payer' });
     await expect(sheet).toBeVisible();
+    await expect(sheet.locator('.figure')).toHaveText('80 $');
     await expect(sheet.getByRole('link', { name: 'Appeler le secrétariat' })).toHaveAttribute(
       'href',
       'tel:+243998877665',
     );
     await expect(sheet.getByText('Bientôt disponible')).toHaveCount(2);
+
+    await sheet.getByRole('button', { name: 'Fermer' }).click();
+    await expect(sheet).toBeHidden();
+  });
+
+  test('passe de la fiche d’un frais à « Comment payer », puis y revient', async ({ page }) => {
+    await mockParentApi(page);
+    await page.goto(`${FEES}?fee=${FEE_ID.firstInstalment}`);
+
+    const feeSheet = page.getByRole('dialog', { name: 'Frais scolaires · 1re tranche' });
+    await feeSheet.getByRole('button', { name: 'Comment payer' }).click();
+    const howToPay = page.getByRole('dialog', { name: 'Comment payer' });
+    await expect(howToPay).toBeVisible();
+    await expect(feeSheet).toBeHidden();
+
+    await howToPay.getByRole('button', { name: 'Retour à la fiche du frais' }).click();
+    await expect(feeSheet).toBeVisible();
+    await expect(page).toHaveURL(`${FEES}?fee=${FEE_ID.firstInstalment}`);
   });
 
   test('mène d’un frais à son versement, et le retour rouvre la fiche du frais', async ({

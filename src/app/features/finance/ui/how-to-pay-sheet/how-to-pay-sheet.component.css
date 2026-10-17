@@ -1,67 +1,128 @@
-.context {
-  color: var(--color-text-secondary);
-  font-size: var(--text-md);
+/* Même conteneur que la fiche d'un frais : feuille Blanc Cassé, panneau de 560 px au-delà. */
+ui-sheet {
+  --sheet-width: 560px;
+  --sheet-max-height: 88dvh;
+  --sheet-bg: var(--color-surface-soft);
+  --sheet-padding: var(--space-5) 18px var(--space-6);
+  --sheet-heading-size: var(--text-section);
 }
 
-.amount {
+.sub {
+  color: var(--color-text-muted);
+  font-size: 0.78125rem;
+  line-height: 1.4;
+}
+
+/* Montant à verser : case bleu brume, chiffre en Lora 28. */
+.due {
+  align-self: flex-start;
+  padding: var(--space-3) 14px;
+  border-radius: var(--radius-tile);
+  background: var(--color-accent-soft);
+}
+
+.caption {
+  color: var(--color-text-secondary);
+  font-size: var(--text-caps);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.figure {
   color: var(--color-heading);
   font-family: var(--font-title);
+  font-size: var(--text-2xl);
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-semibold);
+  line-height: 1.2;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.block-title {
+  color: var(--color-text-secondary);
+  font-size: var(--text-caps);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+/* Les moyens : une carte, rangées de 60 px séparées d'un filet Papier ; aucune couleur propre. */
+.methods {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
 }
 
 .method {
   display: flex;
+  align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-tile);
+  min-height: 60px;
+  padding: var(--space-2) 14px;
+}
+
+.method + .method {
+  border-top: 1px solid var(--color-page);
 }
 
 .icon {
   display: grid;
   flex: none;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   place-items: center;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--color-accent-soft);
   color: var(--color-accent);
 }
 
 .text {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1);
-  font-size: var(--text-md);
+  gap: 2px;
+  min-width: 0;
 }
 
-h3 {
+.name {
   color: var(--color-heading);
-  font-size: var(--text-md);
+  font-size: 0.90625rem;
   font-weight: var(--weight-semibold);
 }
 
+.detail {
+  color: var(--color-text-secondary);
+  font-size: 0.78125rem;
+}
+
+/* Appeler : rond de 36 px à contour bleu ardoise, dans une zone tactile de 44 px. */
 .call {
-  display: inline-flex;
-  min-height: var(--tap-target);
-  align-items: center;
-  gap: var(--space-2);
-  font-weight: var(--weight-semibold);
+  display: grid;
+  flex: none;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  place-items: center;
+  border: 4px solid transparent;
+  border-radius: 50%;
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+  color: var(--color-accent);
+  background-clip: padding-box;
 }
 
 /* Annoncé, pas encore actif : grisé, et dit en toutes lettres. */
-.upcoming {
-  border-style: dashed;
-  color: var(--color-text-muted);
-}
-
 .upcoming .icon {
-  background: var(--color-surface-soft);
+  background: var(--color-page);
   color: var(--color-text-muted);
 }
 
-.upcoming h3 {
+.upcoming .name {
   color: var(--color-text-muted);
 }

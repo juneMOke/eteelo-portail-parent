@@ -1,7 +1,7 @@
 @let item = line();
 <button type="button" class="line" [attr.aria-label]="item.spoken" (click)="activate.emit()">
   @if (item.icon; as icon) {
-    <span class="icon"><ui-icon [name]="icon" [size]="20" /></span>
+    <span class="icon"><ui-icon [name]="icon" [size]="21" [strokeWidth]="1.8" /></span>
   }
   @if (item.status; as status) {
     <ui-badge class="status" [tone]="status.tone"
@@ -17,7 +17,12 @@
     </span>
   }
   @if (item.progress !== null) {
-    <span class="gauge"><span class="filled" [style.width.%]="item.progress * 100"></span></span>
+    <span class="progress">
+      <span class="gauge"><span class="filled" [style.width.%]="item.progress * 100"></span></span>
+      @if (item.progressNote; as note) {
+        <span class="progress-note">{{ note }}</span>
+      }
+    </span>
   }
   <span class="money">
     <span class="amount">{{ item.amounts | amount }}</span>
@@ -25,5 +30,5 @@
       <span class="note">{{ note }}</span>
     }
   </span>
-  <span class="chevron"><ui-icon name="chevron-right" [size]="16" [strokeWidth]="2" /></span>
+  <span class="chevron"><ui-icon name="chevron-right" [size]="16" [strokeWidth]="2.2" /></span>
 </button>

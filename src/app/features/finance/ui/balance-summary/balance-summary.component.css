@@ -1,83 +1,125 @@
-/* Une carte au bandeau Bleu Ardoise à motif kuba, le bilan dessous sur bleu brume. */
+/* Deux étages : tête Bleu Ardoise à motif kuba, corps bleu brume. Le bloc ne s'ouvre pas. */
 :host {
   display: block;
   overflow: hidden;
-  border-radius: var(--radius-tile);
+  border-radius: 16px;
   background: var(--color-accent-soft);
   box-shadow: var(--shadow-banner);
-  transition: translate var(--duration-lift) var(--ease-out-cubic);
+  transition:
+    translate var(--duration-lift) var(--ease-out-cubic),
+    box-shadow var(--duration-lift) var(--ease-out-cubic);
 }
 
-.band {
+.head {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-3) var(--space-4);
+  align-items: center;
+  gap: 13px;
+  padding: var(--space-3) 14px;
   background: var(--color-bar-bg) var(--texture-banner);
   color: var(--color-bar-text);
 }
 
-.year {
-  font-family: var(--font-title);
-  font-size: var(--text-lg);
-  font-weight: var(--weight-semibold);
+.tile {
+  display: grid;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--color-bar-control-border);
+  border-radius: 11px;
+  background: var(--color-bar-control-bg);
+  color: var(--color-highlight);
 }
 
-/* La date de situation en petites capitales Or Doux. */
+.titles {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+/* La date de situation en petites capitales Or Doux, précédée d'une horloge. */
 .as-of {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   color: var(--color-highlight);
   font-size: var(--text-caps);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-caps);
+  line-height: 1.2;
   text-transform: uppercase;
+}
+
+.year {
+  font-family: var(--font-title);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: 1.3;
+}
+
+.count {
+  flex: none;
+  padding: 7px var(--space-3);
+  border: 1px solid var(--color-bar-control-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-bar-control-bg);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  line-height: 1.2;
 }
 
 .body {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
-  padding: var(--space-4);
+  padding: 14px;
 }
 
+/* Téléphone : une colonne, les cases sous la phrase. */
 .block {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: var(--space-3);
 }
 
-/* Le chiffre qu'on cherche ; le mot qui le suit reste discret. */
-.remaining {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-1) var(--space-2);
+/* Une devise par bloc, séparées d'un filet : jamais additionnées. */
+.block + .block {
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-accent-line);
 }
 
-.figure {
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.caption {
+  color: var(--color-text-secondary);
+  font-size: var(--text-caps);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* Le chiffre qu'on cherche, en Bleu Profond même en retard : le retard se lit dans l'alerte. */
+.remaining {
+  margin-top: 6px;
   color: var(--color-heading);
   font-family: var(--font-title);
   font-size: 2rem;
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-semibold);
-  line-height: 1;
+  line-height: 1.1;
   white-space: nowrap;
 }
 
-.word {
-  color: var(--color-text-secondary);
-  font-size: var(--text-md);
-}
-
-.settled {
-  color: var(--color-tone-success);
-  font-family: var(--font-title);
-  font-size: var(--text-lg);
-  font-weight: var(--weight-semibold);
-}
-
-/* Jauge de 9 px, versé ÷ total : elle glisse au changement d'année, jamais depuis zéro. */
+/* Jauge de 9 px, versé ÷ total : elle glisse au changement d'enfant, jamais depuis zéro. */
 .gauge {
   height: 9px;
+  margin-top: var(--space-3);
   overflow: hidden;
   border-radius: var(--radius-pill);
   background: var(--color-page);
@@ -91,27 +133,43 @@
   transition: width var(--duration-gauge) var(--ease-out-cubic);
 }
 
-.paid {
+.sentence {
+  margin-top: var(--space-2);
   color: var(--color-text-secondary);
-  font-family: var(--font-title);
-  font-size: var(--text-md);
-  font-style: italic;
+  font-size: 0.78125rem;
+  line-height: var(--leading-normal);
 }
 
-/* Total et versé : deux cases blanches à liseré, l'une sous l'autre au téléphone. */
+.sentence strong {
+  color: var(--color-text);
+  font-weight: var(--weight-semibold);
+}
+
+/* Tout est réglé : 0 $ et la phrase en vert savane, jauge pleine. */
+.settled .remaining {
+  color: var(--color-tone-success);
+}
+
+.settled .sentence {
+  color: var(--color-tone-success);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+/* Total et déjà versé : deux cases blanches à liseré, intitulé à gauche et montant à droite. */
 .boxes {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .box {
   display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-end;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-border-soft);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 11px 14px;
+  border: 1px solid var(--color-accent-line);
   border-left: 3px solid var(--box-edge);
   border-radius: var(--radius-md);
   background: var(--color-surface);
@@ -131,40 +189,62 @@
   font-size: var(--text-kpi);
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-semibold);
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .total {
   --box-edge: var(--color-accent);
 }
 
-.paid-box {
+.paid {
   --box-edge: var(--color-tone-success);
 }
 
+/* Tablette et bureau : reste et jauge à gauche, cases empilées à droite (1,35 fr / 1 fr). */
 @media (min-width: 600px) {
   :host {
     border-radius: var(--radius-card);
   }
 
-  .band {
+  .head {
     padding: var(--space-4) var(--space-5);
   }
 
+  .tile {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+  }
+
   .year {
-    font-size: var(--text-xl);
+    font-size: var(--text-lg);
   }
 
   .body {
-    padding: var(--space-5);
+    padding: 18px var(--space-5);
   }
 
-  .figure {
+  .block {
+    grid-template-columns: 1.35fr 1fr;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .remaining {
     font-size: var(--text-amount-hero);
+  }
+
+  .box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
   }
 }
 
 @media (hover: hover) {
   :host(:hover) {
     translate: 0 -2px;
+    box-shadow: var(--shadow-banner), var(--shadow-lift);
   }
 }
