@@ -22,6 +22,12 @@ describe('AvatarComponent', () => {
     expect(fixture.nativeElement.textContent.trim()).toBe('M');
   });
 
+  it('ignore un prénom de remplissage (« N/A »)', async () => {
+    const fixture = await render({ firstName: 'N/A', lastName: 'Boboto' });
+
+    expect(fixture.nativeElement.textContent.trim()).toBe('B');
+  });
+
   it('affiche la photo, puis les initiales si elle ne charge pas', async () => {
     const fixture = await render({ firstName: 'Grâce', lastName: 'Mbala', photoUrl: '/photo' });
     const img: HTMLImageElement = fixture.nativeElement.querySelector('img');

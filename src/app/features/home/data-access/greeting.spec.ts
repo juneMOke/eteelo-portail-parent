@@ -16,6 +16,9 @@ describe('greetingName', () => {
     expect(greetingName({ firstName: null, lastName: 'Kabila', surname: ' ' }, 'MOTHER')).toBe(
       'Mme Kabila',
     );
+    expect(greetingName({ firstName: 'N/A', lastName: 'BOBOTO', surname: 'n/a' }, 'MOTHER')).toBe(
+      'Mme BOBOTO',
+    );
   });
 
   it('ne nomme personne sans nom', () => {

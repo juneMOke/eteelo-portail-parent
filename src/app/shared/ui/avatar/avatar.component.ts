@@ -6,6 +6,7 @@ export type AvatarSize = 'sm' | 'md' | 'lg';
  * Photo de l'enfant si elle existe, sinon ses initiales. Décoratif : le prénom est toujours
  * écrit à côté.
  */
+import { namePart } from '../../format/name-part';
 @Component({
   selector: 'ui-avatar',
   template: `
@@ -33,7 +34,7 @@ export class AvatarComponent {
   protected readonly showPhoto = computed(() => !!this.photoUrl() && !this.photoFailed());
   protected readonly initials = computed(() =>
     [this.firstName(), this.lastName()]
-      .map((part) => part?.trim().charAt(0) ?? '')
+      .map((part) => namePart(part)?.charAt(0) ?? '')
       .join('')
       .toLocaleUpperCase('fr'),
   );

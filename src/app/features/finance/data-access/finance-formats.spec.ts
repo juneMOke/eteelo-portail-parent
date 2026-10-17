@@ -114,6 +114,9 @@ describe('finance-formats', () => {
     expect(
       payerName({ payerFirstName: null, payerLastName: null, payerMiddleName: null }),
     ).toBeNull();
+    expect(
+      payerName({ payerFirstName: 'N/A', payerLastName: 'Boboto', payerMiddleName: null }),
+    ).toBe('Boboto');
     expect(methodView('CASH')).toEqual({ label: 'Espèces', icon: 'banknote' });
     expect(methodView('CHEQUE').label).toBe('Autre moyen');
   });
