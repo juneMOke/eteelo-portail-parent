@@ -1,63 +1,64 @@
-<ui-sheet [heading]="fee()?.label ?? ''" (closed)="closed.emit()">
+<ui-sheet [heading]="fee()?.label ?? ''" dismissible (closed)="closed.emit()">
+  @if (state(); as state) {
+    <ui-badge sheetLead class="status" [tone]="state.tone"
+      ><span class="dot"></span>{{ state.label }}</ui-badge
+    >
+  }
+  @if (subline(); as subline) {
+    <p sheetSub class="sub">{{ subline }}</p>
+  }
   @if (fee(); as fee) {
     @let amounts = money()!;
-    <p class="meta">
-      @if (state(); as state) {
-        <ui-badge [tone]="state.tone">{{ state.label }}</ui-badge>
-      }
-      @if (fee.section; as section) {
-        <span>{{ section.title }}</span>
-      }
-      @if (due()) {
-        <span>Échéance : {{ due() }}</span>
-      }
-    </p>
-
-    <dl class="facts">
-      @if (reduction()) {
+    <section class="block" aria-labelledby="fee-calc">
+      <h3 id="fee-calc" class="block-title">Le calcul</h3>
+      <dl class="calc">
         <div>
           <dt>Montant</dt>
-          <dd class="money">{{ amounts.gross | amount }}</dd>
+          <dd>{{ amounts.gross | amount }}</dd>
         </div>
         <div>
-          <dt>Réduction</dt>
-          <dd>{{ reduction() }}</dd>
+          <dt>Réductions</dt>
+          <dd [class.none]="!reduction()">{{ reduction() ?? '—' }}</dd>
         </div>
         <div>
-          <dt>À payer</dt>
-          <dd class="money">{{ amounts.expected | amount }}</dd>
+          <dt>Déjà versé</dt>
+          <dd class="paid">− {{ amounts.paid | amount }}</dd>
+        </div>
+        <div
+          class="remaining"
+          [style.--remaining]="'var(--color-tone-' + (state()?.tone ?? 'neutral') + ')'"
+        >
+          <dt>Reste à payer</dt>
+          <dd>{{ amounts.remaining | amount }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="block" aria-labelledby="fee-payments">
+      <h3 id="fee-payments" class="block-title">Versements reçus · {{ payments().length }}</h3>
+      @if (payments().length) {
+        <div class="payments">
+          @for (payment of payments(); track payment.id) {
+            <app-ledger-row
+              flat
+              [row]="payment.row"
+              [link]="paymentsLink()"
+              [queryParams]="payment.params"
+            />
+          }
         </div>
       } @else {
-        <div>
-          <dt>Montant</dt>
-          <dd class="money">{{ amounts.expected | amount }}</dd>
-        </div>
+        <p class="empty">Aucun versement reçu pour ce frais.</p>
       }
-      <div>
-        <dt>Versé</dt>
-        <dd class="money">{{ amounts.paid | amount }}</dd>
-      </div>
-      <div>
-        <dt>Reste</dt>
-        <dd class="money">{{ amounts.remaining | amount }}</dd>
-      </div>
-    </dl>
-
-    <h3 class="section-title">Versements reçus</h3>
-    <div class="rows">
-      @for (payment of payments(); track payment.id) {
-        <app-ledger-row
-          [row]="payment.row"
-          [link]="paymentsLink()"
-          [queryParams]="payment.params"
-        />
-      } @empty {
-        <p class="none">Aucun versement pour ce frais.</p>
-      }
-    </div>
+    </section>
 
     @if (fee.remainingInCents > 0) {
-      <button type="button" class="button" (click)="pay.emit(fee)">Comment payer</button>
+      <div class="actions">
+        <button type="button" class="button attention pay" (click)="pay.emit(fee)">
+          <ui-icon name="smartphone" [size]="17" />
+          Comment payer
+        </button>
+      </div>
     }
   }
 </ui-sheet>

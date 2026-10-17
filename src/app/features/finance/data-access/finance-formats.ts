@@ -9,7 +9,7 @@ import {
   PaymentMethod,
   ReceivedMoney,
 } from '../../../core/api/finance.contract';
-import { CivilMonth, civilToDate, monthOf } from '../../../shared/date/civil-date';
+import { CivilDate, CivilMonth, civilToDate, monthOf } from '../../../shared/date/civil-date';
 import { Money, amountLabel, currencySymbol, spokenAmount } from '../../../shared/format/amount';
 import { dayLabel, monthLabel, shortDate, spokenDay } from '../../../shared/format/day-labels';
 import { instantDay, instantTime } from '../../../shared/format/time-labels';
@@ -29,7 +29,7 @@ export interface FeeStateView {
 
 const FEE_STATES: Readonly<Record<string, FeeStateView>> = {
   OVERDUE: { label: 'En retard', tone: 'alert' },
-  PARTIAL: { label: 'Partiellement payé', tone: 'pending' },
+  PARTIAL: { label: 'Partiel', tone: 'pending' },
   DUE: { label: 'À payer', tone: 'info' },
   PAID: { label: 'Payé', tone: 'success' },
 };
@@ -46,7 +46,7 @@ export function feeMoney(fee: Fee, amountInCents: number): Money {
 
 /**
  * La pastille d'état d'une ligne de frais, le mot et sa date : « En retard depuis le 15/09 »,
- * « Partiellement payé · avant le 30/09 », « À payer avant le 10/10 », « Payé le 03/09 ». Le
+ * « Partiel · avant le 30/09 », « À payer avant le 10/10 », « Payé le 03/09 ». Le
  * reste s'écrit à droite, en Lora.
  */
 export function feeStatePill(fee: Fee, locale: string): string {
@@ -88,16 +88,6 @@ export function reductionLabel(reduction: FeeReduction, locale: string): string 
   return `${reduction.label} ${formatNumber(reduction.percent, locale, '1.0-2')}\u00a0%`;
 }
 
-/** « 280 $ versés sur 594 $ ». */
-export function paidOverExpectedLabel(total: FeesTotal, locale: string): string {
-  const paid = amountLabel({ amountInCents: total.paidInCents, currency: total.currency }, locale);
-  const expected = amountLabel(
-    { amountInCents: total.expectedInCents, currency: total.currency },
-    locale,
-  );
-  return `${paid} versés sur ${expected}`;
-}
-
 /**
  * Part versée, de 0 à 1 : la largeur d'une jauge, pas un montant. Elle se lit sur les chiffres
  * du serveur, jamais affichée en pourcentage.
@@ -106,15 +96,59 @@ export function paidShare(paidInCents: number, expectedInCents: number): number 
   return expectedInCents > 0 ? Math.min(paidInCents / expectedInCents, 1) : 1;
 }
 
-/** « Situation au 23/09 à 7 h 40 » : en finances, un chiffre sans date peut induire en erreur. */
+/**
+ * « Situation au 23/09 · 07 h 40 » (en capitales à l'écran) : en finances, un chiffre sans date
+ * peut induire en erreur.
+ */
 export function asOfLabel(asOf: string, locale: string): string {
-  return `Situation au ${shortDate(instantDay(asOf, locale), locale)} à ${instantTime(asOf, locale)}`;
+  // Espaces insécables : l'heure ne se coupe pas à la ligne.
+  const time = formatDate(asOf, "HH'\u00a0h\u00a0'mm", locale);
+  return `Situation au ${shortDate(instantDay(asOf, locale), locale)} · ${time}`;
+}
+
+/** « 15 septembre 2026 » : l'échéance en toutes lettres, sur la fiche d'un frais. */
+export function longDate(day: CivilDate, locale: string): string {
+  return formatDate(civilToDate(day), 'd MMMM y', locale, 'UTC');
 }
 
 /**
- * Le bandeau « À payer maintenant » : un frais en retard est nommé (« 1re tranche · 80 $ en
- * retard depuis le 15/09 ») ; plusieurs sont comptés, avec leur reste par devise tel que le
- * serveur le donne (« 2 frais · 220 $ en retard »).
+ * Le nom court d'un frais, sans sa catégorie quand le libellé la répète : « Frais scolaires ·
+ * 1re tranche » devient « 1re tranche ». Sinon le libellé tel quel.
+ */
+export function shortFeeLabel(fee: Fee): string {
+  const prefix = fee.section ? `${fee.section.title} · ` : null;
+  return prefix && fee.label.startsWith(prefix) && fee.label.length > prefix.length
+    ? fee.label.slice(prefix.length)
+    : fee.label;
+}
+
+/** « Frais scolaires · échéance le 15/09 » : la catégorie et l'échéance, sous le nom. */
+export function feeSubline(fee: Fee, locale: string): string | null {
+  const due = fee.dueDate ? `échéance le ${shortDate(fee.dueDate, locale)}` : null;
+  const parts = [fee.section?.title, due].filter(Boolean);
+  return parts.length ? parts.join(' · ') : null;
+}
+
+/** Icône de catégorie (`FeeCode`, liste fermée du serveur) ; un reçu pour les autres. */
+const CATEGORY_ICONS: Readonly<Record<string, IconName>> = {
+  TUITION: 'graduation-cap',
+  REGISTRATION: 'user-plus',
+  ENROLLMENT: 'user-plus',
+  APPLICATION: 'user-plus',
+  ADMISSION: 'user-plus',
+  BOOKS: 'book-open',
+  TRANSPORT: 'bus',
+  UNIFORM: 'shirt',
+};
+
+export function feeCategoryIcon(fee: Fee): IconName {
+  return CATEGORY_ICONS[fee.section?.code ?? fee.feeCode] ?? 'receipt';
+}
+
+/**
+ * Le titre de l'alerte « À payer maintenant » : un frais en retard est nommé (« 1re tranche ·
+ * 80 $ en retard depuis le 15/09 ») ; plusieurs sont comptés, avec leur reste par devise tel que
+ * le serveur le donne (« 2 frais · 220 $ à payer »).
  */
 export function overdueHeadline(
   overdue: readonly Fee[],
@@ -125,15 +159,19 @@ export function overdueHeadline(
     const [fee] = overdue;
     const remaining = amountLabel(feeMoney(fee, fee.remainingInCents), locale);
     const since = fee.dueDate ? ` depuis le ${shortDate(fee.dueDate, locale)}` : '';
-    return `${fee.label} · ${remaining} en retard${since}`;
+    return `${shortFeeLabel(fee)} · ${remaining} en retard${since}`;
   }
-  const amounts = totals
+  return `${overdue.length} frais · ${overdueAmounts(totals, locale)} à payer`;
+}
+
+/** « 220 $ », « 80 $ · 150 000 FC » : le reste en retard par devise, tel que le serveur le donne. */
+export function overdueAmounts(totals: readonly FeesTotal[], locale: string): string {
+  return totals
     .filter((total) => total.overdueCount > 0)
     .map((total) =>
       amountLabel({ amountInCents: total.overdueInCents, currency: total.currency }, locale),
     )
     .join(' · ');
-  return `${overdue.length} frais · ${amounts} en retard`;
 }
 
 /** « Léonie Kabila » ; null si la caisse n'a pas saisi de nom. */
@@ -148,7 +186,7 @@ interface MethodView {
 }
 
 const METHODS: Readonly<Record<string, MethodView>> = {
-  CASH: { label: 'Espèces', icon: 'wallet' },
+  CASH: { label: 'Espèces', icon: 'banknote' },
   MOBILE_MONEY: { label: 'Mobile money', icon: 'smartphone' },
   CREDIT_CARD: { label: 'Carte bancaire', icon: 'credit-card' },
   DEBIT_CARD: { label: 'Carte bancaire', icon: 'credit-card' },
@@ -212,7 +250,12 @@ export function receiptFileName(receiptNumber: string): string {
 
 /** « Lun. 22 sept. · Mobile money » : la date et le moyen d'un reçu, sur sa ligne. */
 export function receiptMeta(payment: Payment, locale: string): string {
-  const day = formatDate(civilToDate(instantDay(payment.paidAt, locale)), 'EEE d MMM', locale, 'UTC');
+  const day = formatDate(
+    civilToDate(instantDay(payment.paidAt, locale)),
+    'EEE d MMM',
+    locale,
+    'UTC',
+  );
   return `${day.charAt(0).toUpperCase()}${day.slice(1)} · ${methodView(payment.method).label}`;
 }
 

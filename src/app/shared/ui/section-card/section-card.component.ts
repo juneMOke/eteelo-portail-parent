@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
 import { IconName } from '../icon/icons';
 
@@ -23,9 +23,13 @@ export class SectionCardComponent {
   readonly icon = input.required<IconName>();
   /** « 4 frais · 1 en retard » ; null, pas de pilule. Lu après le titre. */
   readonly count = input<string | null>(null);
+  /** Segment d'alerte de la pilule (« 1 en retard »), en terre cuite après le compteur. */
+  readonly countAlert = input<string | null>(null);
   /** Niveau du titre dans la page. */
   readonly level = input<2 | 3>(2);
   readonly lift = input(false);
 
   protected readonly id = `section-card-${nextId++}`;
+  /** « 4 frais · 1 en retard » : le point ne précède que le segment d'alerte. */
+  protected readonly separator = computed(() => (this.countAlert() ? ' · ' : ''));
 }

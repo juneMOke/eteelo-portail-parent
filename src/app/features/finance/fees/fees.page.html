@@ -1,12 +1,28 @@
 @if (data(); as data) {
   @if (data.fees.length) {
+    <app-balance-summary
+      [yearLabel]="yearLabel()"
+      [totals]="data.totals"
+      [asOf]="data.asOf"
+      [count]="feesCount()"
+    />
+
     @if (overdue().length) {
-      <app-overdue-banner [headline]="headline()" [fees]="overdue()" (pay)="showHowToPay(null)" />
+      <app-overdue-banner
+        [headline]="headline()"
+        [fees]="overdue()"
+        (pay)="payOverdue()"
+        (more)="showFeeList()"
+      />
     }
 
-    <app-balance-summary [yearLabel]="yearLabel()" [totals]="data.totals" [asOf]="data.asOf" />
-
-    <ui-section-card heading="Les frais de l’année" icon="wallet" [count]="feesCount()">
+    <ui-section-card
+      #feeList
+      heading="Les frais de l’année"
+      icon="receipt"
+      [count]="feesCount()"
+      [countAlert]="overdueCount()"
+    >
       <ul class="rows" [attr.aria-busy]="resource.isLoading()">
         @for (item of lines(); track item.id) {
           <li><app-finance-line [line]="item.line" (activate)="fiche.show(item.id)" /></li>
@@ -23,9 +39,16 @@
     [childId]="childId()"
     [fee]="openFee()"
     (closed)="fiche.dismiss()"
-    (pay)="showHowToPay($event)"
+    (pay)="payFee($event)"
   />
-  <app-how-to-pay-sheet [fee]="payingFee()" [phone]="schoolPhone()" />
+  <app-how-to-pay-sheet
+    [fee]="payingFee()"
+    [overdueAmount]="payingAmount()"
+    [childName]="childName()"
+    [phone]="schoolPhone()"
+    [fromFee]="payingFromFee()"
+    (back)="backToFee()"
+  />
 } @else if (resource.error()) {
   <ui-load-error
     heading="Impossible d’afficher les frais"
@@ -35,9 +58,9 @@
 } @else {
   <div class="loading" role="status" aria-busy="true">
     <span class="visually-hidden">Chargement des frais…</span>
-    <ui-skeleton height="170px" />
-    <ui-skeleton height="64px" />
-    <ui-skeleton height="64px" />
-    <ui-skeleton height="64px" />
+    <ui-skeleton class="summary" height="252px" />
+    <ui-skeleton height="88px" />
+    <ui-skeleton height="88px" />
+    <ui-skeleton height="88px" />
   </div>
 }

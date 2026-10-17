@@ -9,7 +9,10 @@
       }
     </span>
     @if (count(); as count) {
-      <p class="count">{{ count }}</p>
+      <p class="count">
+        <span>{{ count + separator() }}</span>
+        <span class="alert">{{ countAlert() }}</span>
+      </p>
     }
   </header>
   <div class="body"><ng-content /></div>

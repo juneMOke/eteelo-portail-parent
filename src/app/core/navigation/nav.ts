@@ -63,7 +63,7 @@ export const NAV_GROUPS: readonly NavGroup[] = [
   {
     title: 'Mes finances',
     entries: [
-      { id: 'fees', title: 'Mes frais', icon: 'wallet', path: 'finance/fees' },
+      { id: 'fees', title: 'Mes frais', icon: 'banknote', path: 'finance/fees' },
       { id: 'receipts', title: 'Mes reçus', icon: 'file-text', path: 'finance/receipts' },
       { id: 'payments', title: 'Mes paiements', icon: 'dollar', path: 'finance/payments' },
     ],

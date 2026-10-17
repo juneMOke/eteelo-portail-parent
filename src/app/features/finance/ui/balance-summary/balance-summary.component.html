@@ -1,30 +1,37 @@
-<div class="band">
-  <p class="year">Année {{ yearLabel() }}</p>
-  <p class="as-of">{{ asOfText() }}</p>
-</div>
+<header class="head">
+  <span class="tile" aria-hidden="true"
+    ><ui-icon name="banknote" [size]="21" [strokeWidth]="1.9"
+  /></span>
+  <div class="titles">
+    <p class="as-of"><ui-icon name="clock" [size]="12" [strokeWidth]="2.2" />{{ asOfText() }}</p>
+    <h2 class="year">Année scolaire {{ yearLabel() }}</h2>
+  </div>
+  <p class="count">{{ count() }}</p>
+</header>
 <div class="body">
   @for (block of blocks(); track block.currency) {
-    <div class="block">
-      @if (block.settled) {
-        <p class="settled">Rien à payer pour le moment.</p>
-      } @else {
-        <p class="remaining">
-          <span class="figure">{{ block.remaining }}</span>&ngsp;<span class="word"
-            >restant sur l’année</span
-          >
-        </p>
-      }
-      <span class="gauge" aria-hidden="true">
-        <span class="filled" [style.width.%]="block.share * 100"></span>
-      </span>
-      <p class="paid">{{ block.paidOverExpected }}</p>
+    <div class="block" [class.settled]="block.settled">
+      <div class="main">
+        <p class="caption">Reste à payer sur l’année</p>
+        <p class="remaining">{{ block.remaining }}</p>
+        <span class="gauge" aria-hidden="true">
+          <span class="filled" [style.width.%]="block.share * 100"></span>
+        </span>
+        @if (block.settled) {
+          <p class="sentence">Rien à payer pour le moment.</p>
+        } @else {
+          <p class="sentence">
+            <strong>{{ block.paid }}</strong> versés sur <strong>{{ block.expected }}</strong>
+          </p>
+        }
+      </div>
       <dl class="boxes">
         <div class="box total">
           <dt>Total de l’année</dt>
           <dd>{{ block.expected }}</dd>
         </div>
-        <div class="box paid-box">
-          <dt>Versé</dt>
+        <div class="box paid">
+          <dt>Déjà versé</dt>
           <dd>{{ block.paid }}</dd>
         </div>
       </dl>

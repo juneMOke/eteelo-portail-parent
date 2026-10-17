@@ -58,6 +58,7 @@
     --color-accent-soft: var(--palette-bleu-brume);
     --color-accent-line: var(--palette-bleu-filet);
     --color-attention: var(--palette-terre-cuite);
+    --color-attention-hover: var(--palette-terre-cuite-fonce);
     --color-highlight: var(--palette-or-doux);
     --color-focus-ring: var(--palette-or-doux);
 
@@ -74,6 +75,17 @@
     --color-tone-success-soft: var(--palette-vert-pale);
     --color-tone-alert: var(--palette-terre-cuite-fonce);
     --color-tone-alert-soft: var(--palette-terre-pale);
+    /* Alerte « À payer maintenant » (Mes frais D) : filet et tuile d'icône sur le fond terre pâle. */
+    --color-tone-alert-line: color-mix(
+      in srgb,
+      var(--palette-terre-cuite) 22%,
+      var(--palette-terre-pale)
+    );
+    --color-tone-alert-tile: color-mix(
+      in srgb,
+      var(--palette-terre-cuite) 14%,
+      var(--palette-terre-pale)
+    );
     --color-tone-neutral: var(--palette-gris-texte);
     --color-tone-neutral-soft: var(--palette-sable-clair);
     --color-on-tone: var(--palette-blanc-casse);
@@ -197,6 +209,11 @@
     --shadow-sheet: 0 -8px 32px rgb(14 45 66 / 0.24);
     /* Carte survolée : ombre bleutée, « ceci s'ouvre ». */
     --shadow-lift: 0 6px 16px rgb(14 45 66 / 0.1);
+    /* Ligne de frais survolée, puis pressée au pointeur (Mes frais E). */
+    --shadow-line-hover: 0 12px 24px rgb(14 45 66 / 0.12);
+    --shadow-line-press: 0 4px 10px rgb(14 45 66 / 0.1);
+    /* Bouton terre cuite « Comment payer », seul accent plein de Mes frais. */
+    --shadow-attention: 0 2px 6px rgb(184 92 44 / 0.25);
 
     /* Tailles */
     --tap-target: 44px;

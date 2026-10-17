@@ -1,0 +1,33 @@
+/* Mes frais : 14 px entre sections au téléphone, 18 en tablette, 20 au bureau. */
+:host {
+  gap: 14px;
+}
+
+/* « + n autres frais » amène la carte sous la barre collante. */
+ui-section-card {
+  scroll-margin-top: var(--space-9);
+}
+
+.loading ui-skeleton {
+  border-radius: var(--radius-tile);
+}
+
+.loading .summary {
+  border-radius: 16px;
+}
+
+@media (min-width: 600px) {
+  :host {
+    gap: 18px;
+  }
+
+  .loading .summary {
+    border-radius: var(--radius-card);
+  }
+}
+
+@media (min-width: 905px) {
+  :host {
+    gap: var(--space-5);
+  }
+}

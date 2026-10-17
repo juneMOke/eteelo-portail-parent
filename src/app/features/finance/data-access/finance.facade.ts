@@ -2,6 +2,7 @@ import { Injectable, ResourceRef, Signal, computed, inject } from '@angular/core
 import { rxResource } from '@angular/core/rxjs-interop';
 import { AcademicYear, ChildFees, Payment } from '../../../core/api/finance.contract';
 import { ParentApi, receiptUrl } from '../../../core/api/parent-api';
+import { childName } from '../../../core/session/child-format';
 import { SessionStore } from '../../../core/session/session.store';
 
 export interface PaymentsRequest {
@@ -30,6 +31,12 @@ export class FinanceFacade {
   readonly currentYearLabel: Signal<string> = computed(
     () => this.session.academicYear()?.name ?? '',
   );
+
+  /** « Josué » : le prénom de l'enfant, dans « Comment payer ». */
+  childName(childId: string): string | null {
+    const child = this.session.childById(childId);
+    return child ? childName(child) : null;
+  }
 
   /** À créer dans un contexte d'injection (initialiseur de champ d'une page). */
   feesResource(childId: () => string): ResourceRef<ChildFees | undefined> {

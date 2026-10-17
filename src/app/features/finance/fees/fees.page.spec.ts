@@ -50,13 +50,15 @@ describe('FeesPage', () => {
 
     expect(api.fees).toHaveBeenCalledWith(GRACE.childId);
     expect(text(el.querySelector('app-overdue-banner .headline'))).toBe(
-      'Frais scolaires · 1re tranche · 80 $ en retard depuis le 15/09',
+      '1re tranche · 80 $ en retard depuis le 15/09',
     );
-    expect(text(el.querySelector('app-balance-summary .year'))).toBe('Année 2026-2027');
+    expect(text(el.querySelector('app-balance-summary .year'))).toBe('Année scolaire 2026-2027');
+    expect(text(el.querySelector('app-balance-summary .count'))).toBe('4 frais');
     expect([...el.querySelectorAll('app-balance-summary .remaining')].map(text)).toEqual([
-      '314 $ restant sur l’année',
-      '100 000 FC restant sur l’année',
+      '314 $',
+      '100 000 FC',
     ]);
+    expect(text(el.querySelector('app-balance-summary .sentence'))).toBe('280 $ versés sur 594 $');
     expect([...el.querySelectorAll('app-balance-summary .total dd')].map(text)).toEqual([
       '594 $',
       expect.stringContaining('FC'),
@@ -71,7 +73,8 @@ describe('FeesPage', () => {
     ]);
     const first = el.querySelector('app-finance-line')!;
     expect(text(first.querySelector('.status'))).toBe('En retard depuis le 15/09');
-    expect(text(first.querySelector('.details'))).toContain('180 $ déjà versés');
+    expect(text(first.querySelector('.details'))).toBe('Frais scolaires · échéance le 15/09');
+    expect(text(first.querySelector('.progress-note'))).toBe('180 $ déjà versés');
     expect(text(first.querySelector('.amount'))).toBe('80 $');
     expect(text(first.querySelector('.note'))).toBe('sur 260 $');
   });
@@ -91,15 +94,16 @@ describe('FeesPage', () => {
     const sheet = el.querySelector('app-fee-sheet dialog')!;
 
     expect(sheet.hasAttribute('open')).toBe(true);
-    expect([...sheet.querySelectorAll('.facts dt')].map(text)).toEqual([
+    expect([...sheet.querySelectorAll('.calc dt')].map(text)).toEqual([
       'Montant',
-      'Réduction',
-      'À payer',
-      'Versé',
-      'Reste',
+      'Réductions',
+      'Déjà versé',
+      'Reste à payer',
     ]);
-    expect(text(sheet.querySelector('.facts div:nth-child(2) dd'))).toBe('Réduction fratrie 10 %');
-    expect(text(sheet.querySelector('.none'))).toBe('Aucun versement pour ce frais.');
+    expect(text(sheet.querySelector('.calc div:nth-child(2) dd'))).toBe('Réduction fratrie 10 %');
+    expect(text(sheet.querySelector('#fee-payments'))).toBe('Versements reçus · 0');
+    expect(text(sheet.querySelector('.empty'))).toBe('Aucun versement reçu pour ce frais.');
+    expect(sheet.querySelector('button[aria-label="Fermer"]')).not.toBeNull();
   });
 
   it('mène d’un versement reçu à sa fiche dans Mes paiements', async () => {
@@ -126,18 +130,39 @@ describe('FeesPage', () => {
   it('dit comment payer : le secrétariat, les autres moyens bientôt disponibles', async () => {
     const { el, fixture } = await render();
 
-    el.querySelector<HTMLButtonElement>('app-overdue-banner button')!.click();
+    el.querySelector<HTMLButtonElement>('app-overdue-banner button.pay')!.click();
     await fixture.whenStable();
     const sheet = el.querySelector('app-how-to-pay-sheet dialog')!;
 
     expect(sheet.hasAttribute('open')).toBe(true);
-    expect([...sheet.querySelectorAll('h3')].map(text)).toEqual([
-      'Au secrétariat de l’école',
+    expect(text(sheet.querySelector('.sub'))).toBe('1re tranche · Grâce');
+    expect(text(sheet.querySelector('.figure'))).toBe('80 $');
+    expect([...sheet.querySelectorAll('.name')].map(text)).toEqual([
+      'Secrétariat de l’école',
       'Mobile money',
       'Virement bancaire',
     ]);
+    expect(sheet.querySelector('.back')).toBeNull();
     expect(sheet.querySelectorAll('ui-badge')).toHaveLength(2);
     expect(sheet.querySelector('a.call')?.getAttribute('href')).toBe('tel:+243998877665');
+  });
+
+  it('ramène de « Comment payer » à la fiche du frais', async () => {
+    const { el, fixture } = await render(undefined, FEE_ID.firstInstalment);
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    el.querySelector<HTMLButtonElement>('app-fee-sheet button.pay')!.click();
+    await fixture.whenStable();
+    const sheet = el.querySelector('app-how-to-pay-sheet dialog')!;
+    expect(sheet.hasAttribute('open')).toBe(true);
+
+    sheet.querySelector<HTMLButtonElement>('.back')!.click();
+
+    expect(sheet.hasAttribute('open')).toBe(false);
+    expect(navigate).toHaveBeenLastCalledWith(
+      [],
+      expect.objectContaining({ queryParams: { fee: FEE_ID.firstInstalment } }),
+    );
   });
 
   it('annonce des frais pas encore publiés, sans bilan', async () => {

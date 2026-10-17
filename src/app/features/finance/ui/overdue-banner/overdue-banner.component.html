@@ -1,16 +1,29 @@
-<h2 class="heading">À payer maintenant</h2>
-<p class="headline">{{ headline() }}</p>
-@if (rows().length > 1) {
-  <details>
-    <summary>Voir les frais en retard</summary>
-    <ul>
-      @for (row of rows(); track row.id) {
-        <li>
-          <span>{{ row.label }}</span>
-          <span class="amount">{{ row.remaining | amount }}</span>
-        </li>
-      }
-    </ul>
-  </details>
+<span class="tile" aria-hidden="true"
+  ><ui-icon name="calendar-clock" [size]="20" [strokeWidth]="1.9"
+/></span>
+<div class="text">
+  <h2 class="kicker">À payer maintenant</h2>
+  <p class="headline">{{ headline() }}</p>
+</div>
+<button type="button" class="button attention pay" (click)="pay.emit()">
+  <ui-icon name="smartphone" [size]="17" />
+  Comment payer
+</button>
+@if (rows().length) {
+  <ul class="rows">
+    @for (row of rows(); track row.id) {
+      <li>
+        <span class="dot" aria-hidden="true"></span>
+        <span class="name">{{ row.name }}</span>
+        <span class="state"
+          ><span class="long">{{ row.state }}</span
+          ><span class="short">en retard</span></span
+        >
+        <span class="amount">{{ row.remaining | amount }}</span>
+      </li>
+    }
+  </ul>
+  @if (others()) {
+    <button type="button" class="more" (click)="more.emit()">+ {{ others() }} autres frais</button>
+  }
 }
-<button type="button" class="button attention" (click)="pay.emit()">Comment payer</button>
