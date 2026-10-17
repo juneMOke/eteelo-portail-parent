@@ -6,7 +6,7 @@ import { SessionStore } from '../../../core/session/session.store';
 
 /**
  * Façade de la connexion par lien WhatsApp.
- * Toute écriture exige le jeton CSRF (cookie __Host-XSRF-TOKEN, XSRF-TOKEN en développement) : s'il manque, un appel à
+ * Toute écriture exige le jeton CSRF (cookie __Host-XSRF-TOKEN, XSRF-TOKEN contre le back local) : s'il manque, un appel à
  * GET /auth/me le fait poser avant le premier POST.
  */
 @Injectable({ providedIn: 'root' })
