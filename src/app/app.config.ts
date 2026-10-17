@@ -18,6 +18,7 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
 import { apiInterceptor } from './core/api/api.interceptor';
 import { DEV_BACKEND_INTERCEPTORS } from './core/api/dev-backend';
+import { XSRF_COOKIE_NAME } from './core/api/xsrf-cookie';
 import { IntentPreloading } from './core/navigation/intent-preloading';
 import { PageTitleStrategy } from './core/navigation/page-title.strategy';
 
@@ -37,9 +38,9 @@ export const appConfig: ApplicationConfig = {
     // Pas de withFetch() : le backend fetch ne remonte pas la progression d'upload (dépôt de devoir).
     provideHttpClient(
       withInterceptors([apiInterceptor, ...DEV_BACKEND_INTERCEPTORS]),
-      // « __Host- » exige Secure : sur http://localhost, le backend (profil dev) nomme le cookie XSRF-TOKEN.
+      // Le nom du cookie suit le backend visé, pas le mode Angular (voir xsrf-cookie.ts).
       withXsrfConfiguration({
-        cookieName: isDevMode() ? 'XSRF-TOKEN' : '__Host-XSRF-TOKEN',
+        cookieName: XSRF_COOKIE_NAME,
         headerName: 'X-XSRF-TOKEN',
       }),
     ),

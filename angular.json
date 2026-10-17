@@ -35,8 +35,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "400kB",
+                  "maximumError": "500kB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -50,6 +50,17 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/app/core/api/xsrf-cookie.ts",
+                  "with": "src/app/core/api/xsrf-cookie.local.ts"
+                }
+              ]
+            },
+            "staging-backend": {
+              "optimization": false,
+              "extractLicenses": false,
               "sourceMap": true
             },
             "mock": {
@@ -60,6 +71,10 @@
                 {
                   "replace": "src/app/core/api/dev-backend.ts",
                   "with": "src/app/core/api/dev-backend.mock.ts"
+                },
+                {
+                  "replace": "src/app/core/api/xsrf-cookie.ts",
+                  "with": "src/app/core/api/xsrf-cookie.local.ts"
                 }
               ]
             }
@@ -69,7 +84,7 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json"
+            "proxyConfig": "proxy.conf.mjs"
           },
           "configurations": {
             "production": {
@@ -77,6 +92,9 @@
             },
             "development": {
               "buildTarget": "eteelo-portail-parent:build:development"
+            },
+            "staging-backend": {
+              "buildTarget": "eteelo-portail-parent:build:staging-backend"
             },
             "mock": {
               "buildTarget": "eteelo-portail-parent:build:mock"

@@ -32,11 +32,13 @@ emploi du temps, notes, présence, discipline, frais, reçus, messages, notifica
 ## Commandes
 
 ```bash
-npm start               # ng serve, avec proxy /api (proxy.conf.json)
+npm start               # ng serve, proxy /api vers le back local (proxy.conf.mjs, API_TARGET)
+npm run start:staging   # ng serve contre api-staging.eteeloconnect.com (cookie __Host-XSRF-TOKEN)
 npx ng test             # tests unitaires Vitest
 npx ng build            # build de production
 npx playwright test     # tests de bout en bout
 npm run api:types       # régénère api-types.ts depuis l'OpenAPI de staging
+docker build -t eteelo-portail-parent .   # image unique pour tous les environnements (nginx, voir nginx.conf)
 ```
 
 ## Arborescence
