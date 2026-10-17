@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { GRACE } from '../src/testing/bootstrap.fixture';
-import { FEE_ID, PAYMENT_ID } from '../src/testing/finance.fixture';
+import { FEE_ID, PAYMENT_ID, YEAR } from '../src/testing/finance.fixture';
 import { mockParentApi } from './support/parent-api';
 
 const PAYMENTS = `/c/${GRACE.childId}/finance/payments`;
@@ -14,6 +14,7 @@ test.describe('Mes paiements', () => {
 
     await expect(page).toHaveURL(PAYMENTS);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mes paiements');
+    await expect(page.locator('app-year-banner')).toContainText('2026-2027');
     await expect(page.getByRole('heading', { name: 'Septembre 2026' })).toBeVisible();
     await expect(page.locator('ui-section-card .count')).toHaveText('4 versements');
     await expect(page.locator('app-finance-line .heading')).toHaveText([
@@ -29,6 +30,7 @@ test.describe('Mes paiements', () => {
     await page.goto(`${PAYMENTS}?payment=${PAYMENT_ID.registration}`);
 
     const sheet = page.getByRole('dialog', { name: 'Jeudi 03/09 · Espèces' });
+    await expect(sheet.getByRole('heading', { level: 2 })).toHaveText('100 $');
     await expect(sheet).toContainText('280 000 FC au taux de 2 800 FC pour 1 $');
     await expect(
       sheet.getByRole('link', { name: /Ouvrir le reçu n° ETL-RC-2627-001031/ }),
@@ -47,8 +49,20 @@ test.describe('Mes paiements', () => {
     await page.goto(`${PAYMENTS}?payment=${PAYMENT_ID.airtel}`);
 
     const sheet = page.getByRole('dialog', { name: 'Mardi 22/09 · Mobile money' });
-    await expect(sheet.getByText('Reçu en préparation.')).toBeVisible();
+    await expect(sheet.getByText('Reçu en préparation')).toBeVisible();
     await expect(sheet.getByRole('button', { name: 'Copier la référence' })).toBeVisible();
+
+    await sheet.getByRole('button', { name: 'Fermer' }).click();
+    await expect(sheet).toBeHidden();
+    await expect(page).toHaveURL(PAYMENTS);
+  });
+
+  test('ouvre une année précédente', async ({ page }) => {
+    await mockParentApi(page);
+    await page.goto(`${PAYMENTS}?year=${YEAR.past}`);
+
+    await expect(page.getByRole('heading', { name: 'Janvier 2026' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Septembre 2025' })).toBeVisible();
   });
 
   test('dit une année sans versement et mène aux frais', async ({ page }) => {

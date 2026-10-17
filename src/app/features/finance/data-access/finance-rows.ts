@@ -15,6 +15,7 @@ import {
   paidShare,
   payerName,
   paymentTitle,
+  compactPaymentTitle,
   spokenFee,
   spokenPayment,
 } from './finance-formats';
@@ -46,6 +47,8 @@ export interface FinanceLine {
   /** Le mot de l'état et son ton ; null pour un état inconnu. */
   readonly status: { readonly label: string; readonly tone: Tone } | null;
   readonly heading: string;
+  /** « Lun. 22/09 · Mobile money » : le titre au téléphone ; null, le même partout. */
+  readonly compactHeading: string | null;
   readonly details: readonly string[];
   readonly amounts: readonly Money[];
   /** Ton du montant ; null, Bleu Profond (un versement). */
@@ -77,6 +80,7 @@ export function feeLine(fee: Fee, locale: string): FinanceLine {
   return {
     status: state ? { label: feeStatusPill(fee, locale), tone: state.tone } : null,
     heading: fee.label,
+    compactHeading: null,
     details: subline ? [subline] : [],
     amounts: [feeMoney(fee, paid ? fee.expectedInCents : fee.remainingInCents)],
     amountTone: state?.tone ?? null,
@@ -96,6 +100,7 @@ export function paymentLine(payment: Payment, locale: string): FinanceLine {
   return {
     status: { label: 'Enregistré', tone: 'success' },
     heading: paymentTitle(payment, locale),
+    compactHeading: compactPaymentTitle(payment, locale),
     details: payment.allocations.length ? [allocationsLabel(payment)] : [],
     amounts: payment.amounts,
     amountTone: null,

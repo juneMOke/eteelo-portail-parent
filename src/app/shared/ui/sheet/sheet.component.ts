@@ -16,7 +16,7 @@ let nextId = 0;
  * natif : modal, fermeture par Échap ou par le voile, focus rendu au déclencheur à la
  * fermeture. Le contenu est projeté ; la page place le focus à l'ouverture. En option : un
  * bouton ✕ (`dismissible`), une flèche de retour (`backLabel`), une pastille au-dessus du titre
- * (`[sheetLead]`) et un sous-titre (`[sheetSub]`). La largeur au bureau se règle par
+ * (`[sheetLead]`), un sous-titre (`[sheetSub]`) et un nom lu distinct du titre (`label`). La largeur au bureau se règle par
  * `--sheet-width`.
  */
 @Component({
@@ -25,7 +25,8 @@ let nextId = 0;
   template: `
     <dialog
       #dialog
-      [attr.aria-labelledby]="headingId"
+      [attr.aria-labelledby]="label() ? null : headingId"
+      [attr.aria-label]="label()"
       (click)="closeOnBackdrop($event)"
       (close)="closed.emit()"
     >
@@ -62,6 +63,8 @@ let nextId = 0;
 })
 export class SheetComponent {
   readonly heading = input.required<string>();
+  /** Nom lu de la feuille, quand le titre affiché ne la nomme pas (un montant) ; null, le titre. */
+  readonly label = input<string | null>(null);
   /** Bouton ✕ « Fermer » en haut à droite. */
   readonly dismissible = input(false, { transform: booleanAttribute });
   /** Nom lu de la flèche de retour ; null, pas de flèche. */

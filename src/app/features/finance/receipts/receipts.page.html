@@ -1,13 +1,14 @@
 @if (data(); as data) {
   @if (showBanner()) {
     <app-year-banner
-      [years]="yearChoices()"
-      [checked]="checkedYear()"
+      [years]="years.choices()"
+      [checked]="years.checked()"
       [countLabel]="receiptsCount()"
       [latestLabel]="latestReceipt()"
       [count]="receipts().length"
-      [wide]="wide()"
-      (pick)="pickYear($event)"
+      unit="reçus"
+      [wide]="years.wide()"
+      (pick)="years.pick($event)"
     />
   }
 
@@ -55,11 +56,4 @@
   </div>
 }
 
-<div class="saved-region" role="status">
-  @if (saved(); as message) {
-    <p class="saved">
-      <ui-icon name="check-circle" [size]="18" [strokeWidth]="2" />
-      {{ message }}
-    </p>
-  }
-</div>
+<app-saved-toast />

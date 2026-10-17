@@ -1,21 +1,29 @@
 <a
   class="action"
+  [class.labelled]="labelled()"
   [href]="href()"
   target="_blank"
   rel="noopener"
   [attr.aria-label]="'Ouvrir le ' + name()"
   [title]="'Ouvrir le ' + name()"
 >
-  <ui-icon name="eye" [size]="18" [strokeWidth]="2" />
+  <ui-icon name="eye" [size]="labelled() ? 16 : 18" [strokeWidth]="2" />
+  @if (labelled()) {
+    Ouvrir
+  }
 </a>
 <button
   type="button"
   class="action"
+  [class.labelled]="labelled()"
   [attr.aria-label]="'Partager le ' + name()"
   [title]="'Partager le ' + name()"
   [attr.aria-busy]="sharing()"
   [disabled]="sharing()"
   (click)="share.emit()"
 >
-  <ui-icon name="share" [size]="18" [strokeWidth]="2" />
+  <ui-icon name="share" [size]="labelled() ? 16 : 18" [strokeWidth]="2" />
+  @if (labelled()) {
+    Partager
+  }
 </button>
