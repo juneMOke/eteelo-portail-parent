@@ -27,7 +27,8 @@ emploi du temps, notes, présence, discipline, frais, reçus, messages, notifica
 - Valibot : validation à l'exécution du bootstrap et du bulletin uniquement.
 - CSS natif + design tokens (`src/styles/tokens.css`) + Angular CDK pour le comportement. **Pas de Tailwind, pas de librairie de composants.**
 - Tests unitaires : Vitest (`ng test`). Bout en bout : Playwright.
-- Types d'API générés depuis l'OpenAPI de Spring (`src/app/core/api/api-types.ts`, ne jamais l'éditer à la main).
+- Types d'API générés depuis l'OpenAPI de Spring (`src/app/core/api/api-types.ts`, ne jamais l'éditer à la main),
+  à partir du spec versionné `openapi/api-docs.json`.
 
 ## Commandes
 
@@ -37,7 +38,9 @@ npm run start:staging   # ng serve contre api-staging.eteeloconnect.com (cookie 
 npx ng test             # tests unitaires Vitest
 npx ng build            # build de production
 npx playwright test     # tests de bout en bout
-npm run api:types       # régénère api-types.ts depuis l'OpenAPI de staging
+npm run lint            # angular-eslint (préfixes app-/ui-, OnPush, signals, contrôle de flux) ; format:check pour Prettier
+npm run api:spec        # rafraîchit openapi/api-docs.json (versionné) depuis l'OpenAPI de staging
+npm run api:types       # régénère api-types.ts depuis openapi/api-docs.json ; le CI échoue s'ils divergent
 docker build -t eteelo-portail-parent .   # image unique pour tous les environnements (nginx, voir nginx.conf)
 ```
 

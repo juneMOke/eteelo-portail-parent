@@ -8,3 +8,6 @@ playwright-report
 test-results
 Dockerfile
 .dockerignore
+.github
+e2e
+openapi

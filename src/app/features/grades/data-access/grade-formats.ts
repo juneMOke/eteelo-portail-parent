@@ -12,7 +12,7 @@ import { CivilDate, civilToDate } from '../../../shared/date/civil-date';
 
 /** Une moyenne, toujours en pourcentage et à une décimale : « 64,5 % ». */
 export function percentLabel(percent: number, locale: string): string {
-  return `${formatNumber(percent, locale, '1.1-1')} %`;
+  return `${formatNumber(percent, locale, '1.1-1')}\u00a0%`;
 }
 
 /** Une note sur son barème : « 7,5/10 ». */

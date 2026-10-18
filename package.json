@@ -10,7 +10,10 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "e2e": "playwright test",
-    "api:types": "npx -y openapi-typescript@7.13.0 https://api-staging.eteeloconnect.com/v3/api-docs -o src/app/core/api/api-types.ts"
+    "lint": "ng lint",
+    "format:check": "prettier --check .",
+    "api:spec": "node scripts/fetch-openapi.mjs",
+    "api:types": "npx -y openapi-typescript@7.13.0 openapi/api-docs.json -o src/app/core/api/api-types.ts"
   },
   "private": true,
   "packageManager": "npm@12.2.0",
@@ -32,10 +35,14 @@
     "@angular/build": "^22.2.2",
     "@angular/cli": "^22.2.2",
     "@angular/compiler-cli": "^22.2.0",
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.64.0",
+    "angular-eslint": "22.6.0",
+    "eslint": "^10.12.0",
     "jsdom": "^30.0.0",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
+    "typescript-eslint": "8.71.0",
     "vitest": "^5.0.0"
   }
 }

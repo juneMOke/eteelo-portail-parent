@@ -1,0 +1,146 @@
+name: portal-ci
+
+# PR : vérifications (lint, dérive OpenAPI, tests, build), parcours Playwright, build de l'image.
+# main : la même chose, puis push de l'image sur GHCR, taguée sha-<commit> comme le backend.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  NG_CLI_ANALYTICS: 'false'
+
+jobs:
+  verify:
+    name: Lint, OpenAPI, tests, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.16'
+          cache: npm
+
+      - name: npm 12.2.0 (packageManager)
+        run: npm install -g npm@12.2.0
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Formatage
+        run: npm run format:check
+
+      # Le spec est versionné (openapi/api-docs.json) : le CI ne dépend d'aucun serveur.
+      # Pour suivre le back : npm run api:spec && npm run api:types, puis commiter les deux fichiers.
+      - name: Dérive OpenAPI
+        run: |
+          npm run api:types
+          if ! git diff --exit-code --stat -- src/app/core/api/api-types.ts; then
+            echo "::error file=src/app/core/api/api-types.ts::api-types.ts ne correspond pas à openapi/api-docs.json. Lancer npm run api:types et commiter le résultat."
+            exit 1
+          fi
+
+      - name: Tests unitaires
+        run: npx ng test --watch=false
+
+      - name: Build de production
+        run: npx ng build
+
+  e2e:
+    name: Parcours Playwright
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.16'
+          cache: npm
+
+      - name: npm 12.2.0 (packageManager)
+        run: npm install -g npm@12.2.0
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Parcours (téléphone, tablette, bureau)
+        run: npx playwright test
+
+      - name: Traces des échecs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  docker:
+    name: Docker build${{ github.event_name == 'push' && ' + push GHCR' || '' }}
+    runs-on: ubuntu-latest
+    needs: [verify, e2e]
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.tag.outputs.value }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute lowercase repo name
+        id: repo
+        run: |
+          REPO_LC=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "name=${REPO_LC}" >> "$GITHUB_OUTPUT"
+
+      - name: Compute immutable image tag
+        id: tag
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7 | tr -d '[:space:]')
+          echo "value=sha-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "Tag immuable de ce commit : sha-${SHORT_SHA}"
+
+      - name: Compute image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ steps.repo.outputs.name }}
+          tags: |
+            type=ref,event=branch
+            type=sha,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build${{ github.event_name == 'push' && ' & push' || '' }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

@@ -404,6 +404,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/announcements/{announcementId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get"];
+        put: operations["update_4"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/announcement-templates/{templateId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_1"];
+        put: operations["update_5"];
+        post?: never;
+        delete: operations["delete_1"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/schools/{schoolId}/report-recipients": {
         parameters: {
             query?: never;
@@ -428,7 +460,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["list_1"];
-        put: operations["update_4"];
+        put: operations["update_6"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1044,6 +1076,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sync/attendance-justifications/{id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["decide_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sync/attendance-closures": {
         parameters: {
             query?: never;
@@ -1070,6 +1118,22 @@ export interface paths {
         get: operations["pullNotes"];
         put?: never;
         post: operations["submitNotes"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sync/academics/journal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["pullJournal"];
+        put?: never;
+        post: operations["submitSeance"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1294,6 +1358,54 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["createParent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/statement": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["statement"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/homework/{evaluationId}/submission": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["submitHomework"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/attendance/{date}/justification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["justify"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1860,6 +1972,118 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/announcements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_7"];
+        put?: never;
+        post: operations["create_3"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/announcements/{announcementId}/unschedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["unschedule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/announcements/{announcementId}/send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["send"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/announcements/{announcementId}/schedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["schedule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/announcements/{announcementId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["cancel_3"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/announcements/reach": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["reach"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/announcement-templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_8"];
+        put?: never;
+        post: operations["create_4"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/schools/{schoolId}/finance-reports": {
         parameters: {
             query?: never;
@@ -1949,7 +2173,7 @@ export interface paths {
         };
         get: operations["listByCours"];
         put?: never;
-        post: operations["create_3"];
+        post: operations["create_5"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1963,9 +2187,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["list_7"];
+        get: operations["list_9"];
         put?: never;
-        post: operations["create_4"];
+        post: operations["create_6"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2414,6 +2638,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sync/attendance-justifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["pull_11"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sync/academics/grades-referential": {
         parameters: {
             query?: never;
@@ -2630,6 +2870,390 @@ export interface paths {
             cookie?: never;
         };
         get: operations["searchParentsByPhoneNumber"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/school/logo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["schoolLogo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/timetable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["timetable"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/photo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["childPhoto"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/payments/{paymentId}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["receipt_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/homework": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["homework"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/homework/{evaluationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["homeworkItem"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/homework/{evaluationId}/submission/files/{fileId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["submittedFile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/homework/{evaluationId}/subject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["homeworkSubject"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/homework/{evaluationId}/answer-key": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["homeworkAnswerKey"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/grades/week": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["week"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/grades/report-card": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["reportCard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/grades/report-card/{reportCardId}/pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["reportCardPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/grades/periods": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["periods"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/grades/courses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["courses"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/fees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["fees"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/evaluations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["evaluations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/evaluations/{evaluationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["evaluation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/evaluations/{evaluationId}/answer-key": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["evaluationAnswerKey"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/discipline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["discipline"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/attendance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["attendance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/attendance/{date}/justification/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["justificationFile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/academic-years": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["academicYears"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/bootstrap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["bootstrap"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3061,7 +3685,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["list_8"];
+        get: operations["list_10"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3326,6 +3950,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/attendance-justifications/{id}/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["file"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/announcements/audience/students": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["searchStudents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/activity": {
         parameters: {
             query?: never;
@@ -3438,6 +4094,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/academics/journal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getJournee"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/academics/evaluations/{id}": {
         parameters: {
             query?: never;
@@ -3462,6 +4134,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["listEleves"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/academics/evaluations/{evaluationId}/depots/fichiers/{fichierId}/contenu": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["content_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3541,7 +4229,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["get"];
+        get: operations["get_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3557,7 +4245,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["content_1"];
+        get: operations["content_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3573,7 +4261,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["list_9"];
+        get: operations["list_11"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3853,6 +4541,20 @@ export interface components {
             consignes?: string;
             maxPoints?: number;
             questions: components["schemas"]["SujetQuestionInput"][];
+            heureLimite?: string;
+            /** @enum {string} */
+            modeRemise?: "EN_LIGNE" | "EN_CLASSE";
+            depotTardifPermis?: boolean;
+        };
+        DepotDevoirView: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            studentId?: string;
+            /** Format: date-time */
+            depositedAt?: string;
+            enRetard?: boolean;
+            fichiers?: components["schemas"]["Fichier"][];
         };
         EvaluationCopieLogView: {
             /** Format: uuid */
@@ -3903,10 +4605,15 @@ export interface components {
             dureeMinutes?: number;
             programme?: string[];
             consignes?: string;
+            heureLimite?: string;
+            /** @enum {string} */
+            modeRemise?: "EN_LIGNE" | "EN_CLASSE";
+            depotTardifPermis?: boolean;
             /** Format: date-time */
             sujetClientUpdatedAt?: string;
             questions?: components["schemas"]["EvaluationQuestionView"][];
             copieLog?: components["schemas"]["EvaluationCopieLogView"][];
+            depots?: components["schemas"]["DepotDevoirView"][];
             publication?: components["schemas"]["EvaluationPublicationsView"];
             /** Format: int64 */
             version?: number;
@@ -3914,6 +4621,17 @@ export interface components {
             updatedAt?: string;
             /** Format: date-time */
             serverUpdatedAt?: string;
+        };
+        Fichier: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: int32 */
+            ordre?: number;
+            nom?: string;
+            mimeType?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+            sha256?: string;
         };
         PublicationState: {
             /** Format: date-time */
@@ -4377,6 +5095,91 @@ export interface components {
             /** Format: int64 */
             priceInCents?: number;
         };
+        AnnouncementAudience: {
+            /** @enum {string} */
+            mode: "SCHOOL" | "LEVELS" | "CLASSROOMS" | "STUDENTS" | "OVERDUE";
+            levelIds?: string[];
+            classroomIds?: string[];
+            studentIds?: string[];
+            feeCode?: string;
+            tariffCode?: string;
+            /** Format: int32 */
+            overdueDays?: number;
+        };
+        UpdateAnnouncementRequest: {
+            /** Format: int64 */
+            version: number;
+            /** @enum {string} */
+            category: "INFO" | "URGENT" | "EVENT" | "ADMINISTRATIVE";
+            title?: string;
+            body?: string;
+            audience?: components["schemas"]["AnnouncementAudience"];
+            channels?: "WHATSAPP"[];
+        };
+        AnnouncementDto: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            academicYearId?: string;
+            /** @enum {string} */
+            category?: "INFO" | "URGENT" | "EVENT" | "ADMINISTRATIVE";
+            title?: string;
+            body?: string;
+            audience?: components["schemas"]["AnnouncementAudience"];
+            channels?: "WHATSAPP"[];
+            /** @enum {string} */
+            status?: "DRAFT" | "SCHEDULED" | "SENT" | "CANCELLED" | "FAILED";
+            /** Format: date-time */
+            scheduledAt?: string;
+            /** Format: date-time */
+            sentAt?: string;
+            /** Format: date-time */
+            cancelledAt?: string;
+            /** Format: int32 */
+            sendAttempts?: number;
+            lastSendError?: string;
+            reachAtSend?: components["schemas"]["AnnouncementReach"];
+            /** Format: uuid */
+            authorUserId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        AnnouncementReach: {
+            /** Format: int32 */
+            students?: number;
+            /** Format: int32 */
+            guardians?: number;
+            /** Format: int32 */
+            messages?: number;
+            /** Format: int32 */
+            reachableMessages?: number;
+            /** Format: int32 */
+            guardiansWithoutPhone?: number;
+            /** Format: int32 */
+            studentsUnreachable?: number;
+        };
+        AnnouncementTemplateRequest: {
+            /** @enum {string} */
+            category: "INFO" | "URGENT" | "EVENT" | "ADMINISTRATIVE";
+            title: string;
+            body: string;
+        };
+        AnnouncementTemplateDto: {
+            /** Format: uuid */
+            id?: string;
+            /** @enum {string} */
+            category?: "INFO" | "URGENT" | "EVENT" | "ADMINISTRATIVE";
+            title?: string;
+            body?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+        };
         ReportRecipientDto: {
             fullName: string;
             jobTitle?: string;
@@ -4387,7 +5190,7 @@ export interface components {
         };
         Change: {
             /** @enum {string} */
-            template: "MAGIC_LINK" | "ABSENCE_ALERT" | "REPORT_CARD_PUBLISHED" | "PAYMENT_RECEIPT" | "FINANCE_DAILY_REPORT" | "FINANCE_WEEKLY_REPORT" | "EVALUATION_SUBJECT_PUBLISHED" | "EVALUATION_ANSWER_KEY_PUBLISHED" | "EVALUATION_GRADE_PUBLISHED" | "EVALUATION_GRADE_REVISED";
+            template: "MAGIC_LINK" | "ABSENCE_ALERT" | "REPORT_CARD_PUBLISHED" | "PAYMENT_RECEIPT" | "FINANCE_DAILY_REPORT" | "FINANCE_WEEKLY_REPORT" | "EVALUATION_SUBJECT_PUBLISHED" | "EVALUATION_ANSWER_KEY_PUBLISHED" | "EVALUATION_GRADE_PUBLISHED" | "EVALUATION_GRADE_REVISED" | "SCHOOL_ANNOUNCEMENT";
             enabled: boolean;
         };
         UpdateSchoolNotificationSettingsRequest: {
@@ -4395,7 +5198,7 @@ export interface components {
         };
         SchoolNotificationSettingDto: {
             /** @enum {string} */
-            template?: "MAGIC_LINK" | "ABSENCE_ALERT" | "REPORT_CARD_PUBLISHED" | "PAYMENT_RECEIPT" | "FINANCE_DAILY_REPORT" | "FINANCE_WEEKLY_REPORT" | "EVALUATION_SUBJECT_PUBLISHED" | "EVALUATION_ANSWER_KEY_PUBLISHED" | "EVALUATION_GRADE_PUBLISHED" | "EVALUATION_GRADE_REVISED";
+            template?: "MAGIC_LINK" | "ABSENCE_ALERT" | "REPORT_CARD_PUBLISHED" | "PAYMENT_RECEIPT" | "FINANCE_DAILY_REPORT" | "FINANCE_WEEKLY_REPORT" | "EVALUATION_SUBJECT_PUBLISHED" | "EVALUATION_ANSWER_KEY_PUBLISHED" | "EVALUATION_GRADE_PUBLISHED" | "EVALUATION_GRADE_REVISED" | "SCHOOL_ANNOUNCEMENT";
             enabled?: boolean;
             /** Format: date-time */
             updatedAt?: string;
@@ -4409,6 +5212,7 @@ export interface components {
             statut: "NOTEE" | "ABSENT_JUSTIFIE" | "ABSENT_NON_JUSTIFIE" | "EN_ATTENTE";
             /** Format: date-time */
             updatedAt?: string;
+            commentaire?: string;
         };
         NoteEvaluationDto: {
             /** Format: uuid */
@@ -4420,6 +5224,7 @@ export interface components {
             pointsObtenus?: number;
             /** @enum {string} */
             statut?: "NOTEE" | "ABSENT_JUSTIFIE" | "ABSENT_NON_JUSTIFIE" | "EN_ATTENTE";
+            commentaire?: string;
             /** Format: int64 */
             version?: number;
             /** Format: date-time */
@@ -5851,6 +6656,50 @@ export interface components {
             /** Format: int32 */
             expectedCount?: number;
         };
+        AbsenceJustificationDecisionRequest: {
+            /** Format: uuid */
+            gestureId: string;
+            /** @enum {string} */
+            decision: "ACCEPT" | "REJECT";
+            note?: string;
+            /** Format: uuid */
+            authorId: string;
+        };
+        AbsenceJustificationDelta: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            studentId?: string;
+            /** Format: uuid */
+            classroomId?: string;
+            /** Format: uuid */
+            academicYearId?: string;
+            /** Format: date */
+            attendanceDate?: string;
+            /** Format: uuid */
+            parentId?: string;
+            reason?: string;
+            note?: string;
+            /** Format: date-time */
+            submittedAt?: string;
+            file?: components["schemas"]["File"];
+            status?: string;
+            /** Format: date-time */
+            decidedAt?: string;
+            decidedBy?: string;
+            decisionNote?: string;
+            /** Format: uuid */
+            decisionGestureId?: string;
+            /** Format: date-time */
+            serverUpdatedAt?: string;
+        };
+        File: {
+            name?: string;
+            mimeType?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+            sha256?: string;
+        };
         AttendanceClosureRequest: {
             /** Format: uuid */
             gestureId: string;
@@ -5895,6 +6744,7 @@ export interface components {
             statut: "NOTEE" | "ABSENT_JUSTIFIE" | "ABSENT_NON_JUSTIFIE" | "EN_ATTENTE";
             /** Format: date-time */
             updatedAt: string;
+            commentaire?: string;
         };
         NoteBatchSyncResponse: {
             outcomes?: components["schemas"]["NoteLineOutcome"][];
@@ -5921,12 +6771,67 @@ export interface components {
             /** @enum {string} */
             statut?: "NOTEE" | "ABSENT_JUSTIFIE" | "ABSENT_NON_JUSTIFIE" | "EN_ATTENTE";
             pointsObtenus?: number;
+            commentaire?: string;
             /** Format: int64 */
             version?: number;
             /** Format: date-time */
             updatedAt?: string;
             /** Format: date-time */
             serverUpdatedAt?: string;
+        };
+        JournalSeanceInput: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            coursId: string;
+            /** Format: date */
+            date: string;
+            /** Format: uuid */
+            timeSlotId: string;
+            /** Format: uuid */
+            chapitreId?: string;
+            cb?: string;
+            objectif?: string;
+            contenu?: string;
+            strategie?: string;
+            ressources?: string;
+            evaluation?: string;
+            observation?: string;
+            /** Format: date-time */
+            clientUpdatedAt: string;
+        };
+        JournalSeanceSyncRequest: {
+            /** Format: uuid */
+            authorId: string;
+            entry: components["schemas"]["JournalSeanceInput"];
+        };
+        JournalSeanceDelta: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            coursId?: string;
+            /** Format: date */
+            date?: string;
+            /** Format: uuid */
+            timeSlotId?: string;
+            /** Format: uuid */
+            chapitreId?: string;
+            cb?: string;
+            objectif?: string;
+            contenu?: string;
+            strategie?: string;
+            ressources?: string;
+            evaluation?: string;
+            observation?: string;
+            /** Format: date-time */
+            clientUpdatedAt?: string;
+            /** Format: date-time */
+            serverUpdatedAt?: string;
+        };
+        JournalSeanceSyncResponse: {
+            entry?: components["schemas"]["JournalSeanceDelta"];
+            /** @enum {string} */
+            lwwOutcome?: "APPLIED" | "SUPERSEDED";
         };
         CreateEvaluationCommand: {
             /** Format: uuid */
@@ -5948,6 +6853,10 @@ export interface components {
             dureeMinutes?: number;
             programme?: string[];
             consignes?: string;
+            heureLimite?: string;
+            /** @enum {string} */
+            modeRemise?: "EN_LIGNE" | "EN_CLASSE";
+            depotTardifPermis?: boolean;
         };
         EvaluationSyncRequest: {
             /** Format: uuid */
@@ -5978,6 +6887,10 @@ export interface components {
             dureeMinutes?: number;
             programme?: string[];
             consignes?: string;
+            heureLimite?: string;
+            /** @enum {string} */
+            modeRemise?: "EN_LIGNE" | "EN_CLASSE";
+            depotTardifPermis?: boolean;
             /** Format: int64 */
             version?: number;
             /** Format: date-time */
@@ -6296,6 +7209,97 @@ export interface components {
             district?: string;
             municipality?: string;
             address?: string;
+        };
+        ParentAssignmentDocumentDto: {
+            kind?: string;
+            fileName?: string;
+            contentType?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+            /** Format: date-time */
+            publishedAt?: string;
+            href?: string;
+        };
+        ParentAssignmentQuestionDto: {
+            /** Format: int32 */
+            number?: number;
+            statement?: string;
+            points?: number;
+        };
+        ParentAssignmentResultDto: {
+            points?: number;
+            maxPoints?: number;
+            classAverage?: number;
+            /** Format: date-time */
+            gradedAt?: string;
+            teacherComment?: string;
+            absenceJustified?: boolean;
+        };
+        ParentHomeworkDetailDto: {
+            /** Format: uuid */
+            evaluationId?: string;
+            /** Format: uuid */
+            courseId?: string;
+            title?: string;
+            subjectLabel?: string;
+            teacherLabel?: string;
+            /** Format: date */
+            dueDate?: string;
+            dueTime?: string;
+            /** Format: date-time */
+            dueAt?: string;
+            deliveryMode?: string;
+            status?: string;
+            points?: number;
+            maxPoints?: number;
+            /** Format: date-time */
+            assignedAt?: string;
+            lateSubmissionAllowed?: boolean;
+            programme?: string[];
+            instructions?: string;
+            questions?: components["schemas"]["ParentAssignmentQuestionDto"][];
+            result?: components["schemas"]["ParentAssignmentResultDto"];
+            documents?: components["schemas"]["ParentAssignmentDocumentDto"][];
+            submission?: components["schemas"]["ParentHomeworkSubmissionDto"];
+        };
+        ParentHomeworkSubmissionDto: {
+            /** Format: date-time */
+            submittedAt?: string;
+            late?: boolean;
+            files?: components["schemas"]["ParentAssignmentDocumentDto"][];
+        };
+        ParentHomeworkSummaryDto: {
+            /** Format: uuid */
+            evaluationId?: string;
+            /** Format: uuid */
+            courseId?: string;
+            title?: string;
+            subjectLabel?: string;
+            teacherLabel?: string;
+            /** Format: date */
+            dueDate?: string;
+            dueTime?: string;
+            /** Format: date-time */
+            dueAt?: string;
+            deliveryMode?: string;
+            status?: string;
+            points?: number;
+            maxPoints?: number;
+        };
+        ParentJustificationDto: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: date */
+            date?: string;
+            status?: string;
+            reason?: string;
+            note?: string;
+            /** Format: date-time */
+            submittedAt?: string;
+            /** Format: date-time */
+            decidedAt?: string;
+            decisionNote?: string;
+            file?: components["schemas"]["File"];
         };
         OpenParentSessionRequest: {
             token: string;
@@ -6726,6 +7730,48 @@ export interface components {
             updatedAt?: string;
             /** Format: int64 */
             version?: number;
+        };
+        CreateAnnouncementRequest: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            academicYearId?: string;
+            /** @enum {string} */
+            category: "INFO" | "URGENT" | "EVENT" | "ADMINISTRATIVE";
+            title?: string;
+            body?: string;
+            audience?: components["schemas"]["AnnouncementAudience"];
+            channels?: "WHATSAPP"[];
+        };
+        AnnouncementGestureRequest: {
+            /** Format: int64 */
+            version: number;
+        };
+        ScheduleAnnouncementRequest: {
+            /** Format: int64 */
+            version: number;
+            /** Format: date-time */
+            scheduledAt: string;
+        };
+        AnnouncementReachRequest: {
+            /** Format: uuid */
+            academicYearId?: string;
+            audience: components["schemas"]["AnnouncementAudience"];
+        };
+        AnnouncementReachPreviewDto: {
+            /** Format: int32 */
+            students?: number;
+            /** Format: int32 */
+            guardians?: number;
+            /** Format: int32 */
+            messages?: number;
+            /** Format: int32 */
+            reachableMessages?: number;
+            /** Format: int32 */
+            guardiansWithoutPhone?: number;
+            /** Format: int32 */
+            studentsUnreachable?: number;
+            whatsappEnabled?: boolean;
         };
         FinanceReportRunDto: {
             documentNumber?: string;
@@ -7787,6 +8833,17 @@ export interface components {
             serverTime?: string;
             empty?: boolean;
         };
+        KeysetPageAbsenceJustificationDelta: {
+            items?: components["schemas"]["AbsenceJustificationDelta"][];
+            nextCursor?: string;
+            nextWatermark?: string;
+            hasMore?: boolean;
+            /** Format: int32 */
+            totalCount?: number;
+            /** Format: date-time */
+            serverTime?: string;
+            empty?: boolean;
+        };
         KeysetPageAttendanceClosureDelta: {
             items?: components["schemas"]["AttendanceClosureDelta"][];
             nextCursor?: string;
@@ -7800,6 +8857,17 @@ export interface components {
         };
         KeysetPageNoteSyncView: {
             items?: components["schemas"]["NoteSyncView"][];
+            nextCursor?: string;
+            nextWatermark?: string;
+            hasMore?: boolean;
+            /** Format: int32 */
+            totalCount?: number;
+            /** Format: date-time */
+            serverTime?: string;
+            empty?: boolean;
+        };
+        KeysetPageJournalSeanceDelta: {
+            items?: components["schemas"]["JournalSeanceDelta"][];
             nextCursor?: string;
             nextWatermark?: string;
             hasMore?: boolean;
@@ -7994,6 +9062,506 @@ export interface components {
             version?: string;
             country?: string;
             cycles?: components["schemas"]["CatalogCycleView"][];
+        };
+        ParentTimeSlotDto: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: int32 */
+            order?: number;
+            startTime?: string;
+            endTime?: string;
+            label?: string;
+        };
+        ParentTimetableResponse: {
+            /** Format: uuid */
+            classroomId?: string;
+            days?: string[];
+            timeSlots?: components["schemas"]["ParentTimeSlotDto"][];
+            sessions?: components["schemas"]["ParentTimetableSessionDto"][];
+        };
+        ParentTimetableSessionDto: {
+            day?: string;
+            /** Format: uuid */
+            timeSlotId?: string;
+            subjectLabel?: string;
+            teacherLabel?: string;
+            room?: string;
+        };
+        ParentMoneyDto: {
+            /** Format: int64 */
+            amountInCents?: number;
+            currency?: string;
+        };
+        ParentPaymentAllocationDto: {
+            /** Format: uuid */
+            feeId?: string;
+            feeCode?: string;
+            label?: string;
+            /** Format: int64 */
+            amountInCents?: number;
+            currency?: string;
+        };
+        ParentPaymentDto: {
+            /** Format: uuid */
+            paymentId?: string;
+            /** Format: date-time */
+            paidAt?: string;
+            method?: string;
+            externalReference?: string;
+            amounts?: components["schemas"]["ParentMoneyDto"][];
+            receiptNumber?: string;
+            payerFirstName?: string;
+            payerLastName?: string;
+            payerMiddleName?: string;
+            allocations?: components["schemas"]["ParentPaymentAllocationDto"][];
+            received?: components["schemas"]["ParentReceivedDto"][];
+        };
+        ParentReceivedDto: {
+            /** Format: int64 */
+            amountInCents?: number;
+            currency?: string;
+            rate?: number;
+            pivotCurrency?: string;
+        };
+        ParentHomeworkListResponse: {
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
+            /** Format: date */
+            today?: string;
+            schoolDays?: string[];
+            items?: components["schemas"]["ParentHomeworkSummaryDto"][];
+        };
+        Day: {
+            /** Format: date */
+            date?: string;
+            items?: components["schemas"]["GradeCardDto"][];
+        };
+        GradeCardDto: {
+            /** Format: uuid */
+            evaluationId?: string;
+            /** Format: uuid */
+            courseId?: string;
+            kind?: string;
+            title?: string;
+            subjectLabel?: string;
+            subjectCode?: string;
+            /** Format: date */
+            date?: string;
+            topics?: string[];
+            points?: number;
+            maxPoints?: number;
+            state?: string;
+            /** Format: date-time */
+            revisedAt?: string;
+            href?: string;
+        };
+        GradeWeekDto: {
+            /** Format: date */
+            weekStart?: string;
+            /** Format: date */
+            weekEnd?: string;
+            /** Format: date */
+            firstWeek?: string;
+            /** Format: date */
+            currentWeek?: string;
+            summary?: components["schemas"]["Summary"];
+            days?: components["schemas"]["Day"][];
+            /** Format: date */
+            lastEvaluationDate?: string;
+        };
+        Summary: {
+            /** Format: int32 */
+            total?: number;
+            /** Format: int32 */
+            graded?: number;
+            /** Format: int32 */
+            pending?: number;
+        };
+        Average: {
+            percent?: number;
+            state?: string;
+        };
+        Document: {
+            href?: string;
+            number?: string;
+            /** Format: int64 */
+            sizeBytes?: number;
+        };
+        Evolution: {
+            points?: number;
+            versus?: string;
+        };
+        GradeSelectionViewDto: {
+            /** Format: uuid */
+            periodId?: string;
+            part?: string;
+            label?: string;
+        };
+        Line: {
+            /** Format: uuid */
+            courseId?: string;
+            subjectLabel?: string;
+            subjectCode?: string;
+            percent?: number;
+            obtained?: number;
+            max?: number;
+            state?: string;
+        };
+        Rank: {
+            /** Format: int32 */
+            position?: number;
+            /** Format: int32 */
+            of?: number;
+        };
+        ReportCardDto: {
+            selection?: components["schemas"]["GradeSelectionViewDto"];
+            status?: string;
+            scope?: string;
+            averageLabel?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: int32 */
+            gradedCount?: number;
+            average?: components["schemas"]["Average"];
+            rank?: components["schemas"]["Rank"];
+            evolution?: components["schemas"]["Evolution"];
+            lines?: components["schemas"]["Line"][];
+            document?: components["schemas"]["Document"];
+        };
+        GradePeriodDto: {
+            /** Format: uuid */
+            periodId?: string;
+            label?: string;
+            /** Format: int32 */
+            order?: number;
+            status?: string;
+            /** Format: date */
+            startDate?: string;
+            /** Format: date */
+            endDate?: string;
+            current?: boolean;
+            parts?: components["schemas"]["Part"][];
+        };
+        Part: {
+            part?: string;
+            label?: string;
+            status?: string;
+            /** Format: date */
+            startDate?: string;
+            /** Format: date */
+            endDate?: string;
+            current?: boolean;
+        };
+        Course: {
+            /** Format: uuid */
+            courseId?: string;
+            subjectLabel?: string;
+            subjectCode?: string;
+            teacherLabel?: string;
+            /** Format: int32 */
+            order?: number;
+            average?: components["schemas"]["GradeAverageViewDto"];
+            /** Format: int32 */
+            count?: number;
+            last?: components["schemas"]["LastGrade"];
+            evaluations?: components["schemas"]["GradeCardDto"][];
+        };
+        GradeAverageViewDto: {
+            percent?: number;
+            obtained?: number;
+            max?: number;
+            state?: string;
+        };
+        GradeCoursesDto: {
+            selection?: components["schemas"]["GradeSelectionViewDto"];
+            courses?: components["schemas"]["Course"][];
+        };
+        LastGrade: {
+            points?: number;
+            maxPoints?: number;
+            /** Format: date */
+            date?: string;
+        };
+        ParentFeeAllocationDto: {
+            /** Format: uuid */
+            paymentId?: string;
+            /** Format: date-time */
+            paidAt?: string;
+            /** Format: int64 */
+            amountInCents?: number;
+            currency?: string;
+            receiptNumber?: string;
+            payerFirstName?: string;
+            payerLastName?: string;
+            payerMiddleName?: string;
+        };
+        ParentFeeDto: {
+            /** Format: uuid */
+            feeId?: string;
+            feeCode?: string;
+            label?: string;
+            currency?: string;
+            /** Format: int64 */
+            expectedInCents?: number;
+            /** Format: int64 */
+            paidInCents?: number;
+            /** Format: int64 */
+            remainingInCents?: number;
+            status?: string;
+            /** Format: date */
+            dueDate?: string;
+            allocations?: components["schemas"]["ParentFeeAllocationDto"][];
+            state?: string;
+            /** Format: date-time */
+            lastPaymentAt?: string;
+            section?: components["schemas"]["ParentFeeSectionDto"];
+            /** Format: int64 */
+            grossInCents?: number;
+            reduction?: components["schemas"]["ParentFeeReductionDto"];
+        };
+        ParentFeeReductionDto: {
+            code?: string;
+            label?: string;
+            percent?: number;
+        };
+        ParentFeeSectionDto: {
+            code?: string;
+            title?: string;
+        };
+        ParentFeesResponse: {
+            /** Format: date-time */
+            asOf?: string;
+            totals?: components["schemas"]["ParentFeesTotalDto"][];
+            fees?: components["schemas"]["ParentFeeDto"][];
+        };
+        ParentFeesTotalDto: {
+            currency?: string;
+            /** Format: int64 */
+            expectedInCents?: number;
+            /** Format: int64 */
+            paidInCents?: number;
+            /** Format: int64 */
+            remainingInCents?: number;
+            /** Format: int64 */
+            overdueInCents?: number;
+            /** Format: int32 */
+            overdueCount?: number;
+        };
+        ParentEvaluationListResponse: {
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
+            /** Format: date */
+            today?: string;
+            schoolDays?: string[];
+            items?: components["schemas"]["ParentEvaluationSummaryDto"][];
+        };
+        ParentEvaluationSummaryDto: {
+            /** Format: uuid */
+            evaluationId?: string;
+            /** Format: uuid */
+            courseId?: string;
+            type?: string;
+            title?: string;
+            subjectLabel?: string;
+            teacherLabel?: string;
+            /** Format: date */
+            date?: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            status?: string;
+            points?: number;
+            maxPoints?: number;
+        };
+        ParentEvaluationDetailDto: {
+            /** Format: uuid */
+            evaluationId?: string;
+            /** Format: uuid */
+            courseId?: string;
+            type?: string;
+            title?: string;
+            subjectLabel?: string;
+            teacherLabel?: string;
+            /** Format: date */
+            date?: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            status?: string;
+            points?: number;
+            maxPoints?: number;
+            /** Format: date-time */
+            announcedAt?: string;
+            programme?: string[];
+            instructions?: string;
+            questions?: components["schemas"]["ParentAssignmentQuestionDto"][];
+            result?: components["schemas"]["ParentAssignmentResultDto"];
+            documents?: components["schemas"]["ParentAssignmentDocumentDto"][];
+        };
+        LinkedAttendance: {
+            kind?: string;
+            /** Format: date */
+            date?: string;
+        };
+        ParentDisciplinaryCaseDto: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: date */
+            date?: string;
+            title?: string;
+            category?: string;
+            severity?: string;
+            sanction?: string;
+            description?: string;
+            recordedBy?: string;
+            /** Format: date-time */
+            recordedAt?: string;
+            /** Format: date-time */
+            revisedAt?: string;
+            parentRequest?: string;
+            linkedAttendance?: components["schemas"]["LinkedAttendance"];
+        };
+        ParentDisciplinePeriodDto: {
+            /** Format: uuid */
+            id?: string;
+            label?: string;
+            /** Format: date */
+            startDate?: string;
+            /** Format: date */
+            endDate?: string;
+            current?: boolean;
+        };
+        ParentDisciplineResponse: {
+            period?: components["schemas"]["ParentDisciplinePeriodDto"];
+            periods?: components["schemas"]["ParentDisciplinePeriodDto"][];
+            summary?: components["schemas"]["ParentDisciplineSummaryDto"];
+            cases?: components["schemas"]["ParentDisciplinaryCaseDto"][];
+        };
+        ParentDisciplineSummaryDto: {
+            /** Format: int64 */
+            minor?: number;
+            /** Format: int64 */
+            major?: number;
+            /** Format: int64 */
+            serious?: number;
+        };
+        ParentAttendanceDayDto: {
+            /** Format: date */
+            date?: string;
+            status?: string;
+            justified?: boolean;
+            absenceReason?: string;
+            absenceReasonNote?: string;
+            arrivalTime?: string;
+            /** Format: int32 */
+            lateMinutes?: number;
+            recordedBy?: string;
+            /** Format: date-time */
+            recordedAt?: string;
+            /** Format: date */
+            justifyUntil?: string;
+            justification?: components["schemas"]["ParentJustificationDto"];
+            disciplinaryCases?: components["schemas"]["ParentDayCaseDto"][];
+        };
+        ParentAttendanceMonthDto: {
+            month?: string;
+            /** Format: int64 */
+            calledDays?: number;
+            /** Format: int64 */
+            absences?: number;
+            /** Format: int64 */
+            lates?: number;
+        };
+        ParentAttendanceResponse: {
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
+            summary?: components["schemas"]["ParentAttendanceSummaryDto"];
+            months?: components["schemas"]["ParentAttendanceMonthDto"][];
+            toJustify?: components["schemas"]["ParentToJustifyDto"][];
+            days?: components["schemas"]["ParentAttendanceDayDto"][];
+        };
+        ParentAttendanceSummaryDto: {
+            /** Format: int64 */
+            schoolDays?: number;
+            /** Format: int64 */
+            presentDays?: number;
+            /** Format: int64 */
+            lateDays?: number;
+            /** Format: int64 */
+            justifiedAbsenceDays?: number;
+            /** Format: int64 */
+            unjustifiedAbsenceDays?: number;
+            /** Format: double */
+            presenceRate?: number;
+        };
+        ParentDayCaseDto: {
+            /** Format: uuid */
+            id?: string;
+            sanction?: string;
+            /** Format: uuid */
+            periodId?: string;
+        };
+        ParentToJustifyDto: {
+            /** Format: date */
+            date?: string;
+            /** Format: date */
+            justifyUntil?: string;
+        };
+        ParentAcademicYearDto: {
+            /** Format: uuid */
+            id?: string;
+            label?: string;
+            /** Format: date */
+            startDate?: string;
+            /** Format: date */
+            endDate?: string;
+            current?: boolean;
+        };
+        ParentPortalBootstrapResponse: {
+            parent?: components["schemas"]["ParentPortalParentDto"];
+            school?: components["schemas"]["ParentPortalSchoolDto"];
+            academicYear?: components["schemas"]["ParentPortalNamedRef"];
+            children?: components["schemas"]["ParentPortalChildDto"][];
+        };
+        ParentPortalChildDto: {
+            /** Format: uuid */
+            childId?: string;
+            firstName?: string;
+            lastName?: string;
+            surname?: string;
+            /** @enum {string} */
+            gender?: "MALE" | "FEMALE" | "OTHER";
+            /** @enum {string} */
+            relationshipType?: "FATHER" | "MOTHER" | "GUARDIAN" | "UNCLE" | "AUNT" | "GRANDPARENT" | "OTHER";
+            photoFingerprint?: string;
+            schoolLevelGroup?: components["schemas"]["ParentPortalNamedRef"];
+            schoolLevel?: components["schemas"]["ParentPortalNamedRef"];
+            classroom?: components["schemas"]["ParentPortalNamedRef"];
+        };
+        ParentPortalNamedRef: {
+            /** Format: uuid */
+            id?: string;
+            name?: string;
+        };
+        ParentPortalParentDto: {
+            /** Format: uuid */
+            parentId?: string;
+            firstName?: string;
+            lastName?: string;
+            surname?: string;
+            phoneNumber?: string;
+            email?: string;
+        };
+        ParentPortalSchoolDto: {
+            /** Format: uuid */
+            schoolId?: string;
+            name?: string;
+            logoFingerprint?: string;
+            contactPhone?: string;
         };
         PayrollPreviewResponse: {
             month?: string;
@@ -8237,9 +9805,9 @@ export interface components {
             empty?: boolean;
         };
         PageableObject: {
-            unpaged?: boolean;
             /** Format: int32 */
             pageNumber?: number;
+            unpaged?: boolean;
             paged?: boolean;
             /** Format: int32 */
             pageSize?: number;
@@ -8744,6 +10312,15 @@ export interface components {
             averagePresenceRate?: number;
             topAbsenceReasons?: components["schemas"]["AbsenceReasonStatsDto"][];
         };
+        AnnouncementStudentHitDto: {
+            /** Format: uuid */
+            id?: string;
+            firstName?: string;
+            lastName?: string;
+            surname?: string;
+            classroomName?: string;
+            levelName?: string;
+        };
         ActivityLogEntry: {
             /** Format: uuid */
             id?: string;
@@ -8966,6 +10543,33 @@ export interface components {
             maxJournalierAgrege?: number;
             /** Format: int64 */
             maxExamenAgrege?: number;
+        };
+        JournalJournee: {
+            /** Format: uuid */
+            teacherId?: string;
+            /** Format: date */
+            date?: string;
+            lignes?: components["schemas"]["JournalLigne"][];
+        };
+        JournalLigne: {
+            /** Format: uuid */
+            coursId?: string;
+            /** Format: uuid */
+            classroomId?: string;
+            branche?: string;
+            classroomLabel?: string;
+            creneau?: components["schemas"]["TimeSlotSummaryDto"];
+            inTimetable?: boolean;
+            entry?: components["schemas"]["JournalSeanceDelta"];
+        };
+        TimeSlotSummaryDto: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: int32 */
+            slotOrder?: number;
+            startTime?: string;
+            endTime?: string;
+            label?: string;
         };
         NoteEleveDto: {
             /** Format: uuid */
@@ -9978,6 +11582,122 @@ export interface operations {
             };
         };
     };
+    get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                announcementId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementDto"];
+                };
+            };
+        };
+    };
+    update_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                announcementId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAnnouncementRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementDto"];
+                };
+            };
+        };
+    };
+    get_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementTemplateDto"];
+                };
+            };
+        };
+    };
+    update_5: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnnouncementTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementTemplateDto"];
+                };
+            };
+        };
+    };
+    delete_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                templateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     list: {
         parameters: {
             query?: never;
@@ -10048,7 +11768,7 @@ export interface operations {
             };
         };
     };
-    update_4: {
+    update_6: {
         parameters: {
             query?: never;
             header?: never;
@@ -11405,6 +13125,32 @@ export interface operations {
             };
         };
     };
+    decide_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AbsenceJustificationDecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AbsenceJustificationDelta"];
+                };
+            };
+        };
+    };
     pull_6: {
         parameters: {
             query?: {
@@ -11496,6 +13242,54 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["NoteBatchSyncResponse"];
+                };
+            };
+        };
+    };
+    pullJournal: {
+        parameters: {
+            query: {
+                coursId: string;
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["KeysetPageJournalSeanceDelta"];
+                };
+            };
+        };
+    };
+    submitSeance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JournalSeanceSyncRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["JournalSeanceSyncResponse"];
                 };
             };
         };
@@ -11935,6 +13729,93 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ParentDetailDto"];
+                };
+            };
+        };
+    };
+    statement: {
+        parameters: {
+            query?: {
+                academicYearId?: string;
+            };
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    submitHomework: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+                evaluationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    files?: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentHomeworkDetailDto"];
+                };
+            };
+        };
+    };
+    justify: {
+        parameters: {
+            query: {
+                id: string;
+                reason: string;
+                note?: string;
+            };
+            header?: never;
+            path: {
+                childId: string;
+                date: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentJustificationDto"];
                 };
             };
         };
@@ -12977,6 +14858,225 @@ export interface operations {
             };
         };
     };
+    list_7: {
+        parameters: {
+            query?: {
+                academicYearId?: string;
+                includeCancelled?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementDto"][];
+                };
+            };
+        };
+    };
+    create_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAnnouncementRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementDto"];
+                };
+            };
+        };
+    };
+    unschedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                announcementId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnnouncementGestureRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementDto"];
+                };
+            };
+        };
+    };
+    send: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                announcementId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnnouncementGestureRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementDto"];
+                };
+            };
+        };
+    };
+    schedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                announcementId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScheduleAnnouncementRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementDto"];
+                };
+            };
+        };
+    };
+    cancel_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                announcementId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnnouncementGestureRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementDto"];
+                };
+            };
+        };
+    };
+    reach: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnnouncementReachRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementReachPreviewDto"];
+                };
+            };
+        };
+    };
+    list_8: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementTemplateDto"][];
+                };
+            };
+        };
+    };
+    create_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnnouncementTemplateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementTemplateDto"];
+                };
+            };
+        };
+    };
     produce: {
         parameters: {
             query: {
@@ -13167,7 +15267,7 @@ export interface operations {
             };
         };
     };
-    create_3: {
+    create_5: {
         parameters: {
             query?: never;
             header?: never;
@@ -13193,7 +15293,7 @@ export interface operations {
             };
         };
     };
-    list_7: {
+    list_9: {
         parameters: {
             query?: never;
             header?: never;
@@ -13215,7 +15315,7 @@ export interface operations {
             };
         };
     };
-    create_4: {
+    create_6: {
         parameters: {
             query?: never;
             header?: never;
@@ -13893,6 +15993,29 @@ export interface operations {
             };
         };
     };
+    pull_11: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["KeysetPageAbsenceJustificationDelta"];
+                };
+            };
+        };
+    };
     pullGradesReferential: {
         parameters: {
             query?: never;
@@ -14246,6 +16369,575 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ParentDetailDto"][];
+                };
+            };
+        };
+    };
+    schoolLogo: {
+        parameters: {
+            query?: {
+                v?: string;
+            };
+            header?: {
+                "If-None-Match"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    timetable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentTimetableResponse"];
+                };
+            };
+        };
+    };
+    childPhoto: {
+        parameters: {
+            query?: {
+                v?: string;
+            };
+            header?: {
+                "If-None-Match"?: string;
+            };
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    payments: {
+        parameters: {
+            query?: {
+                academicYearId?: string;
+            };
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentPaymentDto"][];
+                };
+            };
+        };
+    };
+    receipt_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+                paymentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    homework: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentHomeworkListResponse"];
+                };
+            };
+        };
+    };
+    homeworkItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+                evaluationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentHomeworkDetailDto"];
+                };
+            };
+        };
+    };
+    submittedFile: {
+        parameters: {
+            query?: never;
+            header?: {
+                "If-None-Match"?: string;
+            };
+            path: {
+                childId: string;
+                evaluationId: string;
+                fileId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    homeworkSubject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+                evaluationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    homeworkAnswerKey: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+                evaluationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    week: {
+        parameters: {
+            query?: {
+                weekOf?: string;
+            };
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["GradeWeekDto"];
+                };
+            };
+        };
+    };
+    reportCard: {
+        parameters: {
+            query?: {
+                periodId?: string;
+                part?: "ALL" | "FIRST" | "SECOND" | "EXAM";
+            };
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ReportCardDto"];
+                };
+            };
+        };
+    };
+    reportCardPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+                reportCardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    periods: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["GradePeriodDto"][];
+                };
+            };
+        };
+    };
+    courses: {
+        parameters: {
+            query?: {
+                periodId?: string;
+                part?: "ALL" | "FIRST" | "SECOND" | "EXAM";
+            };
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["GradeCoursesDto"];
+                };
+            };
+        };
+    };
+    fees: {
+        parameters: {
+            query?: {
+                academicYearId?: string;
+            };
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentFeesResponse"];
+                };
+            };
+        };
+    };
+    evaluations: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentEvaluationListResponse"];
+                };
+            };
+        };
+    };
+    evaluation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+                evaluationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentEvaluationDetailDto"];
+                };
+            };
+        };
+    };
+    evaluationAnswerKey: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+                evaluationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    discipline: {
+        parameters: {
+            query?: {
+                periodId?: string;
+            };
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentDisciplineResponse"];
+                };
+            };
+        };
+    };
+    attendance: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentAttendanceResponse"];
+                };
+            };
+        };
+    };
+    justificationFile: {
+        parameters: {
+            query?: never;
+            header?: {
+                "If-None-Match"?: string;
+            };
+            path: {
+                childId: string;
+                date: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    academicYears: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentAcademicYearDto"][];
+                };
+            };
+        };
+    };
+    bootstrap: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentPortalBootstrapResponse"];
                 };
             };
         };
@@ -14892,7 +17584,7 @@ export interface operations {
             };
         };
     };
-    list_8: {
+    list_10: {
         parameters: {
             query: {
                 studentId: string;
@@ -15290,6 +17982,52 @@ export interface operations {
             };
         };
     };
+    file: {
+        parameters: {
+            query?: never;
+            header?: {
+                "If-None-Match"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+        };
+    };
+    searchStudents: {
+        parameters: {
+            query: {
+                q: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AnnouncementStudentHitDto"][];
+                };
+            };
+        };
+    };
     search: {
         parameters: {
             query?: {
@@ -15480,6 +18218,29 @@ export interface operations {
             };
         };
     };
+    getJournee: {
+        parameters: {
+            query: {
+                teacherId: string;
+                date: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["JournalJournee"];
+                };
+            };
+        };
+    };
     getById_3: {
         parameters: {
             query?: never;
@@ -15520,6 +18281,31 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["NoteEleveDto"][];
+                };
+            };
+        };
+    };
+    content_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "If-None-Match"?: string;
+            };
+            path: {
+                evaluationId: string;
+                fichierId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
                 };
             };
         };
@@ -15610,7 +18396,7 @@ export interface operations {
             };
         };
     };
-    get: {
+    get_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -15632,7 +18418,7 @@ export interface operations {
             };
         };
     };
-    content_1: {
+    content_2: {
         parameters: {
             query?: never;
             header?: {
@@ -15657,7 +18443,7 @@ export interface operations {
             };
         };
     };
-    list_9: {
+    list_11: {
         parameters: {
             query?: {
                 classroomId?: string;

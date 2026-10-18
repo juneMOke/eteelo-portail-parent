@@ -38,7 +38,7 @@ let nextId = 0;
 export class CourseRowComponent {
   readonly course = input.required<GradeCourse>();
   readonly expanded = input(false);
-  readonly toggle = output<void>();
+  readonly toggled = output<void>();
 
   private readonly locale = inject(LOCALE_ID);
 

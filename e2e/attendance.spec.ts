@@ -20,7 +20,9 @@ test.describe('Ma présence', () => {
       'Mardi 29/09',
       'Vendredi 02/10',
     ]);
-    await expect(page.locator('app-attendance-header .days')).toHaveText('20 jours présents sur 25');
+    await expect(page.locator('app-attendance-header .days')).toHaveText(
+      '20 jours présents sur 25',
+    );
     await expect(page.locator('app-month-navigator .title')).toHaveText('Octobre 2026');
     await expect(page.getByRole('button', { name: 'Mois suivant' })).toHaveAttribute(
       'aria-disabled',
@@ -46,7 +48,9 @@ test.describe('Ma présence', () => {
 
     await expect(page).toHaveURL(`${ATTENDANCE}?week=2026-09-14`);
     await expect(page.locator('app-week-indicators dd')).toHaveText(['80 %', '0', '1', '2']);
-    await expect(page.locator('app-week-indicators .count')).toHaveText('4 jours présents sur 5 · 2 retards');
+    await expect(page.locator('app-week-indicators .count')).toHaveText(
+      '4 jours présents sur 5 · 2 retards',
+    );
     await expect(page.locator('app-month-navigator .title')).toHaveText('Octobre 2026');
   });
 

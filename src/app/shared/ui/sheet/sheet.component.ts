@@ -23,6 +23,8 @@ let nextId = 0;
   selector: 'ui-sheet',
   imports: [IconComponent],
   template: `
+    <!-- Clic sur le fond : au clavier, Échap ferme le dialog nativement. -->
+    <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
     <dialog
       #dialog
       [attr.aria-labelledby]="label() ? null : headingId"
