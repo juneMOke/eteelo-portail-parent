@@ -1,0 +1,308 @@
+name: deploy
+
+# Workflow réutilisable : déploie une image sha-<commit> du portail sur le VPS.
+# Adapté de eteelo-backend/.github/workflows/deploy.yml (même séquence : garde du compose,
+# pull, bascule, attente de santé, rollback). Différences : variable de tag paramétrable,
+# service compose explicite (au premier déploiement, aucun conteneur ne le porte encore),
+# et un contrôle du routage /api sur la même origine.
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environnement GitHub ciblé (staging | production).'
+        required: true
+        type: string
+      environment_url:
+        description: 'Origine publique du portail, sans / final (https://parent-staging.eteeloconnect.com).'
+        required: true
+        type: string
+      remote_dir:
+        description: 'Dossier de la stack docker compose sur le VPS.'
+        required: true
+        type: string
+      compose_service:
+        description: 'Service compose du portail.'
+        required: true
+        type: string
+      container_name:
+        description: 'Nom du conteneur du portail (container_name du compose).'
+        required: true
+        type: string
+      tag_variable:
+        description: 'Variable du .env lue par le compose pour le tag de l’image.'
+        required: true
+        type: string
+      image_tag:
+        description: 'Tag GHCR exact à déployer (sha-xxxxxxx ou vX.Y.Z). Jamais `latest`.'
+        required: true
+        type: string
+    secrets:
+      VPS_HOST:
+        required: true
+      VPS_USER:
+        required: true
+      VPS_SSH_PRIVATE_KEY:
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.image_tag }} to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ inputs.environment_url }}
+    # Deux déploiements simultanés du portail sur le même environnement se marcheraient dessus.
+    concurrency:
+      group: deploy-portal-${{ inputs.environment }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Compute image reference
+        id: image
+        run: |
+          REPO_LC=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "ref=ghcr.io/${REPO_LC}:${{ inputs.image_tag }}" >> "$GITHUB_OUTPUT"
+          echo "Image cible : ghcr.io/${REPO_LC}:${{ inputs.image_tag }}"
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+
+      - name: Add VPS to known_hosts
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+      # Le dossier existe, le service est déclaré ; on mémorise le tag en service (cible du rollback).
+      - name: Preflight and capture current tag
+        id: backup
+        env:
+          SSH_TARGET: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+          REMOTE_DIR: ${{ inputs.remote_dir }}
+          SERVICE: ${{ inputs.compose_service }}
+          CONTAINER: ${{ inputs.container_name }}
+        run: |
+          OUT=$(ssh "$SSH_TARGET" 'bash -s' -- "$REMOTE_DIR" "$SERVICE" "$CONTAINER" <<'REMOTE'
+          set -euo pipefail
+          DIR="$1"; SERVICE="$2"; CONTAINER="$3"
+          if [ ! -d "$DIR" ]; then
+            echo "✗ Dossier introuvable sur le VPS : $DIR" >&2
+            exit 1
+          fi
+          cd "$DIR"
+          SERVICES=$(docker compose config --services 2>/dev/null || true)
+          if ! printf '%s\n' "$SERVICES" | grep -Fxq "$SERVICE"; then
+            echo "✗ Service '$SERVICE' absent du compose de $DIR (services : $(echo $SERVICES))" >&2
+            exit 1
+          fi
+          CURRENT=$(docker inspect "$CONTAINER" --format='{{.Config.Image}}' 2>/dev/null || echo 'none')
+          case "$CURRENT" in
+            none|''|*@sha256:*) echo "PREVIOUS_TAG=none" ;;
+            *:*)                echo "PREVIOUS_TAG=${CURRENT##*:}" ;;
+            *)                  echo "PREVIOUS_TAG=none" ;;
+          esac
+          REMOTE
+          )
+          echo "$OUT"
+          PREVIOUS=$(echo "$OUT" | grep '^PREVIOUS_TAG=' | cut -d= -f2 | tr -d '[:space:]' || true)
+          echo "previous=${PREVIOUS:-none}" >> "$GITHUB_OUTPUT"
+          echo "Tag actuellement en service : ${PREVIOUS:-none}"
+
+      # Épinglage du tag dans le .env, garde (compose doit résoudre exactement l'image attendue), pull.
+      # Le login GHCR vit dans une configuration Docker propre à la stack : il n'écrase pas celui
+      # des autres stacks du VPS, et il est retiré dès le pull terminé (le jeton expire avec le job).
+      - name: Pin image tag and pull
+        id: pin
+        env:
+          SSH_TARGET: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+          REMOTE_DIR: ${{ inputs.remote_dir }}
+          SERVICE: ${{ inputs.compose_service }}
+          VAR: ${{ inputs.tag_variable }}
+          TAG: ${{ inputs.image_tag }}
+          EXPECTED: ${{ steps.image.outputs.ref }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+        run: |
+          ssh "$SSH_TARGET" 'bash -s' -- "$REMOTE_DIR" "$SERVICE" "$VAR" "$TAG" "$EXPECTED" <<'REMOTE'
+          set -euo pipefail
+          DIR="$1"; SERVICE="$2"; VAR="$3"; TAG="$4"; EXPECTED="$5"
+          cd "$DIR"
+          touch .env
+          if grep -q "^${VAR}=" .env; then
+            sed -i "s|^${VAR}=.*|${VAR}=${TAG}|" .env
+          else
+            printf '\n%s=%s\n' "$VAR" "$TAG" >> .env
+          fi
+          echo "→ .env épinglé sur ${VAR}=${TAG}"
+
+          IMAGES=$(docker compose config --images 2>/tmp/compose-config.err || true)
+          if ! printf '%s\n' "$IMAGES" | grep -Fxq "$EXPECTED"; then
+            echo "✗ Le compose de ${DIR} ne résout pas ${EXPECTED} (images : $(echo $IMAGES))." >&2
+            [ -s /tmp/compose-config.err ] && sed 's/^/  compose: /' /tmp/compose-config.err >&2
+            echo "  → le service '${SERVICE}' doit déclarer image: ghcr.io/<repo>:\${${VAR}}" >&2
+            exit 1
+          fi
+          echo "✓ ${EXPECTED} figure parmi les images de la stack"
+          mkdir -p .docker && chmod 700 .docker
+          REMOTE
+
+          # Le jeton passe par le stdin de ssh jusqu'à --password-stdin : il n'apparaît dans aucune ligne de commande.
+          printf '%s\n' "$GHCR_TOKEN" \
+            | ssh "$SSH_TARGET" "DOCKER_CONFIG='$REMOTE_DIR/.docker' docker login ghcr.io -u '$GHCR_USER' --password-stdin"
+
+          ssh "$SSH_TARGET" 'bash -s' -- "$REMOTE_DIR" "$SERVICE" "$EXPECTED" <<'REMOTE'
+          set -euo pipefail
+          DIR="$1"; SERVICE="$2"; EXPECTED="$3"
+          cd "$DIR"
+          export DOCKER_CONFIG="$DIR/.docker"
+          trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
+          echo "→ Pull de $EXPECTED..."
+          docker compose pull "$SERVICE"
+          REMOTE
+
+      - name: Deploy and wait for healthy
+        id: switch
+        env:
+          SSH_TARGET: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+          REMOTE_DIR: ${{ inputs.remote_dir }}
+          SERVICE: ${{ inputs.compose_service }}
+          CONTAINER: ${{ inputs.container_name }}
+          EXPECTED: ${{ steps.image.outputs.ref }}
+        run: |
+          ssh "$SSH_TARGET" 'bash -s' -- "$REMOTE_DIR" "$SERVICE" "$CONTAINER" "$EXPECTED" <<'REMOTE'
+          set -euo pipefail
+          DIR="$1"; SERVICE="$2"; CONTAINER="$3"; EXPECTED="$4"
+          cd "$DIR"
+          echo "→ Recréation du conteneur ${CONTAINER}..."
+          docker compose up -d --no-deps --force-recreate "$SERVICE"
+
+          RUNNING=$(docker inspect "$CONTAINER" --format='{{.Config.Image}}' 2>/dev/null || echo '')
+          if [ "$RUNNING" != "$EXPECTED" ]; then
+            echo "✗ Le conteneur tourne sur '${RUNNING:-<inconnu>}' au lieu de '$EXPECTED'." >&2
+            exit 1
+          fi
+          echo "✓ ${CONTAINER} tourne bien sur ${EXPECTED}"
+
+          echo "→ Attente de l'état healthy (max 60s)..."
+          elapsed=0
+          while [ $elapsed -lt 60 ]; do
+            STATUS=$(docker inspect "$CONTAINER" --format='{{.State.Health.Status}}' 2>/dev/null || echo "starting")
+            echo "  [${elapsed}s] Status: $STATUS"
+            [ "$STATUS" = "healthy" ] && { echo "✓ Portail healthy"; exit 0; }
+            if [ "$STATUS" = "unhealthy" ]; then
+              echo "✗ Portail unhealthy" >&2
+              docker compose logs --tail=50 "$SERVICE"
+              exit 1
+            fi
+            sleep 3
+            elapsed=$((elapsed + 3))
+          done
+          echo "✗ Timeout d'attente de l'état healthy" >&2
+          docker compose logs --tail=50 "$SERVICE"
+          exit 1
+          REMOTE
+
+      - name: External health check via Traefik
+        id: health
+        env:
+          ORIGIN: ${{ inputs.environment_url }}
+        run: |
+          echo "→ Vérification de ${ORIGIN}/healthz..."
+          for i in 1 2 3 4 5 6; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${ORIGIN}/healthz" || echo "000")
+            echo "  Tentative $i : HTTP $HTTP_CODE"
+            [ "$HTTP_CODE" = "200" ] && { echo "✓ Portail joignable"; exit 0; }
+            sleep 5
+          done
+          echo "✗ Health check public en échec" >&2
+          exit 1
+
+      # /api doit atteindre Spring sur la même origine : sans session, le bootstrap répond 401.
+      # Un 404 signifie que la requête tombe sur le nginx du portail (routeur Traefik /api absent).
+      # Hors rollback : ce routage ne dépend pas de l'image, revenir en arrière n'y changerait rien.
+      - name: Same-origin API routing check
+        env:
+          ORIGIN: ${{ inputs.environment_url }}
+        run: |
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${ORIGIN}/api/v1/parent/bootstrap" || echo "000")
+          echo "GET ${ORIGIN}/api/v1/parent/bootstrap → HTTP $HTTP_CODE"
+          if [ "$HTTP_CODE" != "401" ]; then
+            echo "::error::/api/v1/parent n'atteint pas le backend sur ${ORIGIN} (attendu 401, reçu ${HTTP_CODE}). Vérifier le routeur Traefik Host + PathPrefix(/api/v1/parent) du backend."
+            exit 1
+          fi
+          echo "✓ /api/v1/parent atteint le backend"
+
+      # Échec avant toute bascule : le conteneur n'a pas bougé, on remet seulement le .env
+      # sur le tag en service, pour qu'un `docker compose up` manuel ne bascule pas sur la version refusée.
+      - name: Restore pinned tag (no container change)
+        if: >-
+          failure()
+          && steps.pin.outcome == 'failure'
+          && steps.backup.outputs.previous != 'none'
+          && steps.backup.outputs.previous != ''
+        env:
+          SSH_TARGET: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+          REMOTE_DIR: ${{ inputs.remote_dir }}
+          VAR: ${{ inputs.tag_variable }}
+          PREVIOUS: ${{ steps.backup.outputs.previous }}
+        run: |
+          ssh "$SSH_TARGET" 'bash -s' -- "$REMOTE_DIR" "$VAR" "$PREVIOUS" <<'REMOTE'
+          set -euo pipefail
+          DIR="$1"; VAR="$2"; PREVIOUS="$3"
+          cd "$DIR"
+          sed -i "s|^${VAR}=.*|${VAR}=${PREVIOUS}|" .env
+          echo "→ .env laissé sur ${VAR}=${PREVIOUS} (conteneur inchangé)"
+          REMOTE
+
+      # Ne se déclenche que si la bascule a eu lieu.
+      - name: Rollback on failure
+        if: >-
+          failure()
+          && (steps.switch.outcome == 'failure' || steps.health.outcome == 'failure')
+          && steps.backup.outputs.previous != 'none'
+          && steps.backup.outputs.previous != ''
+        env:
+          SSH_TARGET: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+          REMOTE_DIR: ${{ inputs.remote_dir }}
+          SERVICE: ${{ inputs.compose_service }}
+          CONTAINER: ${{ inputs.container_name }}
+          VAR: ${{ inputs.tag_variable }}
+          PREVIOUS: ${{ steps.backup.outputs.previous }}
+        run: |
+          echo "⚠ Déploiement en échec, retour sur $PREVIOUS..."
+          ssh "$SSH_TARGET" 'bash -s' -- "$REMOTE_DIR" "$SERVICE" "$CONTAINER" "$VAR" "$PREVIOUS" <<'REMOTE'
+          set -euo pipefail
+          DIR="$1"; SERVICE="$2"; CONTAINER="$3"; VAR="$4"; PREVIOUS="$5"
+          cd "$DIR"
+          sed -i "s|^${VAR}=.*|${VAR}=${PREVIOUS}|" .env
+          echo "→ .env réépinglé sur ${VAR}=${PREVIOUS}"
+          docker compose up -d --no-deps --force-recreate "$SERVICE"
+          sleep 10
+          STATUS=$(docker inspect "$CONTAINER" --format='{{.State.Health.Status}}' 2>/dev/null || echo "unknown")
+          echo "État après rollback : $STATUS"
+          REMOTE
+          {
+            echo "## ⚠ Rollback exécuté"
+            echo ""
+            echo "- **Version tentée** : \`${{ inputs.image_tag }}\`"
+            echo "- **Version restaurée** : \`$PREVIOUS\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Deployment summary
+        if: success()
+        run: |
+          {
+            echo "## Déploiement ${{ inputs.environment }} réussi 🚀"
+            echo ""
+            echo "- **Image déployée** : \`${{ steps.image.outputs.ref }}\`"
+            echo "- **Version précédente** : \`${{ steps.backup.outputs.previous }}\`"
+            echo "- **Portail** : ${{ inputs.environment_url }}"
+            echo "- **Commit** : ${{ github.sha }}"
+          } >> "$GITHUB_STEP_SUMMARY"
