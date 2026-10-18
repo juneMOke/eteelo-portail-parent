@@ -1,0 +1,109 @@
+name: release-prod
+
+# Livraison du portail en production. Déclenchée UNIQUEMENT par la publication d'une release GitHub :
+#   gh release create v1.2.0 --generate-notes      (ou depuis l'onglet Releases)
+#
+# Aucune reconstruction : on promeut l'image `sha-<commit>` déjà construite, testée et
+# déployée en staging par portal-ci.yml. Le binaire livré en production est donc bit-pour-bit
+# celui qui a été recetté — « build once, deploy many ». Même logique que release-prod.yml du backend.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: release-prod
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    name: Promote image to ${{ github.event.release.tag_name }}
+    runs-on: ubuntu-latest
+    # Une pré-release (`-rc1`, `-beta`) sert justement à ne PAS aller en production.
+    # Retirer cette condition si l'on souhaite l'inverse.
+    if: ${{ !github.event.release.prerelease }}
+    outputs:
+      image_tag: ${{ steps.tags.outputs.version }}
+    steps:
+      - name: Resolve source and target tags
+        id: tags
+        run: |
+          REPO_LC=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          VERSION="${{ github.event.release.tag_name }}"
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7 | tr -d '[:space:]')
+
+          # Un tag Docker n'accepte pas n'importe quel nom de tag git.
+          if ! echo "$VERSION" | grep -Eq '^[A-Za-z0-9_][A-Za-z0-9._-]{0,127}$'; then
+            echo "✗ Tag de release inutilisable comme tag Docker : '$VERSION'" >&2
+            exit 1
+          fi
+
+          echo "repo=${REPO_LC}"          >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}"       >> "$GITHUB_OUTPUT"
+          echo "source=sha-${SHORT_SHA}"  >> "$GITHUB_OUTPUT"
+          echo "Promotion : ghcr.io/${REPO_LC}:sha-${SHORT_SHA} → :${VERSION}"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Si la release pointe sur un commit qui n'est jamais passé par le CI (tag posé sur une
+      # branche non mergée, release créée avant la fin du build), l'image source n'existe pas.
+      # On le dit ici, clairement, plutôt que d'échouer au `pull` sur le VPS.
+      - name: Verify source image exists
+        env:
+          SRC: ghcr.io/${{ steps.tags.outputs.repo }}:${{ steps.tags.outputs.source }}
+        run: |
+          echo "→ Recherche de $SRC dans GHCR..."
+          if ! docker buildx imagetools inspect "$SRC" > /dev/null 2>&1; then
+            echo "✗ Image introuvable : $SRC" >&2
+            echo "  Le commit ${{ github.sha }} n'a pas été construit par portal-ci." >&2
+            echo "  Vérifier que la release est posée sur un commit de 'main' dont le CI est vert." >&2
+            exit 1
+          fi
+          echo "✓ Image source trouvée"
+
+      # `imagetools create` recopie le manifeste côté registre : pas de pull, pas de rebuild,
+      # même digest. Le tag de version devient un simple alias de l'image recettée.
+      - name: Tag image with release version
+        env:
+          SRC: ghcr.io/${{ steps.tags.outputs.repo }}:${{ steps.tags.outputs.source }}
+          DST: ghcr.io/${{ steps.tags.outputs.repo }}:${{ steps.tags.outputs.version }}
+        run: |
+          docker buildx imagetools create -t "$DST" "$SRC"
+          echo "✓ $DST publié"
+          DIGEST=$(docker buildx imagetools inspect "$DST" --format '{{.Manifest.Digest}}' 2>/dev/null || echo "n/a")
+          {
+            echo "## Promotion d'image"
+            echo ""
+            echo "- **Source (recettée en staging)** : \`$SRC\`"
+            echo "- **Version publiée** : \`$DST\`"
+            echo "- **Digest** : \`$DIGEST\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  deploy-production:
+    name: Deploy to production
+    needs: promote
+    permissions:
+      contents: read
+      packages: read
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: production
+      environment_url: https://parents.eteeloconnect.com
+      remote_dir: /opt/eteelo-parent-prod
+      compose_service: parent-prod
+      container_name: eteelo-parent-prod
+      tag_variable: PARENT_TAG
+      image_tag: ${{ needs.promote.outputs.image_tag }}
+    secrets: inherit
