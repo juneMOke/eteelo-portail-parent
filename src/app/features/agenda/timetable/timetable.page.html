@@ -1,0 +1,53 @@
+@if (week(); as week) {
+  @if (resource.stale()) {
+    <ui-stale-notice (retry)="resource.reload()" />
+  }
+  <app-timetable-banner
+    [title]="title()"
+    [summary]="summary()"
+    [view]="shownView()"
+    [wide]="wide()"
+    [hasPrevious]="hasPrevious()"
+    [hasNext]="hasNext()"
+    [currentLabel]="currentLabel()"
+    [strip]="strip()"
+    [announcement]="title() + ', ' + summary()"
+    (step)="step($event)"
+    (current)="select(null)"
+    (viewChange)="changeView($event)"
+    (pick)="select($event)"
+  />
+
+  @if (newTimetable(); as notice) {
+    <p class="notice">{{ notice }}</p>
+  }
+
+  <ui-swipe-pager
+    [position]="position()"
+    [label]="shownView() === 'week' ? 'Cours de la semaine' : 'Cours de la journée'"
+    [attr.aria-busy]="loading()"
+    (swipe)="step($event)"
+  >
+    @if (shownView() === 'week') {
+      <app-week-schedule [week]="week" />
+    } @else if (day(); as day) {
+      <app-day-schedule [childId]="childId()" [day]="day" [now]="now()" />
+    }
+  </ui-swipe-pager>
+} @else if (resource.error()) {
+  <ui-load-error
+    heading="Impossible d’afficher l’emploi du temps"
+    message="L’emploi du temps nécessite une connexion. Vérifiez-la, puis réessayez."
+    (retry)="resource.reload()"
+  />
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement de l’emploi du temps…</span>
+    <ui-skeleton height="148px" />
+    <ui-skeleton height="44px" />
+    <ui-skeleton height="72px" />
+    <ui-skeleton height="72px" />
+    <ui-skeleton height="72px" />
+    <ui-skeleton height="72px" />
+  </div>
+}

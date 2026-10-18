@@ -1,0 +1,196 @@
+/* D4 — carte de cours au ton de la matière, liseré gauche de 4 px. */
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 11px var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--subject) 22%, var(--color-surface));
+  border-left: 4px solid var(--subject);
+  border-radius: var(--radius-tile);
+  background: color-mix(in srgb, var(--subject-soft) 55%, var(--color-surface));
+  box-shadow: var(--shadow-card);
+}
+
+@media (min-width: 600px) {
+  :host {
+    gap: 13px;
+    padding: 14px var(--space-4);
+    border-radius: var(--space-4);
+  }
+}
+
+:host(.now) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -1px;
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (min-width: 600px) {
+  .main {
+    gap: 13px;
+  }
+}
+
+/* D5 — sigle. */
+.initials {
+  display: grid;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--subject);
+  color: var(--color-on-tone);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+}
+
+@media (min-width: 600px) {
+  .initials {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+.text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+/* D6 — matière, une ligne. */
+.subject {
+  overflow: hidden;
+  color: var(--color-heading);
+  font-size: 0.90625rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 600px) {
+  .subject {
+    font-size: var(--text-card-title);
+  }
+}
+
+/* D7 — enseignant · salle, une ligne au téléphone. */
+.meta {
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 600px) {
+  .meta {
+    white-space: normal;
+  }
+}
+
+/* D12 — modifié : la mention sous D7 ; annulé : à la place de D7. */
+.notice {
+  color: var(--color-accent);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  line-height: 1.4;
+}
+
+:host(.cancelled) {
+  border-color: var(--color-border);
+  background: var(--color-page);
+  box-shadow: none;
+}
+
+:host(.cancelled) .subject {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+:host(.cancelled) .notice {
+  color: var(--color-tone-alert);
+}
+
+/* D8 — durée, absente au téléphone (la règle la donne). */
+.duration {
+  display: none;
+  flex: none;
+  padding: 5px 9px;
+  border: 1px solid color-mix(in srgb, var(--subject) 30%, var(--color-surface));
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--subject);
+  font-size: 0.6875rem;
+  font-weight: var(--weight-medium);
+  line-height: 1.2;
+}
+
+@media (min-width: 600px) {
+  .duration {
+    display: inline-block;
+  }
+}
+
+/* D10 — « En ce moment », au-dessus du sigle et de la matière. */
+.now-pill {
+  align-self: flex-start;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-on-tone);
+  font-size: 0.6875rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+}
+
+/* D11 — ligne d'épreuve, seule partie cliquable. */
+.exam {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-tone-pending-soft);
+  color: var(--color-tone-pending);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+  transition: background-color var(--duration-hover);
+}
+
+@media (min-width: 600px) {
+  .exam {
+    font-size: var(--text-sm);
+  }
+}
+
+.exam:hover {
+  background: var(--color-exam-hover);
+}
+
+.exam:active {
+  background: var(--color-exam-press);
+}
+
+.exam-label {
+  flex: 1;
+}
+
+:host(.with-exam) {
+  border-color: var(--color-exam-line);
+  background: var(--color-surface);
+}

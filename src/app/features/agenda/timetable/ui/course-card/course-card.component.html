@@ -1,0 +1,25 @@
+@if (now()) {
+  <span class="now-pill">En ce moment</span>
+}
+<div class="main">
+  <span class="initials" aria-hidden="true">{{ initials() }}</span>
+  <div class="text">
+    <p class="subject">{{ course().subjectLabel }}</p>
+    @if (!cancelled() && meta()) {
+      <p class="meta">{{ meta() }}</p>
+    }
+    @if (notice(); as notice) {
+      <p class="notice">{{ notice }}</p>
+    }
+  </div>
+  @if (duration() && !cancelled()) {
+    <span class="duration">{{ duration() }}</span>
+  }
+</div>
+@if (exam(); as exam) {
+  <a class="exam" [routerLink]="exam.link" [queryParams]="exam.queryParams">
+    <ui-icon name="clipboard" [size]="16" [strokeWidth]="2" />
+    <span class="exam-label">{{ exam.label }}</span>
+    <ui-icon name="chevron-right" [size]="14" [strokeWidth]="2.2" />
+  </a>
+}

@@ -116,6 +116,15 @@
     --color-subject-6: var(--palette-gris-texte);
     --color-subject-6-soft: var(--palette-sable-clair);
 
+    /*
+     * Mon emploi du temps : la pause, plus discrète qu'un cours (D9), et la ligne d'épreuve posée
+     * dans son cours (D11), aux tons « à venir » des devoirs et évaluations.
+     */
+    --color-break-bg: color-mix(in srgb, var(--palette-papier) 55%, var(--palette-blanc));
+    --color-exam-line: color-mix(in srgb, var(--palette-bronze) 22%, var(--palette-or-pale));
+    --color-exam-hover: color-mix(in srgb, var(--palette-bronze) 8%, var(--palette-or-pale));
+    --color-exam-press: color-mix(in srgb, var(--palette-bronze) 16%, var(--palette-or-pale));
+
     --color-nav-bg: var(--palette-bleu-profond);
     --color-nav-text: var(--palette-blanc-casse);
     --color-nav-text-muted: rgb(250 250 247 / 0.55);

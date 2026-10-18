@@ -1,0 +1,71 @@
+<header class="head">
+  <ui-icon name="clock" [size]="17" [strokeWidth]="2" />
+  <h2 class="heading">Cours de la journée</h2>
+  <span class="count">{{ count() }}</span>
+</header>
+
+<div class="body">
+  @switch (content()) {
+    @case ('courses') {
+      <ol class="slots">
+        @for (slot of slots(); track slot.key) {
+          <li class="slot" [class.now]="slot.now" [class.break]="!slot.course">
+            <p class="rule">
+              <span class="start">{{ slot.start }}</span>
+              @if (slot.course) {
+                <span class="end">{{ slot.end }}</span>
+              }
+            </p>
+            @if (slot.course; as course) {
+              <app-course-card
+                [childId]="childId()"
+                [course]="course"
+                [date]="day().date"
+                [now]="slot.now"
+              />
+            } @else {
+              <div class="pause">
+                @if (slot.now) {
+                  <span class="now-pill">En ce moment</span>
+                }
+                <p>{{ slot.label }}</p>
+              </div>
+            }
+          </li>
+        }
+      </ol>
+    }
+    @case ('unpublished') {
+      <div class="closed">
+        <p class="closed-title">Emploi du temps pas encore publié</p>
+        <p class="closed-text">
+          L’emploi du temps de cette période n’est pas encore publié par l’école.
+        </p>
+      </div>
+    }
+    @default {
+      <div class="closed">
+        <p class="closed-title">
+          @if (content() === 'empty') {
+            Aucun cours ce jour
+          } @else if (day().holidayLabel; as holiday) {
+            Congé : {{ holiday }}
+          } @else {
+            Pas d’école ce jour
+          }
+        </p>
+        @if (nextDay(); as next) {
+          <a
+            class="next-day"
+            [routerLink]="[]"
+            [queryParams]="{ date: next.date }"
+            queryParamsHandling="merge"
+            replaceUrl
+          >
+            Prochain jour d’école : {{ next.label }} ›
+          </a>
+        }
+      </div>
+    }
+  }
+</div>
