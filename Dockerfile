@@ -14,3 +14,6 @@ FROM nginx:1.30-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist/eteelo-portail-parent/browser /usr/share/nginx/html
 EXPOSE 80
+# Lu par le déploiement : la bascule n'est validée qu'une fois le conteneur « healthy ».
+HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget -q -O /dev/null http://127.0.0.1/healthz || exit 1

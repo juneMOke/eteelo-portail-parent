@@ -1,7 +1,7 @@
 name: portal-ci
 
 # PR : vérifications (lint, dérive OpenAPI, tests, build), parcours Playwright, build de l'image.
-# main : la même chose, puis push de l'image sur GHCR, taguée sha-<commit> comme le backend.
+# main : la même chose, push de l'image sur GHCR (sha-<commit>, comme le backend), puis déploiement en staging.
 
 on:
   push:
@@ -144,3 +144,22 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy-staging:
+    name: Deploy to staging
+    needs: docker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Chaque merge sur main part en staging, et seulement en staging.
+    permissions:
+      contents: read
+      packages: read
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: staging
+      environment_url: https://parent-staging.eteeloconnect.com
+      remote_dir: /opt/eteelo-parent
+      compose_service: parent-staging
+      container_name: eteelo-parent-staging
+      tag_variable: PARENT_TAG
+      image_tag: ${{ needs.docker.outputs.image_tag }}
+    secrets: inherit
