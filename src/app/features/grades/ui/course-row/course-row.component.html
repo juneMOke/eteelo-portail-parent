@@ -5,7 +5,7 @@
     [attr.aria-expanded]="expanded()"
     [attr.aria-controls]="panelId"
     [attr.aria-label]="spoken()"
-    (click)="toggle.emit()"
+    (click)="toggled.emit()"
   >
     <span class="code" aria-hidden="true">{{ course().subjectCode }}</span>
     <span class="body">

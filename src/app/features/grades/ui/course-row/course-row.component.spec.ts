@@ -14,7 +14,7 @@ registerLocaleData(localeFr);
     <app-course-row
       [course]="course()"
       [expanded]="expanded()"
-      (toggle)="expanded.set(!expanded())"
+      (toggled)="expanded.set(!expanded())"
     >
       <p class="projected">Évaluations du cours</p>
     </app-course-row>

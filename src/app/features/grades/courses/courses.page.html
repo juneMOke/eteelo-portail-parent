@@ -25,7 +25,7 @@
             <app-course-row
               [course]="course"
               [expanded]="expanded().has(course.courseId)"
-              (toggle)="toggle(course.courseId)"
+              (toggled)="toggle(course.courseId)"
             >
               <ul class="evaluations">
                 @for (item of course.evaluations; track item.evaluationId) {

@@ -46,6 +46,8 @@
           </button>
           @if (olderOpen()) {
             <div class="scrim" aria-hidden="true" (click)="olderOpen.set(false)"></div>
+            <!-- Échap remonte des boutons de la liste : la liste elle-même n'a pas à être focusable. -->
+            <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
             <ul class="older-list" (keydown.escape)="olderOpen.set(false)">
               @for (year of older(); track year.id) {
                 <li>

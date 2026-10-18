@@ -28,11 +28,10 @@ describe('TermPickerComponent', () => {
     return { fixture, el, choices };
   }
 
-  const radios = (root: Element, group: number) => [
-    ...root
-      .querySelectorAll('[role="radiogroup"]')
-      [group].querySelectorAll<HTMLButtonElement>('[role="radio"]'),
-  ];
+  const radios = (root: Element, group: number) => {
+    const groups = root.querySelectorAll('[role="radiogroup"]');
+    return [...groups[group].querySelectorAll<HTMLButtonElement>('[role="radio"]')];
+  };
 
   it('empile deux menus au téléphone : le trimestre, puis la période', async () => {
     const { el } = await render();
