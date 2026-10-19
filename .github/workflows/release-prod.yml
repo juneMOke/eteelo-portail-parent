@@ -100,7 +100,7 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       environment: production
-      environment_url: https://parents.eteeloconnect.com
+      environment_url: https://parent.eteeloconnect.com
       remote_dir: /opt/eteelo-parent-prod
       compose_service: parent-prod
       container_name: eteelo-parent-prod
