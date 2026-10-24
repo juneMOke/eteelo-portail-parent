@@ -31,12 +31,17 @@ const ParentSchema = v.object({
   email: v.nullish(v.string()),
 });
 
+/** Fuseau des écoles servies aujourd'hui, tant que le bootstrap ne rend pas `school.timeZone`. */
+export const DEFAULT_SCHOOL_TIME_ZONE = 'Africa/Kinshasa';
+
 const SchoolSchema = v.object({
   schoolId: Uuid,
   name: v.string(),
   logoFingerprint: v.nullish(v.string()),
   /** Téléphone de la fiche école (secrétariat) ; null s'il n'est pas saisi. */
   contactPhone: v.nullish(v.string()),
+  /** Fuseau IANA de l'école, pour lire les instants (envoi d'une annonce) à son heure. */
+  timeZone: v.optional(v.string(), DEFAULT_SCHOOL_TIME_ZONE),
 });
 
 export const ChildSchema = v.object({
@@ -50,6 +55,8 @@ export const ChildSchema = v.object({
   schoolLevelGroup: NamedRefSchema,
   schoolLevel: NamedRefSchema,
   classroom: v.nullish(NamedRefSchema),
+  /** Annonces de l'année en cours non lues par ce parent pour cet enfant (0 avant le lot L3). */
+  unreadAnnouncements: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0)), 0),
 });
 
 export const BootstrapSchema = v.object({

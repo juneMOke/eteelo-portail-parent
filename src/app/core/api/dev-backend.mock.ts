@@ -1,5 +1,6 @@
 import { HttpErrorResponse, HttpInterceptorFn, HttpResponse } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
+import { announcementsFixture, readResultFixture } from '../../../testing/announcements.fixture';
 import {
   evaluationDetailFixture,
   evaluationListFixture,
@@ -41,6 +42,12 @@ const CONDUCT_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/(attendance|disc
 const FINANCE_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/(fees|payments|academic-years)$`);
 const DOCUMENT_ROUTE = new RegExp(
   `^${PARENT_CHILDREN_API}/[^/]+/(payments/[^/]+/receipt|statement)$`,
+);
+/** Annonces servies, mises à jour par les lectures de la session de développement. */
+let announcements = announcementsFixture();
+const ANNOUNCEMENTS_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/announcements$`);
+const ANNOUNCEMENT_READ_ROUTE = new RegExp(
+  `^${PARENT_CHILDREN_API}/[^/]+/announcements/([^/]+)/read$`,
 );
 const JUSTIFICATION_ROUTE = new RegExp(
   `^${PARENT_CHILDREN_API}/[^/]+/attendance/[^/]+/justification$`,
@@ -108,6 +115,15 @@ const mockBackend: HttpInterceptorFn = (req, next) => {
     const year = req.params.get('academicYearId') ?? undefined;
     if (finance[1] === 'fees') return ok(feesFixture());
     return ok(finance[1] === 'payments' ? paymentsFixture(year) : ACADEMIC_YEARS);
+  }
+  if (req.method === 'GET' && ANNOUNCEMENTS_ROUTE.test(req.url)) return ok(announcements);
+  const read = req.method === 'POST' ? ANNOUNCEMENT_READ_ROUTE.exec(req.url) : null;
+  if (read) {
+    const next = readResultFixture(announcements, read[1], new Date().toISOString());
+    if (next) {
+      announcements = next.list;
+      return ok(next.result);
+    }
   }
   if (DOCUMENT_ROUTE.test(req.url)) {
     return ok(new Blob([PDF_BODY], { type: 'application/pdf' }));

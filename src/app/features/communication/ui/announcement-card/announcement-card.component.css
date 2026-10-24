@@ -1,0 +1,129 @@
+:host {
+  display: block;
+}
+
+/* Catégorie et date en haut, titre, extrait de trois lignes ; chevron à droite, centré. */
+.card {
+  position: relative;
+  display: grid;
+  grid-template-areas:
+    'meta chevron'
+    'title chevron'
+    'excerpt chevron';
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 10px;
+  width: 100%;
+  min-height: var(--tap-target);
+  padding: var(--space-3) 10px var(--space-3) var(--space-4);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-tile);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    translate var(--duration-lift) var(--ease-out-cubic),
+    box-shadow var(--duration-lift) var(--ease-out-cubic),
+    border-color var(--duration-lift),
+    scale var(--duration-hover);
+}
+
+/* Liseré gauche : Bleu Ardoise tant que l'annonce n'est pas lue. */
+.card::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: transparent;
+  content: '';
+}
+
+:host(.unread) .card::before {
+  background: var(--color-accent);
+}
+
+.card:active {
+  scale: 0.99;
+}
+
+.meta {
+  display: flex;
+  grid-area: meta;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  margin-bottom: 6px;
+}
+
+.new {
+  color: var(--color-accent);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+.date {
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.title {
+  grid-area: title;
+  color: var(--color-heading);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-medium);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+:host(.unread) .title {
+  font-weight: var(--weight-semibold);
+}
+
+/* Les premières lignes du message, sauts de ligne compris : la fiche le donne en entier. */
+.excerpt {
+  display: -webkit-box;
+  grid-area: excerpt;
+  margin-top: var(--space-1);
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  white-space: pre-line;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow-wrap: anywhere;
+}
+
+.chevron {
+  display: grid;
+  grid-area: chevron;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-page);
+  color: var(--color-accent);
+  transition: translate var(--duration-hover) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-line-hover);
+    translate: 0 -3px;
+  }
+
+  .card:hover .chevron {
+    translate: 2px 0;
+  }
+}
+
+@media (min-width: 600px) {
+  .card {
+    padding: var(--space-4) var(--space-3) var(--space-4) var(--space-5);
+  }
+}

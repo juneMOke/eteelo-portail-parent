@@ -1,0 +1,57 @@
+@if (data(); as data) {
+  @if (resource.stale()) {
+    <ui-stale-notice (retry)="resource.reload()" />
+  }
+  @if (missing()) {
+    <ui-empty-state
+      icon="info"
+      heading="Message introuvable"
+      message="Il ne fait pas partie des messages de l’école pour cette année."
+    >
+      <button type="button" class="button" (click)="fiche.dismiss()">Voir tous les messages</button>
+    </ui-empty-state>
+  }
+
+  @if (unreadLabel(); as unread) {
+    <p class="visually-hidden" role="status">{{ unread }}</p>
+  }
+  <ul class="cards" [attr.aria-busy]="resource.isLoading()">
+    @for (item of items(); track item.announcement.id) {
+      <li [uiRefreshHighlight]="item.announcement" [refreshed]="resource.refreshed()">
+        <app-announcement-card
+          [announcement]="item.announcement"
+          [sentAt]="item.sentAt"
+          (activate)="fiche.show(item.announcement.id)"
+        />
+      </li>
+    } @empty {
+      <li>
+        <ui-empty-state
+          icon="mail"
+          heading="Aucun message de l’école cette année"
+          message="Les communiqués de l’école pour votre enfant arriveront ici."
+        />
+      </li>
+    }
+  </ul>
+
+  <app-announcement-sheet
+    [childId]="childId()"
+    [announcement]="openAnnouncement()"
+    [sentAt]="openSentAt()"
+    (closed)="fiche.dismiss()"
+  />
+} @else if (resource.error()) {
+  <ui-load-error
+    heading="Impossible d’afficher les messages"
+    message="Mes messages nécessite une connexion. Vérifiez-la, puis réessayez."
+    (retry)="resource.reload()"
+  />
+} @else {
+  <div class="loading" role="status" aria-busy="true">
+    <span class="visually-hidden">Chargement des messages…</span>
+    <ui-skeleton height="104px" />
+    <ui-skeleton height="104px" />
+    <ui-skeleton height="104px" />
+  </div>
+}

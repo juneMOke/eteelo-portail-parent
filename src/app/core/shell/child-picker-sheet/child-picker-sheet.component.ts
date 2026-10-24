@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { moveRadioFocus } from '../../../shared/a11y/radio-focus';
 import { AvatarComponent } from '../../../shared/ui/avatar/avatar.component';
+import { CounterComponent } from '../../../shared/ui/counter/counter.component';
 import { SheetComponent } from '../../../shared/ui/sheet/sheet.component';
 import { Child } from '../../session/bootstrap.schema';
 import { childClass, childName, childPhoto } from '../../session/child-format';
@@ -16,10 +17,11 @@ import { childClass, childName, childPhoto } from '../../session/child-format';
 /**
  * Feuille « Mes enfants » : feuille basse au téléphone, fenêtre centrée au bureau.
  * Choix exclusif (groupe radio), flèches pour parcourir, focus sur l'enfant actif à l'ouverture.
+ * Chaque enfant porte ses annonces non lues.
  */
 @Component({
   selector: 'app-child-picker-sheet',
-  imports: [AvatarComponent, SheetComponent],
+  imports: [AvatarComponent, CounterComponent, SheetComponent],
   templateUrl: './child-picker-sheet.component.html',
   styleUrl: './child-picker-sheet.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

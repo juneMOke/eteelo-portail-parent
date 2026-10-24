@@ -26,6 +26,7 @@
             <span class="child-class">{{ className }}</span>
           }
         </span>
+        <ui-counter [count]="child.unreadAnnouncements" />
       </button>
     }
   </div>
@@ -46,6 +47,7 @@
         >
           <ui-icon [name]="entry.icon" [size]="19" />
           <span>{{ entry.title }}</span>
+          <ui-counter [count]="counts()[entry.id] ?? 0" />
         </a>
       </li>
     }

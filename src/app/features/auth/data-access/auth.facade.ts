@@ -2,6 +2,7 @@ import { HttpXsrfTokenExtractor } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ParentApi } from '../../../core/api/parent-api';
+import { returnPathOf } from '../../../core/session/return-path';
 import { SessionStore } from '../../../core/session/session.store';
 
 /**
@@ -15,16 +16,24 @@ export class AuthFacade {
   private readonly session = inject(SessionStore);
   private readonly xsrf = inject(HttpXsrfTokenExtractor);
 
-  async requestLink(phoneNumber: string): Promise<void> {
+  /** Le lien mènera à `returnPath` (une page d'enfant demandée sans session), sinon à l'Accueil. */
+  async requestLink(phoneNumber: string, returnPath?: string | null): Promise<void> {
     await this.ensureXsrfToken();
-    await firstValueFrom(this.api.requestMagicLink({ phoneNumber }));
+    const path = returnPathOf(returnPath);
+    await firstValueFrom(
+      this.api.requestMagicLink(path ? { phoneNumber, returnPath: path } : { phoneNumber }),
+    );
   }
 
-  /** Ouvre la session ; le bootstrap sera rechargé pour ce parent. */
-  async openSession(token: string): Promise<void> {
+  /**
+   * Ouvre la session ; le bootstrap sera rechargé pour ce parent. Rend la page où mène le lien,
+   * revérifiée ici pour ne jamais sortir du portail, ou null pour l'Accueil.
+   */
+  async openSession(token: string): Promise<string | null> {
     await this.ensureXsrfToken();
-    await firstValueFrom(this.api.openSession({ token }));
+    const identity = await firstValueFrom(this.api.openSession({ token }));
     this.session.reset();
+    return returnPathOf(identity.returnPath);
   }
 
   private async ensureXsrfToken(): Promise<void> {

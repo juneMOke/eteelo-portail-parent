@@ -1,0 +1,31 @@
+/* Mes messages : une colonne de lecture de 760 px au plus, une carte par annonce. */
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: var(--reading-max-width);
+  margin-inline: auto;
+}
+
+.cards,
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.loading ui-skeleton {
+  border-radius: var(--radius-tile);
+}
+
+@media (min-width: 600px) {
+  :host {
+    gap: 18px;
+  }
+}
+
+@media (min-width: 905px) {
+  :host {
+    gap: var(--space-5);
+  }
+}

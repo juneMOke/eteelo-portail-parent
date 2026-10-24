@@ -1,0 +1,13 @@
+@let item = announcement();
+<button type="button" class="card" [attr.aria-label]="spoken()" (click)="activate.emit()">
+  <span class="meta">
+    <ui-badge [tone]="category().tone">{{ category().label }}</ui-badge>
+    @if (unread()) {
+      <span class="new">Nouveau</span>
+    }
+    <span class="date">{{ sentAt() }}</span>
+  </span>
+  <span class="title">{{ item.title }}</span>
+  <span class="excerpt">{{ item.body }}</span>
+  <span class="chevron"><ui-icon name="chevron-right" [size]="16" [strokeWidth]="2.2" /></span>
+</button>

@@ -136,8 +136,28 @@ h1 {
 }
 
 .action {
+  position: relative;
   width: var(--tap-target);
   height: var(--tap-target);
+}
+
+/* Les annonces non lues de l'enfant, en pastille Terre Cuite sur l'action Messages. */
+.action-count {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  display: grid;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--color-tone-alert);
+  color: var(--color-on-tone);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
 }
 
 .back:hover,

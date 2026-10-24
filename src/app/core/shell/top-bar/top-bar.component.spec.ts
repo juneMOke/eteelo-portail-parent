@@ -54,14 +54,23 @@ describe('TopBarComponent', () => {
   });
 
   it('donne accès aux messages et notifications, libellés', async () => {
-    const el = await render();
+    const el = await render({ child: DAVID });
     const actions = [...el.querySelectorAll('.action')];
 
     expect(actions.map((a) => a.getAttribute('aria-label'))).toEqual([
       'Mes messages',
       'Mes notifications',
     ]);
-    expect(actions[1].getAttribute('href')).toBe(`/c/${GRACE.childId}/notifications`);
+    expect(actions[1].getAttribute('href')).toBe(`/c/${DAVID.childId}/notifications`);
+    expect(el.querySelector('.action-count')).toBeNull();
+  });
+
+  it('signale les annonces non lues de l’enfant sur Messages', async () => {
+    const el = await render();
+    const messages = el.querySelector('.action');
+
+    expect(messages?.getAttribute('aria-label')).toBe('Mes messages, 2 nouveaux');
+    expect(messages?.querySelector('.action-count')?.textContent).toBe('2');
   });
 
   it("n'invite pas à changer d'enfant quand il n'y en a qu'un", async () => {

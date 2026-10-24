@@ -1,0 +1,19 @@
+<ui-sheet [heading]="announcement()?.title ?? ''" dismissible (closed)="closed.emit()">
+  @if (category(); as category) {
+    <ui-badge sheetLead class="category" [tone]="category.tone">{{ category.label }}</ui-badge>
+  }
+  @if (sentAt(); as sentAt) {
+    <p sheetSub class="sub">{{ sentAt }}</p>
+  }
+  @if (announcement(); as announcement) {
+    <p class="body">{{ announcement.body }}</p>
+
+    @if (announcement.mentionsBalance) {
+      <div class="balance">
+        <ui-icon class="balance-icon" name="banknote" [size]="18" [strokeWidth]="2" />
+        <p>Montant arrêté au jour de l’envoi. Mes frais donne le reste dû à jour.</p>
+        <a class="balance-link" [routerLink]="feesLink()">Voir mes frais ›</a>
+      </div>
+    }
+  }
+</ui-sheet>

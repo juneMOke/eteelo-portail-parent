@@ -61,6 +61,22 @@ export const SessionStore = signalStore(
       childById(childId: string): Child | undefined {
         return store.children().find((child) => child.childId === childId);
       },
+      /**
+       * Le compte de non-lues d'un enfant, tel que le serveur vient de le rendre (lecture d'une
+       * annonce, liste relue) : badges à jour sans relire le bootstrap.
+       */
+      setUnreadAnnouncements(childId: string, unreadAnnouncements: number): void {
+        const bootstrap = store.bootstrap();
+        if (!bootstrap) return;
+        patchState(store, {
+          bootstrap: {
+            ...bootstrap,
+            children: bootstrap.children.map((child) =>
+              child.childId === childId ? { ...child, unreadAnnouncements } : child,
+            ),
+          },
+        });
+      },
       reset,
       async logout(): Promise<void> {
         try {

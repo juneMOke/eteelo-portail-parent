@@ -49,6 +49,20 @@ describe('gardes de session', () => {
     expect(url(await run(() => sessionGuard(routeWith(null), state)))).toBe('/login?error=network');
   });
 
+  it('sessionGuard garde la page d’enfant demandée pour après la connexion', async () => {
+    api.bootstrap.mockReturnValue(throwError(() => new Error('401')));
+    const requested = `/c/${GRACE.childId}/messages?announcement=a1`;
+
+    const result = await run(() =>
+      sessionGuard(routeWith(null), { url: requested } as RouterStateSnapshot),
+    );
+
+    expect(TestBed.inject(Router).parseUrl(url(result)).queryParams).toEqual({
+      error: 'network',
+      returnPath: requested,
+    });
+  });
+
   describe('une fois la session chargée', () => {
     async function load(children = bootstrapFixture().children) {
       api.bootstrap.mockReturnValue(of(bootstrapFixture(children)));

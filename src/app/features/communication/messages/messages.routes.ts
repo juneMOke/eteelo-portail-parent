@@ -1,4 +1,11 @@
 import { Routes } from '@angular/router';
-import { comingSoonRoute } from '../../../core/navigation/coming-soon.route';
+import { navEntry } from '../../../core/navigation/nav';
 
-export default [comingSoonRoute('messages')] satisfies Routes;
+/** Mes messages : les communiqués de l'école, en lecture seule. */
+export default [
+  {
+    path: '',
+    title: navEntry('messages').title,
+    loadComponent: () => import('./messages.page'),
+  },
+] satisfies Routes;

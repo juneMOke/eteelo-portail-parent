@@ -130,3 +130,9 @@ ul {
   font-size: var(--text-xs);
   font-style: italic;
 }
+
+/* Les annonces non lues, au bout de Mes messages et de chaque enfant. */
+.link ui-counter,
+.child ui-counter {
+  margin-left: auto;
+}

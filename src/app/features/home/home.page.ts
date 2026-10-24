@@ -1,6 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { childLink, navEntry } from '../../core/navigation/nav';
 import { childClass, childFullName } from '../../core/session/child-format';
 import { HomeFacade } from './data-access/home.facade';
 import { GreetingComponent } from './greeting/greeting.component';
@@ -12,7 +10,7 @@ import { TileGroupComponent } from './tile-group/tile-group.component';
  */
 @Component({
   selector: 'app-home-page',
-  imports: [GreetingComponent, RouterLink, TileGroupComponent],
+  imports: [GreetingComponent, TileGroupComponent],
   templateUrl: './home.page.html',
   styleUrl: './home.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,7 +32,8 @@ export default class HomePage {
     const child = this.child();
     return child ? childClass(child) : null;
   });
-  protected readonly messagesLink = computed(() =>
-    childLink(this.childId(), navEntry('messages').path),
-  );
+  /** La pastille de Mes messages : annonces non lues de l'enfant, selon le serveur. */
+  protected readonly counts = computed(() => ({
+    messages: this.child()?.unreadAnnouncements ?? 0,
+  }));
 }
