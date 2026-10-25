@@ -59,15 +59,20 @@ export const ChildSchema = v.object({
   unreadAnnouncements: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0)), 0),
 });
 
+/** Notifications du portail : la clé publique VAPID ; null quand le serveur les coupe. */
+const PushSchema = v.object({ vapidPublicKey: v.pipe(v.string(), v.minLength(1)) });
+
 export const BootstrapSchema = v.object({
   parent: ParentSchema,
   school: SchoolSchema,
   academicYear: NamedRefSchema,
   children: v.array(ChildSchema),
+  push: v.optional(v.nullable(PushSchema), null),
 });
 
 export type RelationshipType = (typeof RELATIONSHIP_TYPES)[number];
 export type Parent = v.InferOutput<typeof ParentSchema>;
 export type School = v.InferOutput<typeof SchoolSchema>;
 export type Child = v.InferOutput<typeof ChildSchema>;
+export type PushConfig = v.InferOutput<typeof PushSchema>;
 export type Bootstrap = v.InferOutput<typeof BootstrapSchema>;

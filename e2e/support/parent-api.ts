@@ -64,6 +64,8 @@ interface ParentApiMock {
   announcementRead?: number;
   /** Page où mène le lien magique, rendue par l'ouverture de session (A4). */
   sessionReturnPath?: string;
+  /** Code HTTP d'échec de l'enregistrement d'un abonnement aux notifications ; par défaut 204. */
+  pushSubscription?: number;
 }
 
 const EVALUATION_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/evaluations(?:\/([^/]+))?$/;
@@ -80,7 +82,8 @@ const REPORT_CARD_PDF = /^\/api\/v1\/parent\/children\/[^/]+\/grades\/report-car
 
 /**
  * Simule l'API du portail parent : bootstrap, authentification, Mes évaluations, Mes devoirs, le
- * dépôt de copie, Mes notes, Ma conduite, Mes finances et Mes messages ; tout le reste répond 404.
+ * dépôt de copie, Mes notes, Ma conduite, Mes finances, Mes messages et les abonnements aux
+ * notifications ; tout le reste répond 404.
  * Les annonces lues pendant le parcours le restent.
  */
 export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promise<void> {
@@ -193,6 +196,10 @@ export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promi
         return route.fulfill({ status: 404, json: { detailCode: 'ANNOUNCEMENT_NOT_FOUND' } });
       announcements = next.list;
       return route.fulfill({ json: next.result });
+    }
+    if (pathname === '/api/v1/parent/push-subscriptions' && ['PUT', 'DELETE'].includes(method)) {
+      const status = method === 'PUT' ? (mock.pushSubscription ?? 204) : 204;
+      return route.fulfill({ status });
     }
     if (FINANCE_DOCUMENT.test(pathname)) {
       return route.fulfill({ contentType: 'application/pdf', body: PDF_BODY });

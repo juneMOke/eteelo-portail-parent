@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, TitleStrategy, provideRouter, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { provideServiceWorker } from '@angular/service-worker';
 import { of } from 'rxjs';
 import { DAVID, GRACE, bootstrapFixture } from '../../../testing/bootstrap.fixture';
 import { ParentApi } from '../api/parent-api';
@@ -16,6 +17,7 @@ describe('ShellComponent', () => {
   async function setup(children = [GRACE, DAVID]) {
     TestBed.configureTestingModule({
       providers: [
+        provideServiceWorker('ngsw-worker.js', { enabled: false }),
         provideRouter(
           [
             {

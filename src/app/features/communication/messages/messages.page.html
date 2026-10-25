@@ -2,6 +2,15 @@
   @if (resource.stale()) {
     <ui-stale-notice (retry)="resource.reload()" />
   }
+  @if (push.shown()) {
+    <app-push-card
+      [status]="push.status()"
+      [busy]="push.busy()"
+      [failed]="push.failed()"
+      (enable)="enablePush()"
+      (disable)="disablePush()"
+    />
+  }
   @if (missing()) {
     <ui-empty-state
       icon="info"

@@ -67,6 +67,9 @@ const mockBackend: HttpInterceptorFn = (req, next) => {
   if (req.method === 'POST' && req.url === `${PARENT_AUTH_API}/magic-link`) return ok();
   if (req.method === 'POST' && req.url === `${PARENT_AUTH_API}/session`) return ok(identity);
   if (req.method === 'DELETE' && req.url === `${PARENT_AUTH_API}/session`) return ok();
+  if (req.url === `${PARENT_API}/push-subscriptions` && ['PUT', 'DELETE'].includes(req.method)) {
+    return of(new HttpResponse({ status: 204 }));
+  }
   const evaluation = req.method === 'GET' ? EVALUATION_ROUTE.exec(req.url) : null;
   if (evaluation) {
     const body = evaluation[1] ? evaluationDetailFixture(evaluation[1]) : evaluationListFixture();

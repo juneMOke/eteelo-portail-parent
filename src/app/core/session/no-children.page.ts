@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
+import { PushStore } from '../push/push.store';
 import { SessionStore } from './session.store';
 
 /** Session ouverte mais aucun élève visible : écran dédié, ni alertes ni tuiles. */
@@ -29,8 +30,10 @@ import { SessionStore } from './session.store';
 export default class NoChildrenPage {
   private readonly session = inject(SessionStore);
   private readonly router = inject(Router);
+  private readonly push = inject(PushStore);
 
   protected async logout(): Promise<void> {
+    this.push.forget();
     // La session locale est vidée même si le serveur ne répond pas.
     await this.session.logout().catch(() => undefined);
     await this.router.navigateByUrl('/login');
