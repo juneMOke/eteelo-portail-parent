@@ -6,8 +6,9 @@ import { patchState, signalStore, withHooks, withMethods, withState } from '@ngr
 import { firstValueFrom } from 'rxjs';
 import { ParentApi } from '../api/parent-api';
 import { AnnouncementPushData } from '../api/push.contract';
+import { Bootstrap } from '../session/bootstrap.schema';
 import { SessionStore } from '../session/session.store';
-import { PushDevice, subscriptionBody } from './push-device';
+import { PushDevice, subscriptionBody, usesKey } from './push-device';
 import { announcementPush, pushedData } from './push-payload';
 
 /**
@@ -29,8 +30,6 @@ interface PushState {
   busy: boolean;
   /** La dernière activation ou désactivation a échoué. */
   failed: boolean;
-  /** Parent dont l'état a été vérifié : un autre parent sur ce téléphone revérifie. */
-  parentId: string | null;
   arrival: PushArrival | null;
 }
 
@@ -38,14 +37,14 @@ const initialState: PushState = {
   status: 'idle',
   busy: false,
   failed: false,
-  parentId: null,
   arrival: null,
 };
 
 /**
  * Les notifications du portail sur ce téléphone : activation à la demande du parent (jamais à
- * l'ouverture), abonnement renvoyé au serveur à chaque session (le navigateur le renouvelle
- * parfois sans prévenir), désactivation. Portail ouvert, une notification met la pastille de
+ * l'ouverture), abonnement renvoyé au serveur à chaque ouverture du portail, désactivation.
+ * Le renvoi tient l'abonnement hors de la purge des 60 jours (une session dure 90 jours sans
+ * être prolongée) et suit les renouvellements silencieux du navigateur. Portail ouvert, une notification met la pastille de
  * l'enfant au compte du serveur ; un appui ouvre l'annonce sans recharger la page.
  */
 export const PushStore = signalStore(
@@ -58,6 +57,9 @@ export const PushStore = signalStore(
       device = inject(PushDevice),
       session = inject(SessionStore),
     ) => {
+      /** Bootstrap déjà vérifié : un nouveau (autre parent, reconnexion) revérifie. */
+      let checked: Bootstrap | null = null;
+
       function received(data: AnnouncementPushData): void {
         session.setUnreadAnnouncements(data.childId, data.unreadAnnouncements);
         patchState(store, {
@@ -66,12 +68,13 @@ export const PushStore = signalStore(
       }
 
       return {
-        /** À l'ouverture d'une session : l'état de ce téléphone, l'abonnement renvoyé au serveur. */
+        /** Après chaque bootstrap : l'état de ce téléphone, l'abonnement renvoyé au serveur. */
         async init(): Promise<void> {
-          const parentId = session.parent()?.parentId ?? null;
-          if (!parentId || store.parentId() === parentId) return;
-          patchState(store, { parentId, status: 'idle', failed: false });
-          const config = session.bootstrap()?.push;
+          const bootstrap = session.bootstrap();
+          if (!bootstrap || checked === bootstrap) return;
+          checked = bootstrap;
+          patchState(store, { status: 'idle', failed: false });
+          const config = bootstrap.push;
           if (!config || device.support === 'unsupported') {
             patchState(store, { status: 'hidden' });
             return;
@@ -84,8 +87,16 @@ export const PushStore = signalStore(
             patchState(store, { status: 'denied' });
             return;
           }
-          const subscription = await device.current().catch(() => null);
-          if (store.parentId() !== parentId) return;
+          let subscription = await device.current().catch(() => null);
+          if (
+            subscription &&
+            device.permission() === 'granted' &&
+            !usesKey(subscription, config.vapidPublicKey)
+          ) {
+            // Le serveur a changé de clé : l'ancien abonnement ne recevrait plus rien.
+            subscription = await device.subscribe(config.vapidPublicKey).catch(() => null);
+          }
+          if (checked !== bootstrap) return;
           const body = subscription && subscriptionBody(subscription);
           if (!body || device.permission() !== 'granted') {
             patchState(store, { status: 'available' });
@@ -147,6 +158,7 @@ export const PushStore = signalStore(
          * abonnements de la session fermée ; rien à attendre ici.
          */
         forget(): void {
+          checked = null;
           patchState(store, initialState);
           void device.unsubscribe().catch(() => null);
         },

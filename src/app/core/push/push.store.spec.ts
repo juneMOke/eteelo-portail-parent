@@ -14,9 +14,16 @@ import { PushStore } from './push.store';
 
 const ENDPOINT = 'https://fcm.googleapis.com/fcm/send/abc';
 
-function fakeSubscription() {
+/** La clé publique VAPID telle que le navigateur la garde dans l'abonnement. */
+function keyBytes(vapidPublicKey: string): ArrayBuffer {
+  const base64 = vapidPublicKey.replace(/-/g, '+').replace(/_/g, '/');
+  return Uint8Array.from(atob(base64), (char) => char.charCodeAt(0)).buffer;
+}
+
+function fakeSubscription(vapidPublicKey = VAPID_PUBLIC_KEY) {
   return {
     endpoint: ENDPOINT,
+    options: { applicationServerKey: keyBytes(vapidPublicKey) },
     toJSON: () => ({ endpoint: ENDPOINT, keys: { p256dh: 'BNcRd', auth: 'tBHI' } }),
     unsubscribe: vi.fn(async () => true),
   };
@@ -28,20 +35,23 @@ interface Setup {
   permission?: NotificationPermission;
   answer?: NotificationPermission;
   subscribed?: boolean;
+  /** Clé avec laquelle le téléphone s'est abonné, si ce n'est pas celle du serveur. */
+  subscribedWith?: string;
   save?: () => unknown;
 }
 
 describe('PushStore', () => {
   function setup(options: Setup = {}) {
     const bootstrap = signal(options.bootstrap ?? bootstrapFixture());
-    const subscription = fakeSubscription();
+    const subscription = fakeSubscription(options.subscribedWith);
+    const renewed = fakeSubscription();
     let permission = options.permission ?? 'default';
     const device = {
       support: options.support ?? 'supported',
       permission: () => permission,
       requestPermission: vi.fn(async () => (permission = options.answer ?? 'granted')),
       current: vi.fn(async () => (options.subscribed ? subscription : null)),
-      subscribe: vi.fn(async () => subscription),
+      subscribe: vi.fn(async () => (options.subscribedWith ? renewed : subscription)),
       unsubscribe: vi.fn(async () => ENDPOINT),
     };
     const api = {
@@ -65,7 +75,7 @@ describe('PushStore', () => {
       ],
     });
     const store = TestBed.inject(PushStore);
-    return { api, device, router, session, store, subscription, swPush };
+    return { api, bootstrap, device, router, session, store, subscription, swPush };
   }
 
   describe('à l’ouverture de la session', () => {
@@ -97,11 +107,49 @@ describe('PushStore', () => {
       expect(store.status()).toBe('enabled');
     });
 
-    it('ne vérifie qu’une fois par parent', async () => {
+    it('ne vérifie qu’une fois par bootstrap', async () => {
       const { device, store } = setup();
       await store.init();
       await store.init();
       expect(device.current).toHaveBeenCalledOnce();
+    });
+
+    it('renvoie l’abonnement après un nouveau bootstrap (reconnexion, autre parent)', async () => {
+      const { api, bootstrap, store } = setup({ permission: 'granted', subscribed: true });
+      await store.init();
+      bootstrap.set(bootstrapFixture());
+      await store.init();
+      expect(api.savePushSubscription).toHaveBeenCalledTimes(2);
+    });
+
+    it('réabonne le téléphone si le serveur a changé de clé, puis l’enregistre', async () => {
+      const { api, device, store } = setup({
+        permission: 'granted',
+        subscribed: true,
+        subscribedWith: 'BOLD-key_from-an-old-configuration',
+      });
+      await store.init();
+      expect(device.subscribe).toHaveBeenCalledExactlyOnceWith(VAPID_PUBLIC_KEY);
+      expect(api.savePushSubscription).toHaveBeenCalledOnce();
+      expect(store.status()).toBe('enabled');
+    });
+
+    it('propose l’activation si ce réabonnement échoue', async () => {
+      const { api, device, store } = setup({
+        permission: 'granted',
+        subscribed: true,
+        subscribedWith: 'BOLD-key_from-an-old-configuration',
+      });
+      device.subscribe.mockImplementation(failingWith(new Error('navigateur')));
+      await store.init();
+      expect(api.savePushSubscription).not.toHaveBeenCalled();
+      expect(store.status()).toBe('available');
+    });
+
+    it('n’envoie pas l’abonnement de la même clé une seconde fois au navigateur', async () => {
+      const { device, store } = setup({ permission: 'granted', subscribed: true });
+      await store.init();
+      expect(device.subscribe).not.toHaveBeenCalled();
     });
 
     it('ne propose rien quand le serveur les coupe ou que le navigateur ne sait pas', async () => {
@@ -192,7 +240,6 @@ describe('PushStore', () => {
       store.forget();
 
       expect(store.status()).toBe('idle');
-      expect(store.parentId()).toBeNull();
       expect(device.unsubscribe).toHaveBeenCalledOnce();
     });
   });

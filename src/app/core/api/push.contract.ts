@@ -1,6 +1,7 @@
 /**
  * Contrat des notifications du portail parent (Web Push), recopié de la proposition front
- * « Notifications du portail parent » du 25/10/2026, en attente des réponses du back.
+ * « Notifications du portail parent » du 25/10/2026, figé par les réponses du back du 26/10
+ * (lots P1 et P2 pas encore livrés).
  *
  * À remplacer par les types générés (`npm run api:types`) dès que ces routes sont dans
  * l'OpenAPI de staging.

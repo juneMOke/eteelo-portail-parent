@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { GRACE, bootstrapFixture } from '../src/testing/bootstrap.fixture';
 import { mockParentApi } from './support/parent-api';
-import { FAKE_ENDPOINT, fakePushDevice } from './support/push-device';
+import { FAKE_ENDPOINT, STALE_ENDPOINT, fakePushDevice } from './support/push-device';
 
 const MESSAGES = `/c/${GRACE.childId}/messages`;
 const SUBSCRIPTIONS = '/api/v1/parent/push-subscriptions';
@@ -45,6 +45,28 @@ test.describe('Notifications de Mes messages', () => {
     await card.getByRole('button', { name: 'Désactiver' }).click();
     expect((await removed).postDataJSON()).toEqual({ endpoint: FAKE_ENDPOINT });
     await expect(card.getByRole('button', { name: 'Activer' })).toBeVisible();
+  });
+
+  test('un téléphone abonné avec une ancienne clé se réabonne avec celle du serveur', async ({
+    page,
+  }) => {
+    await fakePushDevice(page, {
+      permission: 'granted',
+      subscribed: true,
+      subscribedWith: 'BOLD-key_from-an-old-configuration',
+    });
+    await mockParentApi(page);
+    const resync = page.waitForRequest(
+      (request) => request.method() === 'PUT' && request.url().endsWith(SUBSCRIPTIONS),
+    );
+    await page.goto(MESSAGES);
+
+    const body = (await resync).postDataJSON() as { endpoint: string };
+    expect(body.endpoint).toBe(FAKE_ENDPOINT);
+    expect(body.endpoint).not.toBe(STALE_ENDPOINT);
+    await expect(page.locator('app-push-card')).toContainText(
+      'Notifications activées sur ce téléphone',
+    );
   });
 
   test('explique comment les débloquer quand le navigateur les refuse', async ({ page }) => {
