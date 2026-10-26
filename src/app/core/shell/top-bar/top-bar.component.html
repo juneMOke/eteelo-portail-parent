@@ -40,10 +40,13 @@
         [routerLink]="link(action.path)"
         routerLinkActive="active"
         ariaCurrentWhenActive="page"
-        [attr.aria-label]="action.title"
-        [title]="action.title"
+        [attr.aria-label]="actionLabel(action)"
+        [title]="actionLabel(action)"
       >
         <ui-icon [name]="action.icon" [size]="19" [strokeWidth]="1.9" />
+        @if (count(action.id); as count) {
+          <span class="action-count" aria-hidden="true">{{ count > 9 ? '9+' : count }}</span>
+        }
       </a>
     }
   </div>

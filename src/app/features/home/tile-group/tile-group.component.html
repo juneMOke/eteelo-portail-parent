@@ -3,7 +3,9 @@
     <h2 [id]="headingId">{{ group().title }}</h2>
     <ul>
       @for (entry of group().entries; track entry.id) {
-        <li><app-tile [entry]="entry" [childId]="childId()" /></li>
+        <li>
+          <app-tile [entry]="entry" [childId]="childId()" [count]="counts()[entry.id] ?? 0" />
+        </li>
       }
     </ul>
   </ui-card>

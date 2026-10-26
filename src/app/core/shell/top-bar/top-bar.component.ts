@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { countLabel } from '../../../shared/format/count';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
-import { HOME_ENTRY, childLink, navEntry } from '../../navigation/nav';
+import { HOME_ENTRY, NavEntry, NavEntryId, childLink, navEntry } from '../../navigation/nav';
 import { BackTarget } from '../../navigation/page-title.strategy';
 import { Child, School } from '../../session/bootstrap.schema';
 import { childClass, childName } from '../../session/child-format';
@@ -9,7 +10,8 @@ import { ChildPillComponent } from '../child-pill/child-pill.component';
 
 /**
  * Barre haute, collée en haut sur toutes les pages : école et enfant affiché, phrase d'aide,
- * titre de la page (titre principal du document), Messages et Notifications.
+ * titre de la page (titre principal du document), Messages (avec ses annonces non lues) et
+ * Notifications.
  * Sur toute page autre que l'Accueil, un bouton retour ramène à l'Accueil, ou à la liste d'où
  * vient une fiche.
  */
@@ -32,6 +34,17 @@ export class TopBarComponent {
   readonly changeChild = output<void>();
 
   protected readonly actions = [navEntry('messages'), navEntry('notifications')];
+
+  /** Annonces non lues de l'enfant affiché, sur l'action Messages. */
+  protected count(id: NavEntryId): number {
+    return id === 'messages' ? this.child().unreadAnnouncements : 0;
+  }
+
+  /** « Mes messages, 2 nouveaux » : le nom lu de l'action dit ses nouveautés. */
+  protected actionLabel(action: NavEntry): string {
+    const count = countLabel(this.count(action.id), 'nouveau', 'nouveaux', '');
+    return count ? `${action.title}, ${count}` : action.title;
+  }
 
   /** Nom du bouton retour : il dit où il mène, sans répéter le titre de la page. */
   protected readonly backLabel = computed(() => {

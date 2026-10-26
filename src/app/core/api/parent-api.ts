@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import * as v from 'valibot';
 import { Bootstrap, BootstrapSchema } from '../session/bootstrap.schema';
+import { ParentAnnouncementList, ParentAnnouncementReadResult } from './announcements.contract';
 import { components } from './api-types';
 import {
   EvaluationDetail,
@@ -21,7 +22,19 @@ import { AcademicYear, ChildFees, Payment } from './finance.contract';
 import { GradeCourses, GradePeriod, GradeQuery, GradeWeek, ReportCard } from './grades.contract';
 
 type Schemas = components['schemas'];
-export type ParentIdentity = Schemas['ParentPortalIdentityResponse'];
+
+/**
+ * Adresse de retour portée par le lien magique (amendement A4 du contrat « Annonces », lot L3) :
+ * à retirer des deux types ci-dessous dès qu'elle est dans l'OpenAPI de staging.
+ */
+export type ParentIdentity = Schemas['ParentPortalIdentityResponse'] & {
+  /** Rendue par l'ouverture de session seulement ; toujours null sur GET /auth/me. */
+  readonly returnPath?: string | null;
+};
+export type MagicLinkRequest = Schemas['ParentMagicLinkRequest'] & {
+  /** Page du portail où mènera le lien ; hors forme, le serveur l'ignore. */
+  readonly returnPath?: string;
+};
 
 /** Préfixe de toutes les routes du portail parent (contrôleurs déjà préfixés, aucune réécriture). */
 export const PARENT_API = '/api/v1/parent';
@@ -48,7 +61,7 @@ export class ParentApi {
     return this.http.get<ParentIdentity>(`${PARENT_AUTH_API}/me`);
   }
 
-  requestMagicLink(body: Schemas['ParentMagicLinkRequest']): Observable<void> {
+  requestMagicLink(body: MagicLinkRequest): Observable<void> {
     return this.http.post<void>(`${PARENT_AUTH_API}/magic-link`, body);
   }
 
@@ -158,6 +171,22 @@ export class ParentApi {
       params: yearParams(academicYearId),
       responseType: 'blob',
     });
+  }
+
+  /** Les annonces de l'enfant pour l'année en cours, la plus récente d'abord. */
+  announcements(childId: string): Observable<ParentAnnouncementList> {
+    return this.http.get<ParentAnnouncementList>(`${PARENT_CHILDREN_API}/${childId}/announcements`);
+  }
+
+  /** Marque une annonce lue ; idempotent, la première lecture est gardée. */
+  markAnnouncementRead(
+    childId: string,
+    announcementId: string,
+  ): Observable<ParentAnnouncementReadResult> {
+    return this.http.post<ParentAnnouncementReadResult>(
+      `${PARENT_CHILDREN_API}/${childId}/announcements/${announcementId}/read`,
+      null,
+    );
   }
 
   /**

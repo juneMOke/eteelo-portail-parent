@@ -66,4 +66,15 @@ describe('SessionStore', () => {
     expect(store.status()).toBe('idle');
     expect(store.parent()).toBeNull();
   });
+
+  it("met à jour les annonces non lues d'un seul enfant", async () => {
+    api.bootstrap.mockReturnValue(of(bootstrapFixture()));
+    const store = setup();
+    await store.ensureLoaded();
+
+    store.setUnreadAnnouncements(GRACE.childId, 1);
+
+    expect(store.childById(GRACE.childId)?.unreadAnnouncements).toBe(1);
+    expect(store.children()[1].unreadAnnouncements).toBe(0);
+  });
 });

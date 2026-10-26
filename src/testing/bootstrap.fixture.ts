@@ -14,6 +14,7 @@ export const GRACE: Child = {
   schoolLevelGroup: { id: '1f1e2d3c-4b5a-4c6d-8e7f-0a1b2c3d4e5f', name: 'Primaire' },
   schoolLevel: { id: '2f1e2d3c-4b5a-4c6d-8e7f-0a1b2c3d4e5f', name: '5e primaire' },
   classroom: { id: '3f1e2d3c-4b5a-4c6d-8e7f-0a1b2c3d4e5f', name: '5e B' },
+  unreadAnnouncements: 2,
 };
 
 export const DAVID: Child = {
@@ -26,6 +27,7 @@ export const DAVID: Child = {
   schoolLevelGroup: { id: '1f1e2d3c-4b5a-4c6d-8e7f-0a1b2c3d4e5f', name: 'Primaire' },
   schoolLevel: { id: '4f1e2d3c-4b5a-4c6d-8e7f-0a1b2c3d4e5f', name: '2e primaire' },
   classroom: null,
+  unreadAnnouncements: 0,
 };
 
 export function bootstrapFixture(children: Child[] = [GRACE, DAVID]): Bootstrap {
@@ -43,6 +45,7 @@ export function bootstrapFixture(children: Child[] = [GRACE, DAVID]): Bootstrap 
       name: 'Complexe Scolaire La Fontaine',
       logoFingerprint: null,
       contactPhone: '+243998877665',
+      timeZone: 'Africa/Kinshasa',
     },
     academicYear: { id: '5f1e2d3c-4b5a-4c6d-8e7f-0a1b2c3d4e5f', name: '2026-2027' },
     children,

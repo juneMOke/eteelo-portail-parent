@@ -1,8 +1,10 @@
 import { Page } from '@playwright/test';
+import type { ParentAnnouncementList } from '../../src/app/core/api/announcements.contract';
 import type { EvaluationList, HomeworkList } from '../../src/app/core/api/assignments.contract';
 import type { ChildAttendance } from '../../src/app/core/api/conduct.contract';
 import type { ChildFees, Payment } from '../../src/app/core/api/finance.contract';
 import type { Bootstrap } from '../../src/app/core/session/bootstrap.schema';
+import { announcementsFixture, readResultFixture } from '../../src/testing/announcements.fixture';
 import {
   evaluationDetailFixture,
   evaluationListFixture,
@@ -56,6 +58,12 @@ interface ParentApiMock {
   fees?: ChildFees | number;
   /** Versements de toute année demandée, ou un code HTTP d'erreur ; par défaut, ceux de l'année. */
   payments?: Payment[] | number;
+  /** Annonces de l'enfant (Mes messages), ou un code HTTP d'erreur. */
+  announcements?: ParentAnnouncementList | number;
+  /** Code HTTP d'échec de « marquer lue » ; par défaut la lecture réussit. */
+  announcementRead?: number;
+  /** Page où mène le lien magique, rendue par l'ouverture de session (A4). */
+  sessionReturnPath?: string;
 }
 
 const EVALUATION_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/evaluations(?:\/([^/]+))?$/;
@@ -67,11 +75,13 @@ const JUSTIFICATION_ROUTE =
   /^\/api\/v1\/parent\/children\/[^/]+\/attendance\/[^/]+\/justification$/;
 const FINANCE_DOCUMENT =
   /^\/api\/v1\/parent\/children\/[^/]+\/(payments\/[^/]+\/receipt|statement)$/;
+const ANNOUNCEMENT_READ = /^\/api\/v1\/parent\/children\/[^/]+\/announcements\/([^/]+)\/read$/;
 const REPORT_CARD_PDF = /^\/api\/v1\/parent\/children\/[^/]+\/grades\/report-card\/[^/]+\/pdf$/;
 
 /**
  * Simule l'API du portail parent : bootstrap, authentification, Mes évaluations, Mes devoirs, le
- * dépôt de copie, Mes notes, Ma conduite et Mes finances ; tout le reste répond 404.
+ * dépôt de copie, Mes notes, Ma conduite, Mes finances et Mes messages ; tout le reste répond 404.
+ * Les annonces lues pendant le parcours le restent.
  */
 export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promise<void> {
   const bootstrap = mock.bootstrap ?? bootstrapFixture();
@@ -79,6 +89,7 @@ export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promi
   const homework = mock.homework ?? homeworkListFixture();
   let attendance = mock.attendance ?? attendanceFixture();
   const justifications = [mock.justification ?? []].flat();
+  let announcements = mock.announcements ?? announcementsFixture();
 
   await page.route('**/api/v1/parent/**', async (route) => {
     const { pathname, searchParams } = new URL(route.request().url());
@@ -168,6 +179,21 @@ export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promi
     if (method === 'GET' && pathname.endsWith('/academic-years')) {
       return route.fulfill({ json: ACADEMIC_YEARS });
     }
+    if (method === 'GET' && pathname.endsWith('/announcements')) {
+      return typeof announcements === 'number'
+        ? route.fulfill({ status: announcements })
+        : route.fulfill({ json: announcements });
+    }
+    const read = method === 'POST' ? ANNOUNCEMENT_READ.exec(pathname) : null;
+    if (read) {
+      if (mock.announcementRead) return route.fulfill({ status: mock.announcementRead });
+      const next =
+        typeof announcements === 'number' ? null : readResultFixture(announcements, read[1]);
+      if (!next)
+        return route.fulfill({ status: 404, json: { detailCode: 'ANNOUNCEMENT_NOT_FOUND' } });
+      announcements = next.list;
+      return route.fulfill({ json: next.result });
+    }
     if (FINANCE_DOCUMENT.test(pathname)) {
       return route.fulfill({ contentType: 'application/pdf', body: PDF_BODY });
     }
@@ -186,6 +212,9 @@ export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promi
       }));
       const detail = submittedHomeworkFixture(submission[1], files);
       return detail ? route.fulfill({ status: 201, json: detail }) : route.fulfill({ status: 404 });
+    }
+    if (pathname === '/api/v1/parent/auth/session' && method === 'POST') {
+      return route.fulfill({ json: { returnPath: mock.sessionReturnPath ?? null } });
     }
     if (pathname.startsWith('/api/v1/parent/auth/') && method !== 'GET') {
       return route.fulfill({ json: {} });

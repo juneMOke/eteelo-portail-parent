@@ -40,11 +40,13 @@ describe('HomePage', () => {
     expect(el.querySelectorAll('app-tile a')).toHaveLength(13);
   });
 
-  it('renvoie vers Messages depuis le pied de page', async () => {
+  it('signale les annonces non lues sur Mes messages', async () => {
     const el = await render();
 
-    expect(el.querySelector('.footer a')?.getAttribute('href')).toBe(
-      `/c/${GRACE.childId}/messages`,
+    const messages = [...el.querySelectorAll('app-tile a')].find((a) =>
+      a.textContent?.includes('Mes messages'),
     );
+    expect(messages?.querySelector('.bubble')?.textContent).toBe('2');
+    expect(el.querySelectorAll('.bubble')).toHaveLength(1);
   });
 });

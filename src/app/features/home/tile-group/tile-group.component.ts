@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { NavGroup } from '../../../core/navigation/nav';
+import { NavEntryId, NavGroup } from '../../../core/navigation/nav';
 import { CardComponent } from '../../../shared/ui/card/card.component';
 import { TileComponent } from '../tile/tile.component';
 
@@ -16,6 +16,8 @@ let nextId = 0;
 export class TileGroupComponent {
   readonly group = input.required<NavGroup>();
   readonly childId = input.required<string>();
+  /** Nouveautés par destination (Mes messages). */
+  readonly counts = input<Partial<Record<NavEntryId, number>>>({});
 
   protected readonly headingId = `tile-group-${nextId++}`;
 }

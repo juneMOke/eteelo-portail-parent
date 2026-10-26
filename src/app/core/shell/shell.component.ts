@@ -30,6 +30,10 @@ export default class ShellComponent {
   protected readonly children = this.session.children;
   protected readonly school = this.session.school;
   protected readonly child = computed(() => this.session.childById(this.childId()));
+  /** Annonces non lues de l'enfant affiché, sur Mes messages. */
+  protected readonly counts = computed(() => ({
+    messages: this.child()?.unreadAnnouncements ?? 0,
+  }));
   protected readonly hasSeveralChildren = computed(() => this.children().length > 1);
   protected readonly logoUrl = computed(() => {
     const fingerprint = this.school()?.logoFingerprint;

@@ -3,7 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthLayoutComponent } from '../auth-layout/auth-layout.component';
 import { AuthFacade } from '../data-access/auth.facade';
 
-/** Consommation du lien reçu sur WhatsApp : ouvre la session puis mène à l'Accueil. */
+/** Consommation du lien reçu sur WhatsApp : ouvre la session puis mène à la page demandée, ou à l'Accueil. */
 @Component({
   selector: 'app-magic-link-page',
   imports: [AuthLayoutComponent, RouterLink],
@@ -30,8 +30,8 @@ export default class MagicLinkPage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      await this.auth.openSession(this.token());
-      await this.router.navigateByUrl('/', { replaceUrl: true });
+      const returnPath = await this.auth.openSession(this.token());
+      await this.router.navigateByUrl(returnPath ?? '/', { replaceUrl: true });
     } catch {
       this.failed.set(true);
     }

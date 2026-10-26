@@ -8,6 +8,7 @@ import { apiInterceptor } from './api.interceptor';
 describe('apiInterceptor', () => {
   const reset = vi.fn();
   const navigateByUrl = vi.fn().mockResolvedValue(true);
+  const router = { navigateByUrl, url: '/', currentNavigation: vi.fn(() => null as unknown) };
 
   function respond(url: string, status: number, body: { detailCode: string } | null = null): void {
     TestBed.inject(HttpClient)
@@ -19,12 +20,14 @@ describe('apiInterceptor', () => {
   beforeEach(() => {
     reset.mockClear();
     navigateByUrl.mockClear();
+    router.url = '/';
+    router.currentNavigation.mockReturnValue(null);
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([apiInterceptor])),
         provideHttpClientTesting(),
         { provide: SessionStore, useValue: { reset } },
-        { provide: Router, useValue: { navigateByUrl } },
+        { provide: Router, useValue: router },
       ],
     });
   });
@@ -34,6 +37,17 @@ describe('apiInterceptor', () => {
 
     expect(reset).toHaveBeenCalledOnce();
     expect(navigateByUrl).toHaveBeenCalledWith('/login');
+  });
+
+  it('garde la page d’enfant en cours d’ouverture pour après la connexion', () => {
+    const requested = '/c/6a1d2c3b-4e5f-4a6b-8c7d-9e0f1a2b3c4d/messages?announcement=a1';
+    router.currentNavigation.mockReturnValue({ extractedUrl: { toString: () => requested } });
+
+    respond('/api/v1/parent/bootstrap', 401);
+
+    expect(navigateByUrl).toHaveBeenCalledWith(
+      `/login?returnPath=${encodeURIComponent(requested)}`,
+    );
   });
 
   it("laisse les pages d'authentification gérer leur 401", () => {

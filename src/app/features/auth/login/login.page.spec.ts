@@ -4,12 +4,13 @@ import { failingWith, settle } from '../../../../testing/async';
 import LoginPage from './login.page';
 
 describe('LoginPage', () => {
-  let auth: { requestLink: (phoneNumber: string) => Promise<void> };
+  let auth: { requestLink: (phoneNumber: string, returnPath?: string) => Promise<void> };
 
-  async function render(error?: string) {
+  async function render(error?: string, returnPath?: string) {
     TestBed.configureTestingModule({ providers: [{ provide: AuthFacade, useValue: auth }] });
     const fixture = TestBed.createComponent(LoginPage);
     if (error) fixture.componentRef.setInput('error', error);
+    if (returnPath) fixture.componentRef.setInput('returnPath', returnPath);
     await fixture.whenStable();
     const el: HTMLElement = fixture.nativeElement;
     const submit = async (value: string) => {
@@ -30,8 +31,16 @@ describe('LoginPage', () => {
 
     await submit('081 563 2080');
 
-    expect(auth.requestLink).toHaveBeenCalledWith('+243815632080');
+    expect(auth.requestLink).toHaveBeenCalledWith('+243815632080', undefined);
     expect(el.querySelector('[role="status"]')?.textContent).toContain('Lien envoyé');
+  });
+
+  it('demande un lien vers la page d’enfant voulue avant la connexion', async () => {
+    const { submit } = await render(undefined, '/c/abc/messages');
+
+    await submit('0815632080');
+
+    expect(auth.requestLink).toHaveBeenCalledWith('+243815632080', '/c/abc/messages');
   });
 
   it('refuse un numéro invalide sans appeler le serveur', async () => {

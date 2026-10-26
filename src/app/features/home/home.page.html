@@ -7,10 +7,6 @@
 
 <div class="groups">
   @for (group of groups; track group.title) {
-    <app-tile-group [group]="group" [childId]="childId()" />
+    <app-tile-group [group]="group" [childId]="childId()" [counts]="counts()" />
   }
 </div>
-
-<p class="footer">
-  Une question ? Écrivez au titulaire depuis <a [routerLink]="messagesLink()">Messages</a>.
-</p>

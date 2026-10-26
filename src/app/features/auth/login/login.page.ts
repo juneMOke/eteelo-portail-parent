@@ -27,6 +27,8 @@ function mobileNumber(control: AbstractControl<string>): ValidationErrors | null
 export default class LoginPage {
   /** `?error=network` : le bootstrap n'a pas pu être chargé. */
   readonly error = input<string>();
+  /** `?returnPath=` : la page d'enfant demandée sans session, où mènera le lien. */
+  readonly returnPath = input<string>();
 
   private readonly auth = inject(AuthFacade);
 
@@ -44,7 +46,7 @@ export default class LoginPage {
 
     this.status.set('sending');
     try {
-      await this.auth.requestLink(phoneNumber);
+      await this.auth.requestLink(phoneNumber, this.returnPath());
       this.status.set('sent');
     } catch {
       this.status.set('error');

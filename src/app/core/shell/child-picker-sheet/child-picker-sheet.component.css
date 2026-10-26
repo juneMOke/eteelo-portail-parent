@@ -37,3 +37,8 @@
   color: var(--color-text-muted);
   font-size: var(--text-xs);
 }
+
+/* Les annonces non lues de chaque enfant, au bout de sa ligne. */
+.option ui-counter {
+  margin-left: auto;
+}

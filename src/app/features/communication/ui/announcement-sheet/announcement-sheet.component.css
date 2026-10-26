@@ -1,0 +1,62 @@
+/* Feuille Blanc Cassé au téléphone, panneau de 560 px au-delà, comme les fiches de Mes finances. */
+ui-sheet {
+  --sheet-width: 560px;
+  --sheet-max-height: 88dvh;
+  --sheet-bg: var(--color-surface-soft);
+  --sheet-padding: var(--space-5) 18px var(--space-6);
+  --sheet-heading-size: var(--text-section);
+}
+
+.category {
+  margin-bottom: 5px;
+}
+
+.sub {
+  color: var(--color-text-muted);
+  font-size: 0.78125rem;
+  line-height: 1.4;
+}
+
+/* Le message tel qu'écrit par l'école : texte brut, sauts de ligne respectés. */
+.body {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-tile);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+/* Le reste dû cité date de l'envoi : rappel sur Bleu Brume et lien vers Mes frais. */
+.balance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) 10px;
+  padding: var(--space-3) 14px;
+  border-radius: var(--radius-tile);
+  background: var(--color-accent-soft);
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+}
+
+.balance p {
+  flex: 1 1 14rem;
+}
+
+.balance-icon {
+  flex: none;
+  color: var(--color-accent);
+}
+
+.balance-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target);
+  color: var(--color-accent);
+  font-weight: var(--weight-semibold);
+}

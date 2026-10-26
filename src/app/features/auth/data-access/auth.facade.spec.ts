@@ -9,7 +9,7 @@ describe('AuthFacade', () => {
   const api = {
     currentHolder: vi.fn(),
     requestMagicLink: vi.fn(() => of(undefined)),
-    openSession: vi.fn(() => of({})),
+    openSession: vi.fn(() => of({} as { returnPath?: string | null })),
   };
   const session = { reset: vi.fn() };
   let token: string | null;
@@ -47,5 +47,34 @@ describe('AuthFacade', () => {
 
     expect(api.openSession).toHaveBeenCalledWith({ token: 'jeton-du-lien' });
     expect(session.reset).toHaveBeenCalledOnce();
+  });
+
+  describe('adresse de retour', () => {
+    const page = '/c/6a1d2c3b-4e5f-4a6b-8c7d-9e0f1a2b3c4d/messages?announcement=a1';
+
+    beforeEach(() => (token = 'abc'));
+
+    it('la transmet avec la demande de lien, si c’est une page d’enfant', async () => {
+      const auth = TestBed.inject(AuthFacade);
+      await auth.requestLink('+243815632080', page);
+      await auth.requestLink('+243815632080', 'https://evil.example/');
+
+      expect(api.requestMagicLink).toHaveBeenNthCalledWith(1, {
+        phoneNumber: '+243815632080',
+        returnPath: page,
+      });
+      expect(api.requestMagicLink).toHaveBeenNthCalledWith(2, { phoneNumber: '+243815632080' });
+    });
+
+    it('rend celle de l’ouverture de session, revérifiée', async () => {
+      const auth = TestBed.inject(AuthFacade);
+      api.openSession.mockReturnValueOnce(of({ returnPath: page }));
+      api.openSession.mockReturnValueOnce(of({ returnPath: '//evil.example' }));
+      api.openSession.mockReturnValueOnce(of({ returnPath: null }));
+
+      await expect(auth.openSession('j1')).resolves.toBe(page);
+      await expect(auth.openSession('j2')).resolves.toBeNull();
+      await expect(auth.openSession('j3')).resolves.toBeNull();
+    });
   });
 });
