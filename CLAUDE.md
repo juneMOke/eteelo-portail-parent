@@ -42,6 +42,7 @@ npm run lint            # angular-eslint (préfixes app-/ui-, OnPush, signals, c
 npm run api:spec        # rafraîchit openapi/api-docs.json (versionné) depuis l'OpenAPI de staging
 npm run api:types       # régénère api-types.ts depuis openapi/api-docs.json ; le CI échoue s'ils divergent
 docker build -t eteelo-portail-parent .   # image unique pour tous les environnements (nginx, voir nginx.conf)
+python3 scripts/generate-icons.py         # régénère icônes, favicon et manifeste de branding/<env> (Pillow)
 ```
 
 ## Arborescence
@@ -59,6 +60,11 @@ src/app/
   features/   auth, home, agenda, grades, conduct, finance, communication
 src/styles/   tokens.css, base.css
 ```
+
+Icônes, favicon et manifeste par environnement (comme les flavors de l'app mobile) : `branding/<env>/`
+(prod, staging, dev), générés depuis `branding/source/`. Le build sert prod, `ng serve` sert dev ;
+l'image unique pose au démarrage ceux de `PORTAL_ENV` (`docker/40-portal-env.sh`, prod par défaut).
+Ils sont exclus du service worker, leur empreinte variant selon l'environnement.
 
 Routes : `/login`, `/login/:token` (magic-link), `/no-children`, puis tout le métier sous `/c/:childId` :
 accueil sur `/c/:childId`, `homework`, `assessments`, `timetable`, `grades/{week,courses,report-card}`,

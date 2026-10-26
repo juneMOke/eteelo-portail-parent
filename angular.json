@@ -24,6 +24,10 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "branding/prod"
               }
             ],
             "styles": ["src/styles/tokens.css", "src/styles/base.css"]
@@ -46,6 +50,16 @@
               "serviceWorker": "ngsw-config.json"
             },
             "development": {
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "public"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "branding/dev"
+                }
+              ],
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
@@ -57,11 +71,31 @@
               ]
             },
             "staging-backend": {
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "public"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "branding/dev"
+                }
+              ],
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
             },
             "mock": {
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "public"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "branding/dev"
+                }
+              ],
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
