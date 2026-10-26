@@ -13,6 +13,13 @@ RUN NG_CLI_ANALYTICS=false npx ng build
 FROM nginx:1.30-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist/eteelo-portail-parent/browser /usr/share/nginx/html
+# Icônes, favicon et manifeste par environnement : le build sert prod, 40-portal-env.sh pose
+# au démarrage ceux de PORTAL_ENV (prod | staging | dev).
+COPY branding/prod /usr/share/nginx/branding/prod
+COPY branding/staging /usr/share/nginx/branding/staging
+COPY branding/dev /usr/share/nginx/branding/dev
+COPY --chmod=755 docker/40-portal-env.sh /docker-entrypoint.d/40-portal-env.sh
+ENV PORTAL_ENV=prod
 EXPOSE 80
 # Lu par le déploiement : la bascule n'est validée qu'une fois le conteneur « healthy ».
 HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
