@@ -49,6 +49,12 @@ describe('PushCardComponent', () => {
     expect(iphone.el.querySelector('button')).toBeNull();
   });
 
+  it('service de push refusé par le serveur : renvoie vers Chrome, sans bouton', async () => {
+    const { el } = await render('unsupported-service');
+    expect(el.textContent).toContain('Ouvrez le portail dans Chrome');
+    expect(el.querySelector('button')).toBeNull();
+  });
+
   it('signale l’échec selon le geste', async () => {
     const enabling = await render('available', { failed: true });
     expect(enabling.el.querySelector('[role="alert"]')?.textContent?.trim()).toBe(

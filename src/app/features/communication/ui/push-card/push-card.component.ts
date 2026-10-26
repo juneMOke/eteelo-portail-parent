@@ -5,7 +5,8 @@ import { IconComponent } from '../../../../shared/ui/icon/icon.component';
 /**
  * Les notifications de ce téléphone, en tête de Mes messages : une carte qui propose de les
  * activer (la permission du navigateur n'est demandée qu'à l'appui), puis une ligne discrète
- * une fois activées, bloquées, ou sur iPhone tant que le portail n'est pas installé. Rien pour
+ * une fois activées, bloquées, refusées par le serveur (service de push inconnu), ou sur iPhone
+ * tant que le portail n'est pas installé. Rien pour
  * `idle` et `hidden` : la page ne la place pas.
  */
 @Component({

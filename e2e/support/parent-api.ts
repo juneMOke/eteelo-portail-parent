@@ -66,6 +66,8 @@ interface ParentApiMock {
   sessionReturnPath?: string;
   /** Code HTTP d'échec de l'enregistrement d'un abonnement aux notifications ; par défaut 204. */
   pushSubscription?: number;
+  /** `detailCode` du corps de cet échec (400 PUSH_ENDPOINT_INVALID…). */
+  pushSubscriptionCode?: string;
 }
 
 const EVALUATION_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/evaluations(?:\/([^/]+))?$/;
@@ -199,7 +201,8 @@ export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promi
     }
     if (pathname === '/api/v1/parent/push-subscriptions' && ['PUT', 'DELETE'].includes(method)) {
       const status = method === 'PUT' ? (mock.pushSubscription ?? 204) : 204;
-      return route.fulfill({ status });
+      if (status === 204 || !mock.pushSubscriptionCode) return route.fulfill({ status });
+      return route.fulfill({ status, json: { detailCode: mock.pushSubscriptionCode } });
     }
     if (FINANCE_DOCUMENT.test(pathname)) {
       return route.fulfill({ contentType: 'application/pdf', body: PDF_BODY });

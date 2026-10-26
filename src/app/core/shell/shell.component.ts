@@ -45,7 +45,7 @@ export default class ShellComponent {
   protected readonly back = this.page.back;
 
   constructor() {
-    // La session est ouverte : état des notifications de ce téléphone, abonnement resynchronisé.
+    // Bootstrap chargé : état des notifications de ce téléphone, abonnement renvoyé au serveur.
     void inject(PushStore).init();
   }
 

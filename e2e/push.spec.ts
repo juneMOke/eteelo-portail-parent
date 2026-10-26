@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { GRACE, bootstrapFixture } from '../src/testing/bootstrap.fixture';
 import { mockParentApi } from './support/parent-api';
-import { FAKE_ENDPOINT, fakePushDevice } from './support/push-device';
+import { FAKE_ENDPOINT, STALE_ENDPOINT, fakePushDevice } from './support/push-device';
 
 const MESSAGES = `/c/${GRACE.childId}/messages`;
 const SUBSCRIPTIONS = '/api/v1/parent/push-subscriptions';
@@ -47,6 +47,28 @@ test.describe('Notifications de Mes messages', () => {
     await expect(card.getByRole('button', { name: 'Activer' })).toBeVisible();
   });
 
+  test('un téléphone abonné avec une ancienne clé se réabonne avec celle du serveur', async ({
+    page,
+  }) => {
+    await fakePushDevice(page, {
+      permission: 'granted',
+      subscribed: true,
+      subscribedWith: 'BOLD-key_from-an-old-configuration',
+    });
+    await mockParentApi(page);
+    const resync = page.waitForRequest(
+      (request) => request.method() === 'PUT' && request.url().endsWith(SUBSCRIPTIONS),
+    );
+    await page.goto(MESSAGES);
+
+    const body = (await resync).postDataJSON() as { endpoint: string };
+    expect(body.endpoint).toBe(FAKE_ENDPOINT);
+    expect(body.endpoint).not.toBe(STALE_ENDPOINT);
+    await expect(page.locator('app-push-card')).toContainText(
+      'Notifications activées sur ce téléphone',
+    );
+  });
+
   test('explique comment les débloquer quand le navigateur les refuse', async ({ page }) => {
     await fakePushDevice(page, { answer: 'denied' });
     await mockParentApi(page);
@@ -69,6 +91,23 @@ test.describe('Notifications de Mes messages', () => {
       'Impossible d’activer les notifications. Vérifiez la connexion, puis réessayez.',
     );
     await expect(card.getByRole('button', { name: 'Activer' })).toBeEnabled();
+  });
+
+  test('renvoie vers Chrome quand le serveur refuse le service de push du navigateur', async ({
+    page,
+  }) => {
+    await fakePushDevice(page);
+    await mockParentApi(page, {
+      pushSubscription: 400,
+      pushSubscriptionCode: 'PUSH_ENDPOINT_INVALID',
+    });
+    await page.goto(MESSAGES);
+
+    const card = page.locator('app-push-card');
+    await card.getByRole('button', { name: 'Activer' }).click();
+    await expect(card).toContainText('Ouvrez le portail dans Chrome');
+    await expect(card.getByRole('button')).toHaveCount(0);
+    await expect(card.getByRole('alert')).toHaveCount(0);
   });
 
   test('ne propose rien quand le serveur les a coupées', async ({ page }) => {

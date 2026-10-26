@@ -30,8 +30,16 @@ export class PushDevice {
     return registration.pushManager.getSubscription();
   }
 
+  /**
+   * Abonne ce téléphone avec la clé du serveur. Un abonnement signé par une autre clé est
+   * d'abord retiré : le navigateur refuse d'en créer un second, et le service de push
+   * n'accepterait plus rien pour l'ancien.
+   */
   async subscribe(vapidPublicKey: string): Promise<PushSubscription> {
     const registration = await navigator.serviceWorker.ready;
+    const current = await registration.pushManager.getSubscription();
+    if (current && usesKey(current, vapidPublicKey)) return current;
+    await current?.unsubscribe();
     return registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: base64UrlToBytes(vapidPublicKey),
@@ -56,6 +64,15 @@ export function subscriptionBody(subscription: PushSubscription): PushSubscripti
     expirationTime: expirationTime ?? null,
     keys: { p256dh: keys['p256dh'], auth: keys['auth'] },
   };
+}
+
+/** L'abonnement a-t-il été créé avec cette clé publique VAPID ? */
+export function usesKey(subscription: PushSubscription, vapidPublicKey: string): boolean {
+  const key = subscription.options.applicationServerKey;
+  if (!key) return false;
+  const expected = base64UrlToBytes(vapidPublicKey);
+  const actual = new Uint8Array(key);
+  return actual.length === expected.length && actual.every((byte, i) => byte === expected[i]);
 }
 
 function pushSupport(): PushSupport {
