@@ -4,6 +4,7 @@ import { Observable, map } from 'rxjs';
 import * as v from 'valibot';
 import { Bootstrap, BootstrapSchema } from '../session/bootstrap.schema';
 import { ParentAnnouncementList, ParentAnnouncementReadResult } from './announcements.contract';
+import { PushSubscriptionBody } from './push.contract';
 import { components } from './api-types';
 import {
   EvaluationDetail,
@@ -187,6 +188,16 @@ export class ParentApi {
       `${PARENT_CHILDREN_API}/${childId}/announcements/${announcementId}/read`,
       null,
     );
+  }
+
+  /** Enregistre l'abonnement de ce téléphone ; idempotent sur `endpoint`. */
+  savePushSubscription(body: PushSubscriptionBody): Observable<void> {
+    return this.http.put<void>(`${PARENT_API}/push-subscriptions`, body);
+  }
+
+  /** Retire l'abonnement de ce téléphone ; 204 même s'il est déjà absent. */
+  deletePushSubscription(endpoint: string): Observable<void> {
+    return this.http.delete<void>(`${PARENT_API}/push-subscriptions`, { body: { endpoint } });
   }
 
   /**

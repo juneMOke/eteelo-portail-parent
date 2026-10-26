@@ -23,12 +23,14 @@ import { AnnouncementReadStore } from '../data-access/announcement-read.store';
 import { MessagesFacade } from '../data-access/messages.facade';
 import { AnnouncementCardComponent } from '../ui/announcement-card/announcement-card.component';
 import { AnnouncementSheetComponent } from '../ui/announcement-sheet/announcement-sheet.component';
+import { PushCardComponent } from '../ui/push-card/push-card.component';
 
 /**
  * Mes messages : les communiqués de l'école pour l'enfant, année en cours, le plus récent en haut.
  * Lecture seule, on n'y répond pas (décision du 25/10/2026). La fiche d'une annonce vit dans
  * l'URL (`?announcement=`) : le lien « Lire dans le portail » de WhatsApp y mène. L'ouvrir la
- * marque lue ; le badge de l'enfant prend le compte rendu par le serveur.
+ * marque lue ; le badge de l'enfant prend le compte rendu par le serveur. En tête, la carte des
+ * notifications de ce téléphone ; une annonce arrivée par notification relit la liste.
  */
 @Component({
   selector: 'app-messages-page',
@@ -37,6 +39,7 @@ import { AnnouncementSheetComponent } from '../ui/announcement-sheet/announcemen
     AnnouncementSheetComponent,
     EmptyStateComponent,
     LoadErrorComponent,
+    PushCardComponent,
     RefreshHighlightDirective,
     SkeletonComponent,
     StaleNoticeComponent,
@@ -82,6 +85,13 @@ export default class MessagesPage {
   protected readonly missing = computed(
     () => !!this.announcement() && !!this.data() && !this.openAnnouncement(),
   );
+  protected readonly push = {
+    status: this.facade.pushStatus,
+    busy: this.facade.pushBusy,
+    failed: this.facade.pushFailed,
+    shown: computed(() => !['idle', 'hidden'].includes(this.facade.pushStatus())),
+  };
+
   protected readonly fiche = injectQueryParamSheet('announcement', {
     selected: this.openAnnouncement,
     sheet: this.sheet,
@@ -92,6 +102,24 @@ export default class MessagesPage {
     const open = this.openAnnouncement();
     if (open?.readAt === null) untracked(() => void this.markRead(open));
   });
+
+  // Effet de bord seul : une annonce arrivée par notification pour cet enfant relit la liste.
+  // Celle d'avant l'ouverture de la page est déjà dans la liste chargée à l'ouverture.
+  private readonly seenArrival = this.facade.pushArrival();
+  private readonly arrivals = effect(() => {
+    const arrival = this.facade.pushArrival();
+    if (arrival && arrival !== this.seenArrival && arrival.childId === this.childId()) {
+      untracked(() => this.resource.reload());
+    }
+  });
+
+  protected enablePush(): void {
+    void this.facade.enablePush();
+  }
+
+  protected disablePush(): void {
+    void this.facade.disablePush();
+  }
 
   private async markRead(announcement: ParentAnnouncement): Promise<void> {
     const childId = this.childId();

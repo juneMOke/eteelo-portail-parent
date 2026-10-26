@@ -1,0 +1,42 @@
+@switch (status()) {
+  @case ('available') {
+    <ui-icon class="icon" name="bell" [size]="20" />
+    <div class="text">
+      <p class="heading">Être prévenu quand l’école écrit</p>
+      <p class="hint">Une notification sur ce téléphone à chaque nouveau message.</p>
+    </div>
+    <button type="button" class="button" [disabled]="busy()" (click)="enable.emit()">
+      Activer
+    </button>
+  }
+  @case ('enabled') {
+    <ui-icon class="icon" name="bell" [size]="16" />
+    <p class="text">Notifications activées sur ce téléphone</p>
+    <button type="button" class="button-link" [disabled]="busy()" (click)="disable.emit()">
+      Désactiver
+    </button>
+  }
+  @case ('denied') {
+    <ui-icon class="icon" name="bell" [size]="16" />
+    <p class="text">
+      Notifications bloquées sur ce téléphone. Autorisez-les pour ce site dans les réglages du
+      navigateur pour être prévenu des messages.
+    </p>
+  }
+  @case ('install-first') {
+    <ui-icon class="icon" name="bell" [size]="16" />
+    <p class="text">
+      Sur iPhone, ajoutez d’abord le portail à l’écran d’accueil (Partager › Sur l’écran d’accueil)
+      pour être prévenu des messages.
+    </p>
+  }
+}
+@if (failed()) {
+  <p class="error" role="alert">
+    @if (status() === 'enabled') {
+      Impossible de désactiver les notifications. Réessayez.
+    } @else {
+      Impossible d’activer les notifications. Vérifiez la connexion, puis réessayez.
+    }
+  </p>
+}

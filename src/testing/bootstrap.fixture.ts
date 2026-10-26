@@ -30,6 +30,10 @@ export const DAVID: Child = {
   unreadAnnouncements: 0,
 };
 
+/** Clé publique P-256 factice, en base64url (65 octets). */
+export const VAPID_PUBLIC_KEY =
+  'BDAhAXdaqBtxILL7gioM_bT0iIkJh5QDdd4nxEgwSVRh9fr1fkv28-BG9DUY83P3CO0KFpDXgO7lTJGDZHbs98A';
+
 export function bootstrapFixture(children: Child[] = [GRACE, DAVID]): Bootstrap {
   return {
     parent: {
@@ -49,5 +53,6 @@ export function bootstrapFixture(children: Child[] = [GRACE, DAVID]): Bootstrap 
     },
     academicYear: { id: '5f1e2d3c-4b5a-4c6d-8e7f-0a1b2c3d4e5f', name: '2026-2027' },
     children,
+    push: { vapidPublicKey: VAPID_PUBLIC_KEY },
   };
 }
