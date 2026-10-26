@@ -30,6 +30,13 @@
       pour être prévenu des messages.
     </p>
   }
+  @case ('unsupported-service') {
+    <ui-icon class="icon" name="bell" [size]="16" />
+    <p class="text">
+      Ce navigateur ne peut pas recevoir les notifications du portail. Ouvrez le portail dans Chrome
+      pour être prévenu des messages.
+    </p>
+  }
 }
 @if (failed()) {
   <p class="error" role="alert">

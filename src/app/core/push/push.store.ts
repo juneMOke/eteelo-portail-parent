@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
@@ -5,7 +6,12 @@ import { SwPush } from '@angular/service-worker';
 import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
 import { firstValueFrom } from 'rxjs';
 import { ParentApi } from '../api/parent-api';
-import { AnnouncementPushData } from '../api/push.contract';
+import { detailCodeOf } from '../api/api-error';
+import {
+  AnnouncementPushData,
+  PUSH_ENDPOINT_INVALID,
+  PUSH_KEYS_INVALID,
+} from '../api/push.contract';
 import { Bootstrap } from '../session/bootstrap.schema';
 import { SessionStore } from '../session/session.store';
 import { PushDevice, subscriptionBody, usesKey } from './push-device';
@@ -14,9 +20,11 @@ import { announcementPush, pushedData } from './push-payload';
 /**
  * idle : pas encore vérifié · hidden : rien à proposer (serveur ou navigateur) ·
  * install-first : iPhone, portail à ajouter à l'écran d'accueil · available : à activer ·
- * denied : bloquées par le navigateur · enabled : ce téléphone est abonné.
+ * denied : bloquées par le navigateur · enabled : ce téléphone est abonné ·
+ * unsupported-service : le serveur refuse le service de push de ce navigateur.
  */
-export type PushStatus = 'idle' | 'hidden' | 'install-first' | 'available' | 'denied' | 'enabled';
+export type PushStatus =
+  'idle' | 'hidden' | 'install-first' | 'available' | 'denied' | 'enabled' | 'unsupported-service';
 
 /** Une annonce arrivée par notification, portail ouvert : sa liste est à relire. */
 export interface PushArrival {
@@ -103,8 +111,14 @@ export const PushStore = signalStore(
             return;
           }
           patchState(store, { status: 'enabled' });
-          // Un échec ici n'empêche rien : le serveur garde l'abonnement déjà connu.
-          await firstValueFrom(api.savePushSubscription(body)).catch(() => undefined);
+          try {
+            await firstValueFrom(api.savePushSubscription(body));
+          } catch (error) {
+            // Un échec réseau n'empêche rien : le serveur garde l'abonnement déjà connu.
+            if (!refusedByServer(error)) return;
+            await subscription?.unsubscribe().catch(() => false);
+            patchState(store, { status: 'unsupported-service' });
+          }
         },
 
         async enable(): Promise<void> {
@@ -129,8 +143,13 @@ export const PushStore = signalStore(
               throw error;
             }
             patchState(store, { status: 'enabled' });
-          } catch {
-            patchState(store, { status: 'available', failed: true });
+          } catch (error) {
+            patchState(
+              store,
+              refusedByServer(error)
+                ? { status: 'unsupported-service' }
+                : { status: 'available', failed: true },
+            );
           } finally {
             patchState(store, { busy: false });
           }
@@ -183,3 +202,10 @@ export const PushStore = signalStore(
     },
   })),
 );
+
+/** Le serveur refuse ce téléphone pour de bon (service de push inconnu, clés illisibles). */
+function refusedByServer(error: unknown): boolean {
+  if (!(error instanceof HttpErrorResponse) || error.status !== 400) return false;
+  const code = detailCodeOf(error);
+  return code === PUSH_ENDPOINT_INVALID || code === PUSH_KEYS_INVALID;
+}

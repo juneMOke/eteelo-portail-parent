@@ -93,6 +93,23 @@ test.describe('Notifications de Mes messages', () => {
     await expect(card.getByRole('button', { name: 'Activer' })).toBeEnabled();
   });
 
+  test('renvoie vers Chrome quand le serveur refuse le service de push du navigateur', async ({
+    page,
+  }) => {
+    await fakePushDevice(page);
+    await mockParentApi(page, {
+      pushSubscription: 400,
+      pushSubscriptionCode: 'PUSH_ENDPOINT_INVALID',
+    });
+    await page.goto(MESSAGES);
+
+    const card = page.locator('app-push-card');
+    await card.getByRole('button', { name: 'Activer' }).click();
+    await expect(card).toContainText('Ouvrez le portail dans Chrome');
+    await expect(card.getByRole('button')).toHaveCount(0);
+    await expect(card.getByRole('alert')).toHaveCount(0);
+  });
+
   test('ne propose rien quand le serveur les a coupées', async ({ page }) => {
     await fakePushDevice(page);
     await mockParentApi(page, { bootstrap: { ...bootstrapFixture(), push: null } });

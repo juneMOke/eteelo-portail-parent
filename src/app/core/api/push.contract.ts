@@ -7,6 +7,14 @@
  * l'OpenAPI de staging.
  */
 
+/**
+ * Causes fines (`detailCode`) d'un 400 sur PUT /push-subscriptions : le serveur n'accepte que les
+ * services de push connus (Google, Mozilla, Apple, Microsoft) et des clés lisibles. Le navigateur
+ * ne changera pas de service : réessayer ne sert à rien.
+ */
+export const PUSH_ENDPOINT_INVALID = 'PUSH_ENDPOINT_INVALID';
+export const PUSH_KEYS_INVALID = 'PUSH_KEYS_INVALID';
+
 /** Corps de PUT /push-subscriptions : `PushSubscription.toJSON()` tel quel. */
 export interface PushSubscriptionBody {
   readonly endpoint: string;

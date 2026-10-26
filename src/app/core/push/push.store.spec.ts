@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
@@ -13,6 +14,12 @@ import { PushDevice, PushSupport } from './push-device';
 import { PushStore } from './push.store';
 
 const ENDPOINT = 'https://fcm.googleapis.com/fcm/send/abc';
+
+/** Le serveur refuse ce téléphone : service de push hors de sa liste. */
+const refusedEndpoint = () =>
+  throwError(
+    () => new HttpErrorResponse({ status: 400, error: { detailCode: 'PUSH_ENDPOINT_INVALID' } }),
+  );
 
 /** La clé publique VAPID telle que le navigateur la garde dans l'abonnement. */
 function keyBytes(vapidPublicKey: string): ArrayBuffer {
@@ -105,6 +112,17 @@ describe('PushStore', () => {
       });
       await store.init();
       expect(store.status()).toBe('enabled');
+    });
+
+    it('désabonne le téléphone que le serveur refuse, et le dit', async () => {
+      const { store, subscription } = setup({
+        permission: 'granted',
+        subscribed: true,
+        save: refusedEndpoint,
+      });
+      await store.init();
+      expect(subscription.unsubscribe).toHaveBeenCalledOnce();
+      expect(store.status()).toBe('unsupported-service');
     });
 
     it('ne vérifie qu’une fois par bootstrap', async () => {
@@ -210,6 +228,16 @@ describe('PushStore', () => {
       expect(subscription.unsubscribe).toHaveBeenCalledOnce();
       expect(store.status()).toBe('available');
       expect(store.failed()).toBe(true);
+    });
+
+    it('dit que ce navigateur ne convient pas quand le serveur refuse son service de push', async () => {
+      const { store, subscription } = setup({ save: refusedEndpoint });
+      await store.init();
+      await store.enable();
+
+      expect(subscription.unsubscribe).toHaveBeenCalledOnce();
+      expect(store.status()).toBe('unsupported-service');
+      expect(store.failed()).toBe(false);
     });
   });
 
