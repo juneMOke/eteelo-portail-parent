@@ -196,6 +196,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/schools/{id}/receipt-edition-numbering": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["setReceiptEditionNumbering"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/school/sous-periodes/{id}/cloturer": {
         parameters: {
             query?: never;
@@ -287,6 +303,22 @@ export interface paths {
         put: operations["setEmergencyContact"];
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/push-subscriptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["subscribe"];
+        post?: never;
+        delete: operations["unsubscribe"];
         options?: never;
         head?: never;
         patch?: never;
@@ -740,6 +772,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sync/payroll-payouts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["submitPayout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sync/payroll-gestures": {
         parameters: {
             query?: never;
@@ -782,6 +830,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["cancel_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sync/payroll-arrear-priorities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["pullArrearPriorities"];
+        put?: never;
+        post: operations["submitArrearPriority"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1406,6 +1470,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["justify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/announcements/{announcementItemId}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["markRead"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3230,6 +3310,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/parent/children/{childId}/announcements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["announcements"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parent/children/{childId}/announcements/{announcementItemId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["announcement"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/parent/children/{childId}/academic-years": {
         parameters: {
             query?: never;
@@ -3278,6 +3390,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/hr/staff-stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["stats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/staff-stats/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["members"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/staff-stats/members.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["membersReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/hr/staff-documents/{documentId}/content": {
         parameters: {
             query?: never;
@@ -3286,6 +3446,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["content"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/payrolls/{month}/statement.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["statement_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3310,6 +3486,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/hr/payrolls/{month}/payslips/{staffMemberId}/preview.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payslipPreview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/hr/payrolls/{month}/payslips/{staffMemberId}.pdf": {
         parameters: {
             query?: never;
@@ -3318,6 +3510,198 @@ export interface paths {
             cookie?: never;
         };
         get: operations["payslip"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/payrolls/{month}/payslips.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payslips"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/payrolls/{month}/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["dashboard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/payrolls/{month}/dashboard.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["situation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/attendance-stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["dashboard_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/attendance-stats/staff/{staffMemberId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["agentMonth"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/attendance-stats/staff/{staffMemberId}/year": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["agentYear"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/attendance-stats/staff/{staffMemberId}/year.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["agentYearSheet"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/attendance-stats/staff/{staffMemberId}.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["agentMonthSheet"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/attendance-stats/recap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["recap"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/attendance-stats/profiles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["profiles"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/attendance-stats/profiles.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["profilesReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/attendance-stats.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["dashboardReport"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3806,6 +4190,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/boutique/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["stats_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/boutique/sales": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["sales"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/boutique/sales/anomalies": {
         parameters: {
             query?: never;
@@ -3814,6 +4230,38 @@ export interface paths {
             cookie?: never;
         };
         get: operations["anomalies"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/boutique/sales.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["salesReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/boutique/beneficiaries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["beneficiaries"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4485,16 +4933,37 @@ export interface components {
             defaultOvertimeRateInCents?: number;
             /** Format: int64 */
             overtimeRateStepInCents?: number;
+            /** Format: int64 */
+            iprFlatInCents?: number;
+            /** Format: int32 */
+            cnssPermille?: number;
         };
         PayrollSettingsInput: {
             /** Format: int32 */
             monthlyHoursDivisor?: number;
             /** Format: int32 */
             overtimeMultiplierPermille?: number;
+            /** Format: int32 */
+            workDaysDivisor?: number;
+            absenceDeductionEnabled?: boolean;
             allowanceEligibleKinds: ("PERMANENT" | "VACATAIRE" | "CONVENTIONNE")[];
             currencyRules: components["schemas"]["CurrencyRuleInput"][];
             /** Format: date-time */
             clientUpdatedAt: string;
+            /** Format: int32 */
+            cnssEmployerPermille?: number;
+            /** Format: int32 */
+            inppPermille?: number;
+            /** Format: int32 */
+            onemPermille?: number;
+            /** Format: int32 */
+            advanceMaxPercent?: number;
+            /** Format: int32 */
+            loanMaxMonths?: number;
+            childcareEnabled?: boolean;
+            signatureBeneficiaryLabel?: string;
+            signatureDirectorLabel?: string;
+            signatureCashierLabel?: string;
         };
         PayrollSettingsSyncRequest: {
             settings: components["schemas"]["PayrollSettingsInput"];
@@ -4509,14 +4978,35 @@ export interface components {
             defaultOvertimeRateInCents?: number;
             /** Format: int64 */
             overtimeRateStepInCents?: number;
+            /** Format: int64 */
+            iprFlatInCents?: number;
+            /** Format: int32 */
+            cnssPermille?: number;
         };
         PayrollSettingsDto: {
             /** Format: int32 */
             monthlyHoursDivisor?: number;
             /** Format: int32 */
             overtimeMultiplierPermille?: number;
+            /** Format: int32 */
+            workDaysDivisor?: number;
+            absenceDeductionEnabled?: boolean;
             allowanceEligibleKinds?: string[];
             currencyRules?: components["schemas"]["PayrollCurrencyRuleDto"][];
+            /** Format: int32 */
+            cnssEmployerPermille?: number;
+            /** Format: int32 */
+            inppPermille?: number;
+            /** Format: int32 */
+            onemPermille?: number;
+            /** Format: int32 */
+            advanceMaxPercent?: number;
+            /** Format: int32 */
+            loanMaxMonths?: number;
+            childcareEnabled?: boolean;
+            signatureBeneficiaryLabel?: string;
+            signatureDirectorLabel?: string;
+            signatureCashierLabel?: string;
         };
         PayrollSettingsSyncResponse: {
             settings?: components["schemas"]["PayrollSettingsDto"];
@@ -4804,6 +5294,9 @@ export interface components {
             /** Format: int32 */
             ticketCopies?: number;
         };
+        ReceiptEditionNumberingDto: {
+            enabled: boolean;
+        };
         PeriodeClotureResponse: {
             /** Format: uuid */
             id?: string;
@@ -4862,6 +5355,16 @@ export interface components {
         SetEmergencyContactRequest: {
             /** Format: uuid */
             parentId?: string;
+        };
+        Keys: {
+            p256dh: string;
+            auth: string;
+        };
+        ParentPushSubscriptionRequest: {
+            endpoint: string;
+            /** Format: int64 */
+            expirationTime?: number;
+            keys: components["schemas"]["Keys"];
         };
         CreateFeeTariffCommand: {
             /** @enum {string} */
@@ -5114,7 +5617,7 @@ export interface components {
             title?: string;
             body?: string;
             audience?: components["schemas"]["AnnouncementAudience"];
-            channels?: "WHATSAPP"[];
+            channels?: ("WHATSAPP" | "PORTAL")[];
         };
         AnnouncementDto: {
             /** Format: uuid */
@@ -5126,7 +5629,7 @@ export interface components {
             title?: string;
             body?: string;
             audience?: components["schemas"]["AnnouncementAudience"];
-            channels?: "WHATSAPP"[];
+            channels?: ("WHATSAPP" | "PORTAL")[];
             /** @enum {string} */
             status?: "DRAFT" | "SCHEDULED" | "SENT" | "CANCELLED" | "FAILED";
             /** Format: date-time */
@@ -5375,6 +5878,7 @@ export interface components {
             /** @enum {string} */
             category: "ENSEIGNANT" | "ADMINISTRATIF" | "APPUI";
             jobTitle: string;
+            grade?: string;
             /** Format: date */
             entryDate: string;
             branches?: string[];
@@ -5420,6 +5924,7 @@ export interface components {
             /** @enum {string} */
             category?: "ENSEIGNANT" | "ADMINISTRATIF" | "APPUI";
             jobTitle?: string;
+            grade?: string;
             /** Format: date */
             entryDate?: string;
             branches?: string[];
@@ -5612,13 +6117,14 @@ export interface components {
             /** Format: uuid */
             gestureId: string;
             /** @enum {string} */
-            gesture: "VALIDATE_DAY" | "REOPEN_DAY" | "CLOSE_MONTH";
+            gesture: "VALIDATE_DAY" | "REOPEN_DAY" | "CLOSE_MONTH" | "REOPEN_MONTH";
             /** Format: date */
             date: string;
             /** Format: date-time */
             clientRecordedAt: string;
             /** Format: uuid */
             authorId: string;
+            reason?: string;
         };
         StaffAttendanceLockDelta: {
             /** Format: uuid */
@@ -5699,6 +6205,10 @@ export interface components {
             grantedOn?: string;
             /** Format: date-time */
             clientRecordedAt?: string;
+            /** Format: uuid */
+            expenseId?: string;
+            reference?: string;
+            debtAcknowledged?: boolean;
             /** Format: date-time */
             cancelledAt?: string;
             cancelledBy?: string;
@@ -5738,6 +6248,15 @@ export interface components {
             overtimeRateInCents?: number;
             /** Format: int32 */
             dependentChildren?: number;
+            /** Format: int32 */
+            daysWorked?: number;
+            /** Format: int64 */
+            childcareInCents?: number;
+            /** Format: int64 */
+            fixedPayoutInCents?: number;
+            fixedPayoutReason?: string;
+            /** Format: int32 */
+            formulaVersion?: number;
             /** Format: date-time */
             clientUpdatedAt: string;
         };
@@ -5755,6 +6274,11 @@ export interface components {
             overtimeRateInCents?: number;
             /** Format: int32 */
             dependentChildren?: number;
+            /** Format: int64 */
+            childcareInCents?: number;
+            /** Format: int64 */
+            fixedPayoutInCents?: number;
+            fixedPayoutReason?: string;
             /** Format: date-time */
             clientUpdatedAt?: string;
             /** Format: int64 */
@@ -5769,16 +6293,48 @@ export interface components {
             /** @enum {string} */
             lwwOutcome?: "APPLIED" | "SUPERSEDED";
         };
+        PayrollPayoutInput: {
+            month: string;
+            /** Format: int32 */
+            percent?: number;
+            reason?: string;
+            /** Format: date-time */
+            clientUpdatedAt: string;
+        };
+        PayrollPayoutSyncRequest: {
+            payout: components["schemas"]["PayrollPayoutInput"];
+            /** Format: uuid */
+            authorId: string;
+        };
+        PayrollPayoutSyncResponse: {
+            /** Format: uuid */
+            payrollId?: string;
+            /** @enum {string} */
+            status?: "DRAFT" | "SUBMITTED" | "VALIDATED";
+            /** Format: int32 */
+            percent?: number;
+            reason?: string;
+            /** Format: date-time */
+            clientUpdatedAt?: string;
+            /** @enum {string} */
+            lwwOutcome?: "APPLIED" | "SUPERSEDED";
+        };
         CurrencyTotal: {
             currency?: string;
             /** Format: int64 */
             grossInCents?: number;
             /** Format: int64 */
+            deductionInCents?: number;
+            /** Format: int64 */
             advanceInCents?: number;
             /** Format: int64 */
             netInCents?: number;
+            /** Format: int64 */
+            toPayInCents?: number;
         };
         PayrollFingerprint: {
+            /** Format: int32 */
+            formulaVersion?: number;
             /** Format: int32 */
             lineCount?: number;
             totals?: components["schemas"]["CurrencyTotal"][];
@@ -5838,6 +6394,24 @@ export interface components {
             rateInCents?: number;
             hoursMonth?: string;
         };
+        Deductions: {
+            /** Format: int32 */
+            daysWorked?: number;
+            /** Format: int32 */
+            workDaysDivisor?: number;
+            /** Format: int32 */
+            unjustifiedAbsences?: number;
+            /** Format: int64 */
+            absenceInCents?: number;
+            /** Format: int64 */
+            iprInCents?: number;
+            /** Format: int64 */
+            cnssInCents?: number;
+            /** Format: int64 */
+            childcareInCents?: number;
+            /** Format: int64 */
+            totalInCents?: number;
+        };
         Overtime: {
             /** Format: int32 */
             minutes?: number;
@@ -5845,6 +6419,17 @@ export interface components {
             rateInCents?: number;
             /** Format: int64 */
             amountInCents?: number;
+        };
+        Payout: {
+            /** Format: int32 */
+            percent?: number;
+            /** Format: int64 */
+            fixedInCents?: number;
+            reason?: string;
+            /** Format: int64 */
+            toPayInCents?: number;
+            /** Format: int64 */
+            deferredInCents?: number;
         };
         PayrollDelta: {
             /** Format: uuid */
@@ -5861,6 +6446,11 @@ export interface components {
             /** Format: uuid */
             validationGestureId?: string;
             returnReason?: string;
+            /** Format: int32 */
+            payoutPercent?: number;
+            payoutReason?: string;
+            /** Format: date-time */
+            payoutClientUpdatedAt?: string;
             variables?: components["schemas"]["PayrollVariablesDelta"][];
             gestures?: components["schemas"]["PayrollGestureDto"][];
             lines?: components["schemas"]["PayrollLineDto"][];
@@ -5883,6 +6473,8 @@ export interface components {
             payroll?: components["schemas"]["PayrollDelta"];
         };
         PayrollLineDto: {
+            /** Format: int32 */
+            formulaVersion?: number;
             /** Format: uuid */
             staffMemberId?: string;
             /** Format: uuid */
@@ -5897,11 +6489,13 @@ export interface components {
             allowance?: components["schemas"]["Allowance"];
             /** Format: int64 */
             grossInCents?: number;
+            deductions?: components["schemas"]["Deductions"];
             advances?: components["schemas"]["AdvanceTakeDto"][];
             /** Format: int64 */
             advanceInCents?: number;
             /** Format: int64 */
             netInCents?: number;
+            payout?: components["schemas"]["Payout"];
             attendance?: components["schemas"]["Attendance"];
             /** Format: uuid */
             payslipDocumentId?: string;
@@ -5969,6 +6563,38 @@ export interface components {
             version?: number;
             /** Format: date-time */
             serverUpdatedAt?: string;
+        };
+        PayrollArrearPriorityInput: {
+            /** Format: uuid */
+            staffMemberId: string;
+            month: string;
+            prioritized?: boolean;
+            /** Format: date-time */
+            clientUpdatedAt: string;
+        };
+        PayrollArrearPrioritySyncRequest: {
+            priority: components["schemas"]["PayrollArrearPriorityInput"];
+            /** Format: uuid */
+            authorId: string;
+        };
+        PayrollArrearPriorityDelta: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            staffMemberId?: string;
+            month?: string;
+            prioritized?: boolean;
+            /** Format: date-time */
+            clientUpdatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+            /** Format: date-time */
+            serverUpdatedAt?: string;
+        };
+        PayrollArrearPrioritySyncResponse: {
+            priority?: components["schemas"]["PayrollArrearPriorityDelta"];
+            /** @enum {string} */
+            lwwOutcome?: "APPLIED" | "SUPERSEDED";
         };
         Money: {
             /** Format: int64 */
@@ -6043,6 +6669,11 @@ export interface components {
             documentNumber?: string;
             status?: string;
             url?: string;
+            /** Format: date-time */
+            emittedAt?: string;
+            verificationUrl?: string;
+            /** Format: int32 */
+            edition?: number;
         };
         OverpaymentSignal: {
             detected?: boolean;
@@ -6139,8 +6770,19 @@ export interface components {
             supplier?: string;
             /** @enum {string} */
             fundingSource?: "CASH" | "BANK" | "MOBILE_MONEY";
+            staffAdvance?: components["schemas"]["ExpenseStaffAdvance"];
             /** Format: date-time */
             clientUpdatedAt: string;
+        };
+        ExpenseStaffAdvance: {
+            /** Format: uuid */
+            staffMemberId: string;
+            /** @enum {string} */
+            nature: "ADVANCE" | "LOAN";
+            /** Format: int32 */
+            installments?: number;
+            reason: string;
+            reasonDetail?: string;
         };
         ExpenseSyncRequest: {
             expense: components["schemas"]["ExpenseInput"];
@@ -6167,6 +6809,7 @@ export interface components {
             supplier?: string;
             /** @enum {string} */
             fundingSource?: "CASH" | "BANK" | "MOBILE_MONEY";
+            staffAdvance?: components["schemas"]["ExpenseStaffAdvance"];
             /** Format: uuid */
             decidedById?: string;
             decidedByName?: string;
@@ -6207,6 +6850,11 @@ export interface components {
             /** @enum {string} */
             lwwOutcome?: "APPLIED" | "SUPERSEDED";
         };
+        ExpenseAdvancePayment: {
+            firstMonth: string;
+            debtAcknowledged?: boolean;
+            reference?: string;
+        };
         ExpenseGestureRequest: {
             /** @enum {string} */
             action?: "APPROVE" | "REFUSE";
@@ -6215,6 +6863,7 @@ export interface components {
             message: components["schemas"]["ExpenseMessageInput"];
             /** Format: date-time */
             expectedClientUpdatedAt?: string;
+            advance?: components["schemas"]["ExpenseAdvancePayment"];
             /** Format: uuid */
             authorId: string;
         };
@@ -7301,6 +7950,25 @@ export interface components {
             decisionNote?: string;
             file?: components["schemas"]["File"];
         };
+        ParentAnnouncementDto: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            announcementId?: string;
+            category?: string;
+            title?: string;
+            body?: string;
+            mentionsBalance?: boolean;
+            /** Format: date-time */
+            sentAt?: string;
+            /** Format: date-time */
+            readAt?: string;
+        };
+        ParentAnnouncementReadResult: {
+            announcement?: components["schemas"]["ParentAnnouncementDto"];
+            /** Format: int32 */
+            unreadAnnouncements?: number;
+        };
         OpenParentSessionRequest: {
             token: string;
         };
@@ -7312,9 +7980,11 @@ export interface components {
             surname?: string;
             fullName?: string;
             phoneNumber?: string;
+            returnPath?: string;
         };
         ParentMagicLinkRequest: {
             phoneNumber: string;
+            returnPath?: string;
         };
         RelanceLineInput: {
             /** Format: uuid */
@@ -7496,7 +8166,7 @@ export interface components {
             /** Format: uuid */
             id?: string;
             /** @enum {string} */
-            docType?: "AI" | "NP" | "RC" | "RL" | "QT" | "BU" | "RV" | "RP" | "RI" | "LR" | "BP" | "RFJ" | "RFH" | "SE" | "CE" | "FI";
+            docType?: "AI" | "NP" | "RC" | "RL" | "QT" | "BU" | "RV" | "RP" | "RI" | "LR" | "BP" | "RFJ" | "RFH" | "SE" | "CE" | "FI" | "VB" | "LP" | "AP" | "EP" | "SP" | "FP" | "PR";
             documentNumber?: string;
             /** Format: date-time */
             emittedAt?: string;
@@ -7507,6 +8177,8 @@ export interface components {
             /** Format: date-time */
             cancelledAt?: string;
             cancellationReason?: string;
+            /** Format: int32 */
+            edition?: number;
         };
         CreateCaseRequest: {
             /** Format: uuid */
@@ -7741,7 +8413,7 @@ export interface components {
             title?: string;
             body?: string;
             audience?: components["schemas"]["AnnouncementAudience"];
-            channels?: "WHATSAPP"[];
+            channels?: ("WHATSAPP" | "PORTAL")[];
         };
         AnnouncementGestureRequest: {
             /** Format: int64 */
@@ -7905,7 +8577,7 @@ export interface components {
         VerificationResponse: {
             valid?: boolean;
             /** @enum {string} */
-            type?: "AI" | "NP" | "RC" | "RL" | "QT" | "BU" | "RV" | "RP" | "RI" | "LR" | "BP" | "RFJ" | "RFH" | "SE" | "CE" | "FI";
+            type?: "AI" | "NP" | "RC" | "RL" | "QT" | "BU" | "RV" | "RP" | "RI" | "LR" | "BP" | "RFJ" | "RFH" | "SE" | "CE" | "FI" | "VB" | "LP" | "AP" | "EP" | "SP" | "FP" | "PR";
             number?: string;
             /** Format: date */
             dateEmission?: string;
@@ -8348,6 +9020,17 @@ export interface components {
             serverTime?: string;
             empty?: boolean;
         };
+        KeysetPagePayrollArrearPriorityDelta: {
+            items?: components["schemas"]["PayrollArrearPriorityDelta"][];
+            nextCursor?: string;
+            nextWatermark?: string;
+            hasMore?: boolean;
+            /** Format: int32 */
+            totalCount?: number;
+            /** Format: date-time */
+            serverTime?: string;
+            empty?: boolean;
+        };
         Allocation: {
             /** Format: uuid */
             id?: string;
@@ -8561,7 +9244,7 @@ export interface components {
             /** Format: uuid */
             id?: string;
             /** @enum {string} */
-            docType?: "AI" | "NP" | "RC" | "RL" | "QT" | "BU" | "RV" | "RP" | "RI" | "LR" | "BP" | "RFJ" | "RFH" | "SE" | "CE" | "FI";
+            docType?: "AI" | "NP" | "RC" | "RL" | "QT" | "BU" | "RV" | "RP" | "RI" | "LR" | "BP" | "RFJ" | "RFH" | "SE" | "CE" | "FI" | "VB" | "LP" | "AP" | "EP" | "SP" | "FP" | "PR";
             documentNumber?: string;
             /** Format: uuid */
             studentId?: string;
@@ -8573,11 +9256,16 @@ export interface components {
             sizeBytes?: number;
             contentSha256?: string;
             supersedesNumber?: string;
+            /** Format: int32 */
+            edition?: number;
+            /** Format: uuid */
+            supersedesDocumentId?: string;
             /** Format: date-time */
             cancelledAt?: string;
             cancellationReason?: string;
             /** Format: date-time */
             serverUpdatedAt?: string;
+            verificationUrl?: string;
         };
         KeysetPageEditiqueDocumentDelta: {
             items?: components["schemas"]["EditiqueDocumentDelta"][];
@@ -9063,29 +9751,73 @@ export interface components {
             country?: string;
             cycles?: components["schemas"]["CatalogCycleView"][];
         };
-        ParentTimeSlotDto: {
-            /** Format: uuid */
-            id?: string;
-            /** Format: int32 */
-            order?: number;
-            startTime?: string;
-            endTime?: string;
+        Break: components["schemas"]["ParentTimetableItemDto"] & {
+            start?: string;
+            end?: string;
             label?: string;
         };
-        ParentTimetableResponse: {
-            /** Format: uuid */
-            classroomId?: string;
-            days?: string[];
-            timeSlots?: components["schemas"]["ParentTimeSlotDto"][];
-            sessions?: components["schemas"]["ParentTimetableSessionDto"][];
-        };
-        ParentTimetableSessionDto: {
-            day?: string;
-            /** Format: uuid */
-            timeSlotId?: string;
+        Course: components["schemas"]["ParentTimetableItemDto"] & {
+            start?: string;
+            end?: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            subjectCode?: string;
             subjectLabel?: string;
             teacherLabel?: string;
             room?: string;
+            /** @enum {string} */
+            status?: "SCHEDULED" | "CANCELLED" | "CHANGED";
+            cancelReason?: string;
+            substituteTeacherLabel?: string;
+            newRoom?: string;
+            evaluation?: components["schemas"]["Evaluation"];
+        };
+        Evaluation: {
+            /** Format: uuid */
+            id?: string;
+            type?: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+        };
+        ParentTimetableDayDto: {
+            /** Format: date */
+            date?: string;
+            /** @enum {string} */
+            state?: "SCHOOL_DAY" | "WEEKEND" | "HOLIDAY" | "NOT_PUBLISHED";
+            holidayLabel?: string;
+            /** Format: date */
+            nextSchoolDay?: string;
+            /** Format: int32 */
+            courseCount?: number;
+            firstStart?: string;
+            lastEnd?: string;
+            /** Format: int32 */
+            examCount?: number;
+            items?: (components["schemas"]["Break"] | components["schemas"]["Course"])[];
+        };
+        ParentTimetableItemDto: {
+            kind?: string;
+        };
+        ParentTimetableResponse: {
+            /** Format: date */
+            today?: string;
+            /** Format: date-time */
+            serverTime?: string;
+            timeZone?: string;
+            /** Format: date */
+            weekStart?: string;
+            window?: components["schemas"]["Window"];
+            /** Format: date */
+            newTimetableFrom?: string;
+            /** Format: int32 */
+            courseCount?: number;
+            days?: components["schemas"]["ParentTimetableDayDto"][];
+        };
+        Window: {
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
         };
         ParentMoneyDto: {
             /** Format: int64 */
@@ -9254,35 +9986,9 @@ export interface components {
             endDate?: string;
             current?: boolean;
         };
-        Course: {
-            /** Format: uuid */
-            courseId?: string;
-            subjectLabel?: string;
-            subjectCode?: string;
-            teacherLabel?: string;
-            /** Format: int32 */
-            order?: number;
-            average?: components["schemas"]["GradeAverageViewDto"];
-            /** Format: int32 */
-            count?: number;
-            last?: components["schemas"]["LastGrade"];
-            evaluations?: components["schemas"]["GradeCardDto"][];
-        };
-        GradeAverageViewDto: {
-            percent?: number;
-            obtained?: number;
-            max?: number;
-            state?: string;
-        };
         GradeCoursesDto: {
             selection?: components["schemas"]["GradeSelectionViewDto"];
             courses?: components["schemas"]["Course"][];
-        };
-        LastGrade: {
-            points?: number;
-            maxPoints?: number;
-            /** Format: date */
-            date?: string;
         };
         ParentFeeAllocationDto: {
             /** Format: uuid */
@@ -9511,6 +10217,13 @@ export interface components {
             /** Format: date */
             justifyUntil?: string;
         };
+        ParentAnnouncementListResponse: {
+            /** Format: uuid */
+            academicYearId?: string;
+            /** Format: int32 */
+            unreadCount?: number;
+            items?: components["schemas"]["ParentAnnouncementDto"][];
+        };
         ParentAcademicYearDto: {
             /** Format: uuid */
             id?: string;
@@ -9526,6 +10239,7 @@ export interface components {
             school?: components["schemas"]["ParentPortalSchoolDto"];
             academicYear?: components["schemas"]["ParentPortalNamedRef"];
             children?: components["schemas"]["ParentPortalChildDto"][];
+            push?: components["schemas"]["ParentPortalPushDto"];
         };
         ParentPortalChildDto: {
             /** Format: uuid */
@@ -9541,6 +10255,8 @@ export interface components {
             schoolLevelGroup?: components["schemas"]["ParentPortalNamedRef"];
             schoolLevel?: components["schemas"]["ParentPortalNamedRef"];
             classroom?: components["schemas"]["ParentPortalNamedRef"];
+            /** Format: int32 */
+            unreadAnnouncements?: number;
         };
         ParentPortalNamedRef: {
             /** Format: uuid */
@@ -9556,12 +10272,95 @@ export interface components {
             phoneNumber?: string;
             email?: string;
         };
+        ParentPortalPushDto: {
+            vapidPublicKey?: string;
+        };
         ParentPortalSchoolDto: {
             /** Format: uuid */
             schoolId?: string;
             name?: string;
             logoFingerprint?: string;
             contactPhone?: string;
+            timeZone?: string;
+        };
+        CategoryCount: {
+            /** @enum {string} */
+            category?: "ENSEIGNANT" | "ADMINISTRATIF" | "APPUI";
+            /** Format: int32 */
+            women?: number;
+            /** Format: int32 */
+            men?: number;
+            /** Format: int32 */
+            unknown?: number;
+        };
+        Dean: {
+            /** Format: uuid */
+            staffMemberId?: string;
+            lastName?: string;
+            middleName?: string;
+            firstName?: string;
+            /** Format: date */
+            entryDate?: string;
+            /** Format: int32 */
+            years?: number;
+        };
+        Seniority: {
+            average?: number;
+            /** Format: int32 */
+            base?: number;
+        };
+        SexCounts: {
+            /** Format: int32 */
+            women?: number;
+            /** Format: int32 */
+            men?: number;
+            /** Format: int32 */
+            unknown?: number;
+        };
+        StaffStatsDto: {
+            /** Format: date */
+            asOf?: string;
+            /** Format: int32 */
+            headcount?: number;
+            sexes?: components["schemas"]["SexCounts"];
+            seniority?: components["schemas"]["Seniority"];
+            dean?: components["schemas"]["Dean"];
+            categories?: components["schemas"]["CategoryCount"][];
+        };
+        Dossier: {
+            /** Format: int32 */
+            provided?: number;
+            /** Format: int32 */
+            required?: number;
+        };
+        StaffMemberPageDto: {
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            items?: components["schemas"]["StaffMemberRowDto"][];
+        };
+        StaffMemberRowDto: {
+            /** Format: uuid */
+            id?: string;
+            staffNumber?: string;
+            lastName?: string;
+            middleName?: string;
+            firstName?: string;
+            /** @enum {string} */
+            sex?: "M" | "F";
+            /** @enum {string} */
+            category?: "ENSEIGNANT" | "ADMINISTRATIF" | "APPUI";
+            jobTitle?: string;
+            /** Format: date */
+            entryDate?: string;
+            /** Format: int32 */
+            seniorityYears?: number;
+            /** @enum {string} */
+            contractKind?: "PERMANENT" | "VACATAIRE" | "CONVENTIONNE";
+            dossier?: components["schemas"]["Dossier"];
         };
         PayrollPreviewResponse: {
             month?: string;
@@ -9570,6 +10369,457 @@ export interface components {
             lines?: components["schemas"]["PayrollLineDto"][];
             fingerprint?: components["schemas"]["PayrollFingerprint"];
             withoutContract?: string[];
+        };
+        AdvanceRow: {
+            /** Format: uuid */
+            advanceId?: string;
+            /** Format: uuid */
+            staffMemberId?: string;
+            fullName?: string;
+            /** @enum {string} */
+            nature?: "ADVANCE" | "LOAN";
+            /** Format: int32 */
+            installments?: number;
+            /** @enum {string} */
+            reason?: "MEDICAL" | "SCHOOLING" | "RENT" | "BEREAVEMENT" | "TRANSPORT" | "OTHER";
+            reasonDetail?: string;
+            /** Format: date */
+            grantedOn?: string;
+            /** Format: int64 */
+            amountInCents?: number;
+            currency?: string;
+            /** Format: int64 */
+            remainingInCents?: number;
+            /** Format: int64 */
+            takenThisMonthInCents?: number;
+            /** @enum {string} */
+            phase?: "UPCOMING" | "IN_PROGRESS" | "CARRIED" | "SETTLED" | "CANCELLED";
+        };
+        CurrencySection: {
+            currency?: string;
+            forecast?: components["schemas"]["Forecast"];
+            /** Format: int64 */
+            priorityArrearsInCents?: number;
+            progress?: components["schemas"]["Progress"];
+            rows?: components["schemas"]["Row"][];
+            totals?: components["schemas"]["Totals"];
+        };
+        Due: {
+            month?: string;
+            currency?: string;
+            /** Format: int64 */
+            dueInCents?: number;
+            prioritized?: boolean;
+        };
+        Forecast: {
+            /** Format: int64 */
+            grossInCents?: number;
+            /** Format: int64 */
+            absenceInCents?: number;
+            /** Format: int64 */
+            advancesInCents?: number;
+            /** Format: int64 */
+            legalInCents?: number;
+            /** Format: int64 */
+            childcareInCents?: number;
+            /** Format: int64 */
+            netInCents?: number;
+            /** Format: int64 */
+            employerChargesInCents?: number;
+        };
+        MemberArrears: {
+            /** Format: uuid */
+            staffMemberId?: string;
+            fullName?: string;
+            dues?: components["schemas"]["Due"][];
+        };
+        MonthCurrency: {
+            currency?: string;
+            /** Format: int64 */
+            paidInCents?: number;
+            /** Format: int64 */
+            deferredInCents?: number;
+            /** Format: int64 */
+            unpaidInCents?: number;
+            /** Format: int64 */
+            notYetInCents?: number;
+        };
+        MonthSummary: {
+            month?: string;
+            /** @enum {string} */
+            status?: "NONE" | "DRAFT" | "SUBMITTED" | "VALIDATED";
+            tracked?: boolean;
+            currencies?: components["schemas"]["MonthCurrency"][];
+        };
+        PayrollDashboardResponse: {
+            month?: string;
+            /** @enum {string} */
+            status?: "NONE" | "DRAFT" | "SUBMITTED" | "VALIDATED";
+            /** Format: date-time */
+            validatedAt?: string;
+            provisional?: boolean;
+            /** Format: date-time */
+            situationAt?: string;
+            tracked?: boolean;
+            currencies?: components["schemas"]["CurrencySection"][];
+            months?: components["schemas"]["MonthSummary"][];
+            advances?: components["schemas"]["AdvanceRow"][];
+            arrears?: components["schemas"]["MemberArrears"][];
+        };
+        Progress: {
+            /** Format: int64 */
+            paidInCents?: number;
+            /** Format: int64 */
+            deferredInCents?: number;
+            /** Format: int64 */
+            unpaidInCents?: number;
+            /** Format: int64 */
+            notYetInCents?: number;
+            /** Format: int32 */
+            settledCount?: number;
+            /** Format: int32 */
+            partialCount?: number;
+            /** Format: int32 */
+            unpaidCount?: number;
+        };
+        Row: {
+            /** Format: uuid */
+            staffMemberId?: string;
+            fullName?: string;
+            jobTitle?: string;
+            /** Format: int64 */
+            plannedInCents?: number;
+            /** Format: int64 */
+            deductionsInCents?: number;
+            /** Format: int64 */
+            netInCents?: number;
+            /** Format: int64 */
+            arrearsInCents?: number;
+            /** Format: int64 */
+            receivedInCents?: number;
+            /** Format: int64 */
+            remainingInCents?: number;
+            /** @enum {string} */
+            status?: "TO_DISBURSE" | "DUE" | "PARTIAL" | "SETTLED";
+        };
+        Totals: {
+            /** Format: int64 */
+            plannedInCents?: number;
+            /** Format: int64 */
+            deductionsInCents?: number;
+            /** Format: int64 */
+            netInCents?: number;
+            /** Format: int64 */
+            arrearsInCents?: number;
+            /** Format: int64 */
+            receivedInCents?: number;
+            /** Format: int64 */
+            remainingInCents?: number;
+        };
+        AttendanceBarDto: {
+            key?: string;
+            /** Format: int32 */
+            scored?: number;
+            /** Format: int32 */
+            presences?: number;
+            /** Format: int32 */
+            absences?: number;
+            /** Format: int32 */
+            presenceRatePct?: number;
+            /** Format: int32 */
+            absenceRatePct?: number;
+        };
+        AttendanceDashboardDto: {
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
+            /** Format: int32 */
+            classDays?: number;
+            /** Format: int32 */
+            staffCount?: number;
+            /** @enum {string} */
+            granularity?: "DAY" | "MONTH";
+            kpis?: components["schemas"]["AttendanceKpisDto"];
+            series?: components["schemas"]["AttendanceBarDto"][];
+            staff?: components["schemas"]["StaffAttendanceRowDto"][];
+        };
+        AttendanceKpisDto: {
+            /** Format: int32 */
+            scored?: number;
+            /** Format: int32 */
+            presences?: number;
+            /** Format: int32 */
+            presenceRatePct?: number;
+            /** Format: int32 */
+            absenceRatePct?: number;
+            /** Format: int32 */
+            late?: number;
+            /** Format: int32 */
+            lateRatePct?: number;
+            /** Format: int32 */
+            lateMinutes?: number;
+            /** Format: int32 */
+            punctualityPct?: number;
+            /** Format: int32 */
+            justifiedAbsences?: number;
+            /** Format: int32 */
+            unjustifiedAbsences?: number;
+            /** Format: int32 */
+            unscored?: number;
+            /** Format: int32 */
+            workedMinutes?: number;
+        };
+        StaffAttendanceIdentityDto: {
+            /** Format: uuid */
+            staffMemberId?: string;
+            staffNumber?: string;
+            lastName?: string;
+            middleName?: string;
+            firstName?: string;
+            jobTitle?: string;
+            /** @enum {string} */
+            category?: "ENSEIGNANT" | "ADMINISTRATIF" | "APPUI";
+            /** @enum {string} */
+            contractKind?: "PERMANENT" | "VACATAIRE" | "CONVENTIONNE";
+            /** @enum {string} */
+            payMode?: "HEURES_PRESTEES" | "FORFAIT_MENSUEL";
+        };
+        StaffAttendanceRowDto: {
+            /** Format: uuid */
+            staffMemberId?: string;
+            staffNumber?: string;
+            lastName?: string;
+            middleName?: string;
+            firstName?: string;
+            jobTitle?: string;
+            /** @enum {string} */
+            category?: "ENSEIGNANT" | "ADMINISTRATIF" | "APPUI";
+            /** @enum {string} */
+            contractKind?: "PERMANENT" | "VACATAIRE" | "CONVENTIONNE";
+            /** @enum {string} */
+            payMode?: "HEURES_PRESTEES" | "FORFAIT_MENSUEL";
+            /** Format: int32 */
+            scored?: number;
+            /** Format: int32 */
+            presences?: number;
+            /** Format: int32 */
+            presenceRatePct?: number;
+            /** Format: int32 */
+            absenceRatePct?: number;
+            /** Format: int32 */
+            late?: number;
+            /** Format: int32 */
+            lateRatePct?: number;
+            /** Format: int32 */
+            lateMinutes?: number;
+            /** Format: int32 */
+            punctualityPct?: number;
+            /** Format: int32 */
+            justifiedAbsences?: number;
+            /** Format: int32 */
+            unjustifiedAbsences?: number;
+            /** Format: int32 */
+            unscored?: number;
+            /** Format: int32 */
+            workedMinutes?: number;
+        };
+        AttendanceDayDto: {
+            /** Format: date */
+            date?: string;
+            /** @enum {string} */
+            status?: "NONE" | "PRESENT" | "RETARD" | "ABSENT";
+            arrivalTime?: string;
+            departureTime?: string;
+            /** Format: int32 */
+            lateMinutes?: number;
+            /** Format: int32 */
+            workedMinutes?: number;
+            /** @enum {string} */
+            justificationReason?: "MALADIE" | "TRANSPORT" | "DEUIL" | "FAMILLE" | "MISSION" | "FORMATION" | "AUTRE";
+            justificationNote?: string;
+            future?: boolean;
+        };
+        AttendanceTrendPointDto: {
+            month?: string;
+            /** Format: int32 */
+            presenceRatePct?: number;
+        };
+        StaffAttendanceMonthDto: {
+            month?: string;
+            /** Format: int32 */
+            classDays?: number;
+            toDate?: boolean;
+            agent?: components["schemas"]["StaffAttendanceIdentityDto"];
+            /** @enum {string} */
+            profile?: "NON_EVALUE" | "ABSENTEISTE" | "RETARDATAIRE" | "EXEMPLAIRE" | "REGULIER";
+            kpis?: components["schemas"]["AttendanceKpisDto"];
+            days?: components["schemas"]["AttendanceDayDto"][];
+            trend?: components["schemas"]["AttendanceTrendPointDto"][];
+        };
+        AttendanceMonthSummaryDto: {
+            month?: string;
+            /** @enum {string} */
+            state?: "CLASS" | "HOLIDAY" | "FUTURE";
+            /** Format: int32 */
+            classDays?: number;
+            /** Format: int32 */
+            scored?: number;
+            /** Format: int32 */
+            presenceRatePct?: number;
+            /** Format: int32 */
+            lateRatePct?: number;
+            /** Format: int32 */
+            absenceRatePct?: number;
+            /** @enum {string} */
+            profile?: "NON_EVALUE" | "ABSENTEISTE" | "RETARDATAIRE" | "EXEMPLAIRE" | "REGULIER";
+        };
+        SchoolYearDto: {
+            name?: string;
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
+        };
+        StaffAttendanceYearDto: {
+            schoolYear?: components["schemas"]["SchoolYearDto"];
+            agent?: components["schemas"]["StaffAttendanceIdentityDto"];
+            /** @enum {string} */
+            profile?: "NON_EVALUE" | "ABSENTEISTE" | "RETARDATAIRE" | "EXEMPLAIRE" | "REGULIER";
+            kpis?: components["schemas"]["AttendanceKpisDto"];
+            months?: components["schemas"]["AttendanceMonthSummaryDto"][];
+        };
+        AttendanceAmountDto: {
+            currency?: string;
+            /** Format: int64 */
+            amountInCents?: number;
+        };
+        AttendanceRecapAmountDto: {
+            currency?: string;
+            /** Format: int64 */
+            amountInCents?: number;
+            /** Format: int64 */
+            baseInCents?: number;
+            /** Format: int64 */
+            grossInCents?: number;
+            /** Format: int64 */
+            absenceDeductionInCents?: number;
+            /** Format: int64 */
+            grossAfterAbsenceInCents?: number;
+        };
+        AttendanceRecapDto: {
+            month?: string;
+            /** Format: int32 */
+            classDays?: number;
+            toDate?: boolean;
+            closed?: boolean;
+            /** Format: date-time */
+            closedAt?: string;
+            closedBy?: string;
+            closable?: boolean;
+            /** Format: int32 */
+            unscored?: number;
+            totals?: components["schemas"]["AttendanceRecapTotalsDto"];
+            staff?: components["schemas"]["StaffAttendanceRecapRowDto"][];
+            reopenable?: boolean;
+            absenceDeductionEnabled?: boolean;
+            /** Format: int32 */
+            workingDays?: number;
+            /** @enum {string} */
+            payrollStatus?: "NONE" | "DRAFT" | "SUBMITTED" | "VALIDATED";
+        };
+        AttendanceRecapTotalsDto: {
+            /** Format: int32 */
+            presenceRatePct?: number;
+            /** Format: int32 */
+            workedMinutes?: number;
+            /** Format: int32 */
+            unjustifiedAbsences?: number;
+            amounts?: components["schemas"]["AttendanceRecapAmountDto"][];
+        };
+        StaffAttendanceRecapRowDto: {
+            /** Format: uuid */
+            staffMemberId?: string;
+            staffNumber?: string;
+            lastName?: string;
+            middleName?: string;
+            firstName?: string;
+            jobTitle?: string;
+            /** @enum {string} */
+            category?: "ENSEIGNANT" | "ADMINISTRATIF" | "APPUI";
+            /** @enum {string} */
+            contractKind?: "PERMANENT" | "VACATAIRE" | "CONVENTIONNE";
+            /** @enum {string} */
+            payMode?: "HEURES_PRESTEES" | "FORFAIT_MENSUEL";
+            /** Format: int32 */
+            classDays?: number;
+            /** Format: int32 */
+            presences?: number;
+            /** Format: int32 */
+            late?: number;
+            /** Format: int32 */
+            lateMinutes?: number;
+            /** Format: int32 */
+            justifiedAbsences?: number;
+            /** Format: int32 */
+            unjustifiedAbsences?: number;
+            /** Format: int32 */
+            unscored?: number;
+            /** Format: int32 */
+            workedMinutes?: number;
+            amount?: components["schemas"]["AttendanceAmountDto"];
+            currency?: string;
+            /** Format: int64 */
+            baseInCents?: number;
+            /** Format: int64 */
+            grossInCents?: number;
+            /** Format: int64 */
+            dailyRateInCents?: number;
+            /** Format: int64 */
+            absenceDeductionInCents?: number;
+            /** Format: int64 */
+            grossAfterAbsenceInCents?: number;
+            /** Format: int64 */
+            hourlyRateInCents?: number;
+        };
+        AttendanceProfilesDto: {
+            month?: string;
+            schoolYear?: components["schemas"]["SchoolYearDto"];
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
+            /** Format: int32 */
+            classDays?: number;
+            profileCounts?: {
+                [key: string]: number;
+            };
+            staff?: components["schemas"]["StaffAttendanceProfileRowDto"][];
+        };
+        StaffAttendanceProfileRowDto: {
+            /** Format: uuid */
+            staffMemberId?: string;
+            staffNumber?: string;
+            lastName?: string;
+            middleName?: string;
+            firstName?: string;
+            jobTitle?: string;
+            /** @enum {string} */
+            category?: "ENSEIGNANT" | "ADMINISTRATIF" | "APPUI";
+            /** @enum {string} */
+            contractKind?: "PERMANENT" | "VACATAIRE" | "CONVENTIONNE";
+            /** @enum {string} */
+            payMode?: "HEURES_PRESTEES" | "FORFAIT_MENSUEL";
+            /** Format: int32 */
+            scored?: number;
+            /** Format: int32 */
+            presenceRatePct?: number;
+            /** Format: int32 */
+            lateRatePct?: number;
+            /** Format: int32 */
+            absenceRatePct?: number;
+            /** @enum {string} */
+            profile?: "NON_EVALUE" | "ABSENTEISTE" | "RETARDATAIRE" | "EXEMPLAIRE" | "REGULIER";
         };
         PaymentAllocationDto: {
             /** Format: uuid */
@@ -9805,9 +11055,9 @@ export interface components {
             empty?: boolean;
         };
         PageableObject: {
+            unpaged?: boolean;
             /** Format: int32 */
             pageNumber?: number;
-            unpaged?: boolean;
             paged?: boolean;
             /** Format: int32 */
             pageSize?: number;
@@ -10105,6 +11355,101 @@ export interface components {
             /** Format: int32 */
             saleCount?: number;
         };
+        BoutiqueAmountDto: {
+            /** Format: int64 */
+            amount?: number;
+            currency?: string;
+        };
+        BoutiqueStatsDto: {
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
+            timeZone?: string;
+            /** @enum {string} */
+            granularity?: "DAY" | "HOUR";
+            /** Format: int32 */
+            saleCount?: number;
+            /** Format: int32 */
+            previousSaleCount?: number;
+            /** Format: int64 */
+            articleCount?: number;
+            /** Format: int64 */
+            previousArticleCount?: number;
+            byCurrency?: components["schemas"]["CurrencySalesDto"][];
+            topArticles?: components["schemas"]["TopArticleDto"][];
+        };
+        CurrencySalesDto: {
+            currency?: string;
+            /** Format: int64 */
+            revenue?: number;
+            /** Format: int64 */
+            previousRevenue?: number;
+            /** Format: int32 */
+            saleCount?: number;
+            /** Format: int32 */
+            previousSaleCount?: number;
+            buckets?: components["schemas"]["SalesBucketDto"][];
+            families?: components["schemas"]["FamilySalesDto"][];
+        };
+        FamilySalesDto: {
+            /** @enum {string} */
+            family?: "UNIFORME" | "FOURNITURES" | "ACTIVITES" | "ACTES";
+            /** Format: int64 */
+            amount?: number;
+            /** Format: int64 */
+            quantity?: number;
+        };
+        SalesBucketDto: {
+            key?: string;
+            /** Format: int64 */
+            total?: number;
+        };
+        TopArticleDto: {
+            /** Format: uuid */
+            articleId?: string;
+            label?: string;
+            /** @enum {string} */
+            family?: "UNIFORME" | "FOURNITURES" | "ACTIVITES" | "ACTES";
+            /** Format: int64 */
+            quantity?: number;
+            amounts?: components["schemas"]["BoutiqueAmountDto"][];
+        };
+        BeneficiaryClassDto: {
+            /** Format: uuid */
+            id?: string;
+            label?: string;
+        };
+        SaleBeneficiaryDto: {
+            /** Format: uuid */
+            studentId?: string;
+            fullName?: string;
+            /** Format: uuid */
+            classId?: string;
+            classLabel?: string;
+        };
+        SalePageDto: {
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            classes?: components["schemas"]["BeneficiaryClassDto"][];
+            items?: components["schemas"]["SaleRowDto"][];
+        };
+        SaleRowDto: {
+            /** Format: uuid */
+            saleId?: string;
+            /** Format: date-time */
+            soldAt?: string;
+            receiptNumber?: string;
+            amounts?: components["schemas"]["BoutiqueAmountDto"][];
+            /** Format: int64 */
+            articleCount?: number;
+            beneficiaries?: components["schemas"]["SaleBeneficiaryDto"][];
+            payerName?: string;
+        };
         BoutiqueSaleAnomalyDto: {
             /** Format: uuid */
             id?: string;
@@ -10120,6 +11465,40 @@ export interface components {
             detail?: string;
             /** Format: date-time */
             detectedAt?: string;
+        };
+        BeneficiaryArticleDto: {
+            /** Format: uuid */
+            articleId?: string;
+            label?: string;
+            /** @enum {string} */
+            family?: "UNIFORME" | "FOURNITURES" | "ACTIVITES" | "ACTES";
+            /** Format: int64 */
+            quantity?: number;
+            sizes?: string[];
+        };
+        BeneficiaryDto: {
+            /** Format: uuid */
+            studentId?: string;
+            fullName?: string;
+            /** Format: uuid */
+            classId?: string;
+            classLabel?: string;
+            /** Format: date-time */
+            lastPurchaseAt?: string;
+            amounts?: components["schemas"]["BoutiqueAmountDto"][];
+            articles?: components["schemas"]["BeneficiaryArticleDto"][];
+        };
+        BeneficiaryPageDto: {
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            classes?: components["schemas"]["BeneficiaryClassDto"][];
+            /** Format: int64 */
+            walkInLineCount?: number;
+            items?: components["schemas"]["BeneficiaryDto"][];
         };
         BootstrapResponseDto: {
             academicYear?: components["schemas"]["AcademicYearSummaryDto"];
@@ -10240,22 +11619,6 @@ export interface components {
             /** Format: int32 */
             currentBucketIndex?: number;
             buckets?: components["schemas"]["AttendanceEvolutionBucketDto"][];
-        };
-        AttendanceKpisDto: {
-            /** Format: double */
-            presenceRate?: number;
-            /** Format: double */
-            justifiedAbsenceRate?: number;
-            /** Format: double */
-            unjustifiedAbsenceRate?: number;
-            /** Format: int64 */
-            recordedDays?: number;
-            /** Format: int64 */
-            presentDays?: number;
-            /** Format: int64 */
-            justifiedAbsenceDays?: number;
-            /** Format: int64 */
-            unjustifiedAbsenceDays?: number;
         };
         AttendanceStatsResponse: {
             context?: components["schemas"]["StatsContextDto"];
@@ -10684,6 +12047,9 @@ export interface components {
             /** Format: date-time */
             createdAt?: string;
         };
+        ParentPushUnsubscribeRequest: {
+            endpoint: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -11106,6 +12472,32 @@ export interface operations {
             };
         };
     };
+    setReceiptEditionNumbering: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReceiptEditionNumberingDto"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ReceiptEditionNumberingDto"];
+                };
+            };
+        };
+    };
     clotureSousPeriode: {
         parameters: {
             query?: never;
@@ -11288,6 +12680,52 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["SetEmergencyContactRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    subscribe: {
+        parameters: {
+            query?: never;
+            header?: {
+                "User-Agent"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ParentPushSubscriptionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    unsubscribe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ParentPushUnsubscribeRequest"];
             };
         };
         responses: {
@@ -12389,6 +13827,30 @@ export interface operations {
             };
         };
     };
+    submitPayout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PayrollPayoutSyncRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PayrollPayoutSyncResponse"];
+                };
+            };
+        };
+    };
     perform_1: {
         parameters: {
             query?: never;
@@ -12480,6 +13942,53 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["PayrollDisbursementDelta"];
+                };
+            };
+        };
+    };
+    pullArrearPriorities: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["KeysetPagePayrollArrearPriorityDelta"];
+                };
+            };
+        };
+    };
+    submitArrearPriority: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PayrollArrearPrioritySyncRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PayrollArrearPrioritySyncResponse"];
                 };
             };
         };
@@ -13816,6 +15325,29 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ParentJustificationDto"];
+                };
+            };
+        };
+    };
+    markRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+                announcementItemId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentAnnouncementReadResult"];
                 };
             };
         };
@@ -16399,7 +17931,9 @@ export interface operations {
     };
     timetable: {
         parameters: {
-            query?: never;
+            query?: {
+                week?: string;
+            };
             header?: never;
             path: {
                 childId: string;
@@ -16900,6 +18434,51 @@ export interface operations {
             };
         };
     };
+    announcements: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentAnnouncementListResponse"];
+                };
+            };
+        };
+    };
+    announcement: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                childId: string;
+                announcementItemId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ParentAnnouncementDto"];
+                };
+            };
+        };
+    };
     academicYears: {
         parameters: {
             query?: never;
@@ -16962,6 +18541,76 @@ export interface operations {
             };
         };
     };
+    stats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StaffStatsDto"];
+                };
+            };
+        };
+    };
+    members: {
+        parameters: {
+            query: {
+                q?: string;
+                category?: "ENSEIGNANT" | "ADMINISTRATIF" | "APPUI";
+                sort: "NAME" | "NAME_DESC" | "OLDEST" | "NEWEST";
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StaffMemberPageDto"];
+                };
+            };
+        };
+    };
+    membersReport: {
+        parameters: {
+            query: {
+                q?: string;
+                category?: "ENSEIGNANT" | "ADMINISTRATIF" | "APPUI";
+                sort: "NAME" | "NAME_DESC" | "OLDEST" | "NEWEST";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
     content: {
         parameters: {
             query?: never;
@@ -16982,6 +18631,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": string;
+                };
+            };
+        };
+    };
+    statement_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                month: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
                 };
             };
         };
@@ -17008,6 +18679,29 @@ export interface operations {
             };
         };
     };
+    payslipPreview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                month: string;
+                staffMemberId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
     payslip: {
         parameters: {
             query?: never;
@@ -17027,6 +18721,288 @@ export interface operations {
                 };
                 content: {
                     "*/*": string;
+                };
+            };
+        };
+    };
+    payslips: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                month: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    dashboard: {
+        parameters: {
+            query?: {
+                filter?: "ALL" | "OUTSTANDING" | "SETTLED";
+                q?: string;
+            };
+            header?: never;
+            path: {
+                month: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PayrollDashboardResponse"];
+                };
+            };
+        };
+    };
+    situation: {
+        parameters: {
+            query?: {
+                filter?: "ALL" | "OUTSTANDING" | "SETTLED";
+                q?: string;
+            };
+            header?: never;
+            path: {
+                month: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    dashboard_1: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AttendanceDashboardDto"];
+                };
+            };
+        };
+    };
+    agentMonth: {
+        parameters: {
+            query: {
+                month: string;
+            };
+            header?: never;
+            path: {
+                staffMemberId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StaffAttendanceMonthDto"];
+                };
+            };
+        };
+    };
+    agentYear: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                staffMemberId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StaffAttendanceYearDto"];
+                };
+            };
+        };
+    };
+    agentYearSheet: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                staffMemberId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    agentMonthSheet: {
+        parameters: {
+            query: {
+                month: string;
+            };
+            header?: never;
+            path: {
+                staffMemberId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    recap: {
+        parameters: {
+            query: {
+                month: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AttendanceRecapDto"];
+                };
+            };
+        };
+    };
+    profiles: {
+        parameters: {
+            query?: {
+                month?: string;
+                scope?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AttendanceProfilesDto"];
+                };
+            };
+        };
+    };
+    profilesReport: {
+        parameters: {
+            query?: {
+                month?: string;
+                scope?: string;
+                q?: string;
+                category?: string;
+                profile?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    dashboardReport: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
                 };
             };
         };
@@ -17767,6 +19743,58 @@ export interface operations {
             };
         };
     };
+    stats_1: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                academicYearId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BoutiqueStatsDto"];
+                };
+            };
+        };
+    };
+    sales: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                academicYearId: string;
+                family?: "UNIFORME" | "FOURNITURES" | "ACTIVITES" | "ACTES";
+                classId?: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SalePageDto"];
+                };
+            };
+        };
+    };
     anomalies: {
         parameters: {
             query?: {
@@ -17785,6 +19813,61 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["BoutiqueSaleAnomalyDto"][];
+                };
+            };
+        };
+    };
+    salesReport: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                academicYearId: string;
+                family?: "UNIFORME" | "FOURNITURES" | "ACTIVITES" | "ACTES";
+                classId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+        };
+    };
+    beneficiaries: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                academicYearId: string;
+                articleId?: string;
+                classId?: string;
+                q?: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BeneficiaryPageDto"];
                 };
             };
         };

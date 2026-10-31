@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://api-staging.eteeloconnect.com",
+      "url": "https://api-staging.eteeloconnect.com",
       "description": "Generated server url"
     }
   ],
@@ -674,6 +674,47 @@
         }
       }
     },
+    "/api/v1/schools/{id}/receipt-edition-numbering": {
+      "put": {
+        "tags": [
+          "school-controller"
+        ],
+        "operationId": "setReceiptEditionNumbering",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReceiptEditionNumberingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptEditionNumberingDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/school/sous-periodes/{id}/cloturer": {
       "put": {
         "tags": [
@@ -970,6 +1011,60 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/SetEmergencyContactRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/parent/push-subscriptions": {
+      "put": {
+        "tags": [
+          "parent-push-subscription-controller"
+        ],
+        "operationId": "subscribe",
+        "parameters": [
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParentPushSubscriptionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "parent-push-subscription-controller"
+        ],
+        "operationId": "unsubscribe",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParentPushUnsubscribeRequest"
               }
             }
           },
@@ -2568,6 +2663,36 @@
         }
       }
     },
+    "/api/v1/sync/payroll-payouts": {
+      "post": {
+        "tags": [
+          "payroll-sync-controller"
+        ],
+        "operationId": "submitPayout",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollPayoutSyncRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayrollPayoutSyncResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/sync/payroll-gestures": {
       "post": {
         "tags": [
@@ -2688,6 +2813,73 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/PayrollDisbursementDelta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sync/payroll-arrear-priorities": {
+      "get": {
+        "tags": [
+          "payroll-sync-controller"
+        ],
+        "operationId": "pullArrearPriorities",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeysetPagePayrollArrearPriorityDelta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "payroll-sync-controller"
+        ],
+        "operationId": "submitArrearPriority",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollArrearPrioritySyncRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayrollArrearPrioritySyncResponse"
                 }
               }
             }
@@ -4778,6 +4970,46 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ParentJustificationDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/parent/children/{childId}/announcements/{announcementItemId}/read": {
+      "post": {
+        "tags": [
+          "parent-announcement-controller"
+        ],
+        "operationId": "markRead",
+        "parameters": [
+          {
+            "name": "childId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "announcementItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParentAnnouncementReadResult"
                 }
               }
             }
@@ -8726,6 +8958,15 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "name": "week",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
           }
         ],
         "responses": {
@@ -9634,6 +9875,77 @@
         }
       }
     },
+    "/api/v1/parent/children/{childId}/announcements": {
+      "get": {
+        "tags": [
+          "parent-announcement-controller"
+        ],
+        "operationId": "announcements",
+        "parameters": [
+          {
+            "name": "childId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParentAnnouncementListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/parent/children/{childId}/announcements/{announcementItemId}": {
+      "get": {
+        "tags": [
+          "parent-announcement-controller"
+        ],
+        "operationId": "announcement",
+        "parameters": [
+          {
+            "name": "childId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "announcementItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParentAnnouncementDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/parent/children/{childId}/academic-years": {
       "get": {
         "tags": [
@@ -9708,6 +10020,161 @@
         }
       }
     },
+    "/api/v1/hr/staff-stats": {
+      "get": {
+        "tags": [
+          "staff-dashboard-controller"
+        ],
+        "operationId": "stats",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffStatsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/staff-stats/members": {
+      "get": {
+        "tags": [
+          "staff-dashboard-controller"
+        ],
+        "operationId": "members",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ENSEIGNANT",
+                "ADMINISTRATIF",
+                "APPUI"
+              ]
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NAME",
+                "NAME_DESC",
+                "OLDEST",
+                "NEWEST"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffMemberPageDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/staff-stats/members.pdf": {
+      "get": {
+        "tags": [
+          "staff-dashboard-controller"
+        ],
+        "operationId": "membersReport",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ENSEIGNANT",
+                "ADMINISTRATIF",
+                "APPUI"
+              ]
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NAME",
+                "NAME_DESC",
+                "OLDEST",
+                "NEWEST"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/hr/staff-documents/{documentId}/content": {
       "get": {
         "tags": [
@@ -9748,6 +10215,37 @@
         }
       }
     },
+    "/api/v1/hr/payrolls/{month}/statement.pdf": {
+      "get": {
+        "tags": [
+          "payroll-controller"
+        ],
+        "operationId": "statement_1",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/hr/payrolls/{month}/preview": {
       "get": {
         "tags": [
@@ -9771,6 +10269,46 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/PayrollPreviewResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/payrolls/{month}/payslips/{staffMemberId}/preview.pdf": {
+      "get": {
+        "tags": [
+          "payroll-controller"
+        ],
+        "operationId": "payslipPreview",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "staffMemberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
                 }
               }
             }
@@ -9808,6 +10346,500 @@
             "description": "OK",
             "content": {
               "*/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/payrolls/{month}/payslips.pdf": {
+      "get": {
+        "tags": [
+          "payroll-controller"
+        ],
+        "operationId": "payslips",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/payrolls/{month}/dashboard": {
+      "get": {
+        "tags": [
+          "payroll-controller"
+        ],
+        "operationId": "dashboard",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "ALL",
+              "enum": [
+                "ALL",
+                "OUTSTANDING",
+                "SETTLED"
+              ]
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayrollDashboardResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/payrolls/{month}/dashboard.pdf": {
+      "get": {
+        "tags": [
+          "payroll-controller"
+        ],
+        "operationId": "situation",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "ALL",
+              "enum": [
+                "ALL",
+                "OUTSTANDING",
+                "SETTLED"
+              ]
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/attendance-stats": {
+      "get": {
+        "tags": [
+          "staff-attendance-stats-controller"
+        ],
+        "operationId": "dashboard_1",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttendanceDashboardDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/attendance-stats/staff/{staffMemberId}": {
+      "get": {
+        "tags": [
+          "staff-attendance-stats-controller"
+        ],
+        "operationId": "agentMonth",
+        "parameters": [
+          {
+            "name": "staffMemberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffAttendanceMonthDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/attendance-stats/staff/{staffMemberId}/year": {
+      "get": {
+        "tags": [
+          "staff-attendance-stats-controller"
+        ],
+        "operationId": "agentYear",
+        "parameters": [
+          {
+            "name": "staffMemberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffAttendanceYearDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/attendance-stats/staff/{staffMemberId}/year.pdf": {
+      "get": {
+        "tags": [
+          "staff-attendance-stats-controller"
+        ],
+        "operationId": "agentYearSheet",
+        "parameters": [
+          {
+            "name": "staffMemberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/attendance-stats/staff/{staffMemberId}.pdf": {
+      "get": {
+        "tags": [
+          "staff-attendance-stats-controller"
+        ],
+        "operationId": "agentMonthSheet",
+        "parameters": [
+          {
+            "name": "staffMemberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/attendance-stats/recap": {
+      "get": {
+        "tags": [
+          "staff-attendance-stats-controller"
+        ],
+        "operationId": "recap",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttendanceRecapDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/attendance-stats/profiles": {
+      "get": {
+        "tags": [
+          "staff-attendance-stats-controller"
+        ],
+        "operationId": "profiles",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttendanceProfilesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/attendance-stats/profiles.pdf": {
+      "get": {
+        "tags": [
+          "staff-attendance-stats-controller"
+        ],
+        "operationId": "profilesReport",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "profile",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hr/attendance-stats.pdf": {
+      "get": {
+        "tags": [
+          "staff-attendance-stats-controller"
+        ],
+        "operationId": "dashboardReport",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
                 "schema": {
                   "type": "string",
                   "format": "byte"
@@ -11421,6 +12453,143 @@
         }
       }
     },
+    "/api/v1/boutique/stats": {
+      "get": {
+        "tags": [
+          "boutique-stats-controller"
+        ],
+        "operationId": "stats_1",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "academicYearId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoutiqueStatsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/boutique/sales": {
+      "get": {
+        "tags": [
+          "boutique-sale-controller"
+        ],
+        "operationId": "sales",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "academicYearId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "family",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "UNIFORME",
+                "FOURNITURES",
+                "ACTIVITES",
+                "ACTES"
+              ]
+            }
+          },
+          {
+            "name": "classId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SalePageDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/boutique/sales/anomalies": {
       "get": {
         "tags": [
@@ -11448,6 +12617,170 @@
                   "items": {
                     "$ref": "#/components/schemas/BoutiqueSaleAnomalyDto"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/boutique/sales.pdf": {
+      "get": {
+        "tags": [
+          "boutique-sale-controller"
+        ],
+        "operationId": "salesReport",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "academicYearId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "family",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "UNIFORME",
+                "FOURNITURES",
+                "ACTIVITES",
+                "ACTES"
+              ]
+            }
+          },
+          {
+            "name": "classId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/boutique/beneficiaries": {
+      "get": {
+        "tags": [
+          "boutique-beneficiary-controller"
+        ],
+        "operationId": "beneficiaries",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "academicYearId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "articleId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "classId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BeneficiaryPageDto"
                 }
               }
             }
@@ -13165,6 +14498,14 @@
           "overtimeRateStepInCents": {
             "type": "integer",
             "format": "int64"
+          },
+          "iprFlatInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cnssPermille": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "required": [
@@ -13181,6 +14522,13 @@
           "overtimeMultiplierPermille": {
             "type": "integer",
             "format": "int32"
+          },
+          "workDaysDivisor": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absenceDeductionEnabled": {
+            "type": "boolean"
           },
           "allowanceEligibleKinds": {
             "type": "array",
@@ -13203,6 +14551,38 @@
           "clientUpdatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "cnssEmployerPermille": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inppPermille": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "onemPermille": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "advanceMaxPercent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loanMaxMonths": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "childcareEnabled": {
+            "type": "boolean"
+          },
+          "signatureBeneficiaryLabel": {
+            "type": "string"
+          },
+          "signatureDirectorLabel": {
+            "type": "string"
+          },
+          "signatureCashierLabel": {
+            "type": "string"
           }
         },
         "required": [
@@ -13244,6 +14624,14 @@
           "overtimeRateStepInCents": {
             "type": "integer",
             "format": "int64"
+          },
+          "iprFlatInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cnssPermille": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -13258,6 +14646,13 @@
             "type": "integer",
             "format": "int32"
           },
+          "workDaysDivisor": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absenceDeductionEnabled": {
+            "type": "boolean"
+          },
           "allowanceEligibleKinds": {
             "type": "array",
             "items": {
@@ -13269,6 +14664,38 @@
             "items": {
               "$ref": "#/components/schemas/PayrollCurrencyRuleDto"
             }
+          },
+          "cnssEmployerPermille": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inppPermille": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "onemPermille": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "advanceMaxPercent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loanMaxMonths": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "childcareEnabled": {
+            "type": "boolean"
+          },
+          "signatureBeneficiaryLabel": {
+            "type": "string"
+          },
+          "signatureDirectorLabel": {
+            "type": "string"
+          },
+          "signatureCashierLabel": {
+            "type": "string"
           }
         }
       },
@@ -14186,6 +15613,17 @@
           "phone"
         ]
       },
+      "ReceiptEditionNumberingDto": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ]
+      },
       "PeriodeClotureResponse": {
         "type": "object",
         "properties": {
@@ -14372,6 +15810,43 @@
             "format": "uuid"
           }
         }
+      },
+      "Keys": {
+        "type": "object",
+        "properties": {
+          "p256dh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "auth": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "auth",
+          "p256dh"
+        ]
+      },
+      "ParentPushSubscriptionRequest": {
+        "type": "object",
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expirationTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "keys": {
+            "$ref": "#/components/schemas/Keys"
+          }
+        },
+        "required": [
+          "endpoint",
+          "keys"
+        ]
       },
       "CreateFeeTariffCommand": {
         "type": "object",
@@ -15179,7 +16654,8 @@
             "items": {
               "type": "string",
               "enum": [
-                "WHATSAPP"
+                "WHATSAPP",
+                "PORTAL"
               ]
             }
           }
@@ -15223,7 +16699,8 @@
             "items": {
               "type": "string",
               "enum": [
-                "WHATSAPP"
+                "WHATSAPP",
+                "PORTAL"
               ]
             }
           },
@@ -16010,6 +17487,11 @@
             "maxLength": 80,
             "minLength": 0
           },
+          "grade": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 0
+          },
           "entryDate": {
             "type": "string",
             "format": "date"
@@ -16157,6 +17639,9 @@
             ]
           },
           "jobTitle": {
+            "type": "string"
+          },
+          "grade": {
             "type": "string"
           },
           "entryDate": {
@@ -16709,7 +18194,8 @@
             "enum": [
               "VALIDATE_DAY",
               "REOPEN_DAY",
-              "CLOSE_MONTH"
+              "CLOSE_MONTH",
+              "REOPEN_MONTH"
             ]
           },
           "date": {
@@ -16723,6 +18209,11 @@
           "authorId": {
             "type": "string",
             "format": "uuid"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0
           }
         },
         "required": [
@@ -16803,7 +18294,7 @@
           "installments": {
             "type": "integer",
             "format": "int32",
-            "maximum": 4,
+            "maximum": 12,
             "minimum": 1
           },
           "firstMonth": {
@@ -16952,6 +18443,16 @@
             "type": "string",
             "format": "date-time"
           },
+          "expenseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "debtAcknowledged": {
+            "type": "boolean"
+          },
           "cancelledAt": {
             "type": "string",
             "format": "date-time"
@@ -17060,6 +18561,29 @@
             "maximum": 20,
             "minimum": 0
           },
+          "daysWorked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "childcareInCents": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "fixedPayoutInCents": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "fixedPayoutReason": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 0
+          },
+          "formulaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
           "clientUpdatedAt": {
             "type": "string",
             "format": "date-time"
@@ -17106,6 +18630,17 @@
             "type": "integer",
             "format": "int32"
           },
+          "childcareInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fixedPayoutInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fixedPayoutReason": {
+            "type": "string"
+          },
           "clientUpdatedAt": {
             "type": "string",
             "format": "date-time"
@@ -17143,6 +18678,84 @@
           }
         }
       },
+      "PayrollPayoutInput": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "percent": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 100,
+            "minimum": 0
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 0
+          },
+          "clientUpdatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "clientUpdatedAt",
+          "month"
+        ]
+      },
+      "PayrollPayoutSyncRequest": {
+        "type": "object",
+        "properties": {
+          "payout": {
+            "$ref": "#/components/schemas/PayrollPayoutInput"
+          },
+          "authorId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "authorId",
+          "payout"
+        ]
+      },
+      "PayrollPayoutSyncResponse": {
+        "type": "object",
+        "properties": {
+          "payrollId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "SUBMITTED",
+              "VALIDATED"
+            ]
+          },
+          "percent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "clientUpdatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lwwOutcome": {
+            "type": "string",
+            "enum": [
+              "APPLIED",
+              "SUPERSEDED"
+            ]
+          }
+        }
+      },
       "CurrencyTotal": {
         "type": "object",
         "properties": {
@@ -17153,11 +18766,19 @@
             "type": "integer",
             "format": "int64"
           },
+          "deductionInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
           "advanceInCents": {
             "type": "integer",
             "format": "int64"
           },
           "netInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "toPayInCents": {
             "type": "integer",
             "format": "int64"
           }
@@ -17166,6 +18787,10 @@
       "PayrollFingerprint": {
         "type": "object",
         "properties": {
+          "formulaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
           "lineCount": {
             "type": "integer",
             "format": "int32"
@@ -17318,6 +18943,43 @@
           }
         }
       },
+      "Deductions": {
+        "type": "object",
+        "properties": {
+          "daysWorked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "workDaysDivisor": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unjustifiedAbsences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absenceInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "iprInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cnssInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "childcareInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalInCents": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "Overtime": {
         "type": "object",
         "properties": {
@@ -17330,6 +18992,30 @@
             "format": "int64"
           },
           "amountInCents": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Payout": {
+        "type": "object",
+        "properties": {
+          "percent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fixedInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "toPayInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "deferredInCents": {
             "type": "integer",
             "format": "int64"
           }
@@ -17373,6 +19059,17 @@
           },
           "returnReason": {
             "type": "string"
+          },
+          "payoutPercent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "payoutReason": {
+            "type": "string"
+          },
+          "payoutClientUpdatedAt": {
+            "type": "string",
+            "format": "date-time"
           },
           "variables": {
             "type": "array",
@@ -17441,6 +19138,10 @@
       "PayrollLineDto": {
         "type": "object",
         "properties": {
+          "formulaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
           "staffMemberId": {
             "type": "string",
             "format": "uuid"
@@ -17480,6 +19181,9 @@
             "type": "integer",
             "format": "int64"
           },
+          "deductions": {
+            "$ref": "#/components/schemas/Deductions"
+          },
           "advances": {
             "type": "array",
             "items": {
@@ -17493,6 +19197,9 @@
           "netInCents": {
             "type": "integer",
             "format": "int64"
+          },
+          "payout": {
+            "$ref": "#/components/schemas/Payout"
           },
           "attendance": {
             "$ref": "#/components/schemas/Attendance"
@@ -17684,6 +19391,92 @@
           "serverUpdatedAt": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "PayrollArrearPriorityInput": {
+        "type": "object",
+        "properties": {
+          "staffMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "month": {
+            "type": "string"
+          },
+          "prioritized": {
+            "type": "boolean"
+          },
+          "clientUpdatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "clientUpdatedAt",
+          "month",
+          "staffMemberId"
+        ]
+      },
+      "PayrollArrearPrioritySyncRequest": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "$ref": "#/components/schemas/PayrollArrearPriorityInput"
+          },
+          "authorId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "authorId",
+          "priority"
+        ]
+      },
+      "PayrollArrearPriorityDelta": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "staffMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "month": {
+            "type": "string"
+          },
+          "prioritized": {
+            "type": "boolean"
+          },
+          "clientUpdatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "serverUpdatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PayrollArrearPrioritySyncResponse": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "$ref": "#/components/schemas/PayrollArrearPriorityDelta"
+          },
+          "lwwOutcome": {
+            "type": "string",
+            "enum": [
+              "APPLIED",
+              "SUPERSEDED"
+            ]
           }
         }
       },
@@ -17950,6 +19743,17 @@
           },
           "url": {
             "type": "string"
+          },
+          "emittedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "verificationUrl": {
+            "type": "string"
+          },
+          "edition": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -18273,6 +20077,9 @@
               "MOBILE_MONEY"
             ]
           },
+          "staffAdvance": {
+            "$ref": "#/components/schemas/ExpenseStaffAdvance"
+          },
           "clientUpdatedAt": {
             "type": "string",
             "format": "date-time"
@@ -18286,6 +20093,41 @@
           "id",
           "title",
           "typeId"
+        ]
+      },
+      "ExpenseStaffAdvance": {
+        "type": "object",
+        "properties": {
+          "staffMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nature": {
+            "type": "string",
+            "enum": [
+              "ADVANCE",
+              "LOAN"
+            ]
+          },
+          "installments": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 16,
+            "minLength": 0
+          },
+          "reasonDetail": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "nature",
+          "reason",
+          "staffMemberId"
         ]
       },
       "ExpenseSyncRequest": {
@@ -18359,6 +20201,9 @@
               "BANK",
               "MOBILE_MONEY"
             ]
+          },
+          "staffAdvance": {
+            "$ref": "#/components/schemas/ExpenseStaffAdvance"
           },
           "decidedById": {
             "type": "string",
@@ -18465,6 +20310,25 @@
           }
         }
       },
+      "ExpenseAdvancePayment": {
+        "type": "object",
+        "properties": {
+          "firstMonth": {
+            "type": "string"
+          },
+          "debtAcknowledged": {
+            "type": "boolean"
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "firstMonth"
+        ]
+      },
       "ExpenseGestureRequest": {
         "type": "object",
         "properties": {
@@ -18485,6 +20349,9 @@
           "expectedClientUpdatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "advance": {
+            "$ref": "#/components/schemas/ExpenseAdvancePayment"
           },
           "authorId": {
             "type": "string",
@@ -21782,6 +23649,51 @@
           }
         }
       },
+      "ParentAnnouncementDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "announcementId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "category": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "mentionsBalance": {
+            "type": "boolean"
+          },
+          "sentAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ParentAnnouncementReadResult": {
+        "type": "object",
+        "properties": {
+          "announcement": {
+            "$ref": "#/components/schemas/ParentAnnouncementDto"
+          },
+          "unreadAnnouncements": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "OpenParentSessionRequest": {
         "type": "object",
         "properties": {
@@ -21815,6 +23727,9 @@
           },
           "phoneNumber": {
             "type": "string"
+          },
+          "returnPath": {
+            "type": "string"
           }
         }
       },
@@ -21824,6 +23739,9 @@
           "phoneNumber": {
             "type": "string",
             "minLength": 1
+          },
+          "returnPath": {
+            "type": "string"
           }
         },
         "required": [
@@ -22497,7 +24415,14 @@
               "RFH",
               "SE",
               "CE",
-              "FI"
+              "FI",
+              "VB",
+              "LP",
+              "AP",
+              "EP",
+              "SP",
+              "FP",
+              "PR"
             ]
           },
           "documentNumber": {
@@ -22523,6 +24448,10 @@
           },
           "cancellationReason": {
             "type": "string"
+          },
+          "edition": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -23247,7 +25176,8 @@
             "items": {
               "type": "string",
               "enum": [
-                "WHATSAPP"
+                "WHATSAPP",
+                "PORTAL"
               ]
             }
           }
@@ -23708,7 +25638,14 @@
               "RFH",
               "SE",
               "CE",
-              "FI"
+              "FI",
+              "VB",
+              "LP",
+              "AP",
+              "EP",
+              "SP",
+              "FP",
+              "PR"
             ]
           },
           "number": {
@@ -24916,6 +26853,37 @@
           }
         }
       },
+      "KeysetPagePayrollArrearPriorityDelta": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PayrollArrearPriorityDelta"
+            }
+          },
+          "nextCursor": {
+            "type": "string"
+          },
+          "nextWatermark": {
+            "type": "string"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serverTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
       "Allocation": {
         "type": "object",
         "properties": {
@@ -25532,7 +27500,14 @@
               "RFH",
               "SE",
               "CE",
-              "FI"
+              "FI",
+              "VB",
+              "LP",
+              "AP",
+              "EP",
+              "SP",
+              "FP",
+              "PR"
             ]
           },
           "documentNumber": {
@@ -25560,6 +27535,14 @@
           "supersedesNumber": {
             "type": "string"
           },
+          "edition": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "supersedesDocumentId": {
+            "type": "string",
+            "format": "uuid"
+          },
           "cancelledAt": {
             "type": "string",
             "format": "date-time"
@@ -25570,6 +27553,9 @@
           "serverUpdatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "verificationUrl": {
+            "type": "string"
           }
         }
       },
@@ -26871,24 +28857,153 @@
           }
         }
       },
-      "ParentTimeSlotDto": {
+      "Break": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ParentTimetableItemDto"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "Course": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ParentTimetableItemDto"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "durationMinutes": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "subjectCode": {
+                "type": "string"
+              },
+              "subjectLabel": {
+                "type": "string"
+              },
+              "teacherLabel": {
+                "type": "string"
+              },
+              "room": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "SCHEDULED",
+                  "CANCELLED",
+                  "CHANGED"
+                ]
+              },
+              "cancelReason": {
+                "type": "string"
+              },
+              "substituteTeacherLabel": {
+                "type": "string"
+              },
+              "newRoom": {
+                "type": "string"
+              },
+              "evaluation": {
+                "$ref": "#/components/schemas/Evaluation"
+              }
+            }
+          }
+        ]
+      },
+      "Evaluation": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid"
           },
-          "order": {
+          "type": {
+            "type": "string"
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ParentTimetableDayDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "SCHOOL_DAY",
+              "WEEKEND",
+              "HOLIDAY",
+              "NOT_PUBLISHED"
+            ]
+          },
+          "holidayLabel": {
+            "type": "string"
+          },
+          "nextSchoolDay": {
+            "type": "string",
+            "format": "date"
+          },
+          "courseCount": {
             "type": "integer",
             "format": "int32"
           },
-          "startTime": {
+          "firstStart": {
             "type": "string"
           },
-          "endTime": {
+          "lastEnd": {
             "type": "string"
           },
-          "label": {
+          "examCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/Break"
+                },
+                {
+                  "$ref": "#/components/schemas/Course"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ParentTimetableItemDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
             "type": "string"
           }
         }
@@ -26896,48 +29011,50 @@
       "ParentTimetableResponse": {
         "type": "object",
         "properties": {
-          "classroomId": {
+          "today": {
             "type": "string",
-            "format": "uuid"
+            "format": "date"
+          },
+          "serverTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "weekStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "window": {
+            "$ref": "#/components/schemas/Window"
+          },
+          "newTimetableFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "courseCount": {
+            "type": "integer",
+            "format": "int32"
           },
           "days": {
             "type": "array",
             "items": {
-              "type": "string"
-            }
-          },
-          "timeSlots": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ParentTimeSlotDto"
-            }
-          },
-          "sessions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ParentTimetableSessionDto"
+              "$ref": "#/components/schemas/ParentTimetableDayDto"
             }
           }
         }
       },
-      "ParentTimetableSessionDto": {
+      "Window": {
         "type": "object",
         "properties": {
-          "day": {
-            "type": "string"
-          },
-          "timeSlotId": {
+          "from": {
             "type": "string",
-            "format": "uuid"
+            "format": "date"
           },
-          "subjectLabel": {
-            "type": "string"
-          },
-          "teacherLabel": {
-            "type": "string"
-          },
-          "room": {
-            "type": "string"
+          "to": {
+            "type": "string",
+            "format": "date"
           }
         }
       },
@@ -27384,61 +29501,6 @@
           }
         }
       },
-      "Course": {
-        "type": "object",
-        "properties": {
-          "courseId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "subjectLabel": {
-            "type": "string"
-          },
-          "subjectCode": {
-            "type": "string"
-          },
-          "teacherLabel": {
-            "type": "string"
-          },
-          "order": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "average": {
-            "$ref": "#/components/schemas/GradeAverageViewDto"
-          },
-          "count": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "last": {
-            "$ref": "#/components/schemas/LastGrade"
-          },
-          "evaluations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GradeCardDto"
-            }
-          }
-        }
-      },
-      "GradeAverageViewDto": {
-        "type": "object",
-        "properties": {
-          "percent": {
-            "type": "number"
-          },
-          "obtained": {
-            "type": "number"
-          },
-          "max": {
-            "type": "number"
-          },
-          "state": {
-            "type": "string"
-          }
-        }
-      },
       "GradeCoursesDto": {
         "type": "object",
         "properties": {
@@ -27450,21 +29512,6 @@
             "items": {
               "$ref": "#/components/schemas/Course"
             }
-          }
-        }
-      },
-      "LastGrade": {
-        "type": "object",
-        "properties": {
-          "points": {
-            "type": "number"
-          },
-          "maxPoints": {
-            "type": "number"
-          },
-          "date": {
-            "type": "string",
-            "format": "date"
           }
         }
       },
@@ -28055,6 +30102,25 @@
           }
         }
       },
+      "ParentAnnouncementListResponse": {
+        "type": "object",
+        "properties": {
+          "academicYearId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "unreadCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParentAnnouncementDto"
+            }
+          }
+        }
+      },
       "ParentAcademicYearDto": {
         "type": "object",
         "properties": {
@@ -28095,6 +30161,9 @@
             "items": {
               "$ref": "#/components/schemas/ParentPortalChildDto"
             }
+          },
+          "push": {
+            "$ref": "#/components/schemas/ParentPortalPushDto"
           }
         }
       },
@@ -28145,6 +30214,10 @@
           },
           "classroom": {
             "$ref": "#/components/schemas/ParentPortalNamedRef"
+          },
+          "unreadAnnouncements": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -28184,6 +30257,14 @@
           }
         }
       },
+      "ParentPortalPushDto": {
+        "type": "object",
+        "properties": {
+          "vapidPublicKey": {
+            "type": "string"
+          }
+        }
+      },
       "ParentPortalSchoolDto": {
         "type": "object",
         "properties": {
@@ -28199,6 +30280,211 @@
           },
           "contactPhone": {
             "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          }
+        }
+      },
+      "CategoryCount": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "ENSEIGNANT",
+              "ADMINISTRATIF",
+              "APPUI"
+            ]
+          },
+          "women": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "men": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unknown": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Dean": {
+        "type": "object",
+        "properties": {
+          "staffMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "entryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "years": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Seniority": {
+        "type": "object",
+        "properties": {
+          "average": {
+            "type": "number"
+          },
+          "base": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SexCounts": {
+        "type": "object",
+        "properties": {
+          "women": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "men": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unknown": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "StaffStatsDto": {
+        "type": "object",
+        "properties": {
+          "asOf": {
+            "type": "string",
+            "format": "date"
+          },
+          "headcount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sexes": {
+            "$ref": "#/components/schemas/SexCounts"
+          },
+          "seniority": {
+            "$ref": "#/components/schemas/Seniority"
+          },
+          "dean": {
+            "$ref": "#/components/schemas/Dean"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryCount"
+            }
+          }
+        }
+      },
+      "Dossier": {
+        "type": "object",
+        "properties": {
+          "provided": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "required": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "StaffMemberPageDto": {
+        "type": "object",
+        "properties": {
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StaffMemberRowDto"
+            }
+          }
+        }
+      },
+      "StaffMemberRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "staffNumber": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "sex": {
+            "type": "string",
+            "enum": [
+              "M",
+              "F"
+            ]
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ENSEIGNANT",
+              "ADMINISTRATIF",
+              "APPUI"
+            ]
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "entryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "seniorityYears": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contractKind": {
+            "type": "string",
+            "enum": [
+              "PERMANENT",
+              "VACATAIRE",
+              "CONVENTIONNE"
+            ]
+          },
+          "dossier": {
+            "$ref": "#/components/schemas/Dossier"
           }
         }
       },
@@ -28231,6 +30517,1191 @@
               "type": "string",
               "format": "uuid"
             }
+          }
+        }
+      },
+      "AdvanceRow": {
+        "type": "object",
+        "properties": {
+          "advanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "staffMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "nature": {
+            "type": "string",
+            "enum": [
+              "ADVANCE",
+              "LOAN"
+            ]
+          },
+          "installments": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "MEDICAL",
+              "SCHOOLING",
+              "RENT",
+              "BEREAVEMENT",
+              "TRANSPORT",
+              "OTHER"
+            ]
+          },
+          "reasonDetail": {
+            "type": "string"
+          },
+          "grantedOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "amountInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "remainingInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "takenThisMonthInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "phase": {
+            "type": "string",
+            "enum": [
+              "UPCOMING",
+              "IN_PROGRESS",
+              "CARRIED",
+              "SETTLED",
+              "CANCELLED"
+            ]
+          }
+        }
+      },
+      "CurrencySection": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "forecast": {
+            "$ref": "#/components/schemas/Forecast"
+          },
+          "priorityArrearsInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/Progress"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Row"
+            }
+          },
+          "totals": {
+            "$ref": "#/components/schemas/Totals"
+          }
+        }
+      },
+      "Due": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "dueInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "prioritized": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Forecast": {
+        "type": "object",
+        "properties": {
+          "grossInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "absenceInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "advancesInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "legalInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "childcareInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "netInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "employerChargesInCents": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "MemberArrears": {
+        "type": "object",
+        "properties": {
+          "staffMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "dues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Due"
+            }
+          }
+        }
+      },
+      "MonthCurrency": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "paidInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "deferredInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "unpaidInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "notYetInCents": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "MonthSummary": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "DRAFT",
+              "SUBMITTED",
+              "VALIDATED"
+            ]
+          },
+          "tracked": {
+            "type": "boolean"
+          },
+          "currencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonthCurrency"
+            }
+          }
+        }
+      },
+      "PayrollDashboardResponse": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "DRAFT",
+              "SUBMITTED",
+              "VALIDATED"
+            ]
+          },
+          "validatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provisional": {
+            "type": "boolean"
+          },
+          "situationAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tracked": {
+            "type": "boolean"
+          },
+          "currencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CurrencySection"
+            }
+          },
+          "months": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonthSummary"
+            }
+          },
+          "advances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdvanceRow"
+            }
+          },
+          "arrears": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberArrears"
+            }
+          }
+        }
+      },
+      "Progress": {
+        "type": "object",
+        "properties": {
+          "paidInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "deferredInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "unpaidInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "notYetInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "settledCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "partialCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unpaidCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Row": {
+        "type": "object",
+        "properties": {
+          "staffMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "plannedInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "deductionsInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "netInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "arrearsInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "receivedInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "remainingInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "TO_DISBURSE",
+              "DUE",
+              "PARTIAL",
+              "SETTLED"
+            ]
+          }
+        }
+      },
+      "Totals": {
+        "type": "object",
+        "properties": {
+          "plannedInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "deductionsInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "netInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "arrearsInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "receivedInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "remainingInCents": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AttendanceBarDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "scored": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "presences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "presenceRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absenceRatePct": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AttendanceDashboardDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "classDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "staffCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "granularity": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "MONTH"
+            ]
+          },
+          "kpis": {
+            "$ref": "#/components/schemas/AttendanceKpisDto"
+          },
+          "series": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttendanceBarDto"
+            }
+          },
+          "staff": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StaffAttendanceRowDto"
+            }
+          }
+        }
+      },
+      "AttendanceKpisDto": {
+        "type": "object",
+        "properties": {
+          "scored": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "presences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "presenceRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absenceRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "late": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lateRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lateMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "punctualityPct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "justifiedAbsences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unjustifiedAbsences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unscored": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "workedMinutes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "StaffAttendanceIdentityDto": {
+        "type": "object",
+        "properties": {
+          "staffMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "staffNumber": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ENSEIGNANT",
+              "ADMINISTRATIF",
+              "APPUI"
+            ]
+          },
+          "contractKind": {
+            "type": "string",
+            "enum": [
+              "PERMANENT",
+              "VACATAIRE",
+              "CONVENTIONNE"
+            ]
+          },
+          "payMode": {
+            "type": "string",
+            "enum": [
+              "HEURES_PRESTEES",
+              "FORFAIT_MENSUEL"
+            ]
+          }
+        }
+      },
+      "StaffAttendanceRowDto": {
+        "type": "object",
+        "properties": {
+          "staffMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "staffNumber": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ENSEIGNANT",
+              "ADMINISTRATIF",
+              "APPUI"
+            ]
+          },
+          "contractKind": {
+            "type": "string",
+            "enum": [
+              "PERMANENT",
+              "VACATAIRE",
+              "CONVENTIONNE"
+            ]
+          },
+          "payMode": {
+            "type": "string",
+            "enum": [
+              "HEURES_PRESTEES",
+              "FORFAIT_MENSUEL"
+            ]
+          },
+          "scored": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "presences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "presenceRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absenceRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "late": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lateRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lateMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "punctualityPct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "justifiedAbsences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unjustifiedAbsences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unscored": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "workedMinutes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AttendanceDayDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "PRESENT",
+              "RETARD",
+              "ABSENT"
+            ]
+          },
+          "arrivalTime": {
+            "type": "string"
+          },
+          "departureTime": {
+            "type": "string"
+          },
+          "lateMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "workedMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "justificationReason": {
+            "type": "string",
+            "enum": [
+              "MALADIE",
+              "TRANSPORT",
+              "DEUIL",
+              "FAMILLE",
+              "MISSION",
+              "FORMATION",
+              "AUTRE"
+            ]
+          },
+          "justificationNote": {
+            "type": "string"
+          },
+          "future": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AttendanceTrendPointDto": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "presenceRatePct": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "StaffAttendanceMonthDto": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "classDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "toDate": {
+            "type": "boolean"
+          },
+          "agent": {
+            "$ref": "#/components/schemas/StaffAttendanceIdentityDto"
+          },
+          "profile": {
+            "type": "string",
+            "enum": [
+              "NON_EVALUE",
+              "ABSENTEISTE",
+              "RETARDATAIRE",
+              "EXEMPLAIRE",
+              "REGULIER"
+            ]
+          },
+          "kpis": {
+            "$ref": "#/components/schemas/AttendanceKpisDto"
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttendanceDayDto"
+            }
+          },
+          "trend": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttendanceTrendPointDto"
+            }
+          }
+        }
+      },
+      "AttendanceMonthSummaryDto": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "CLASS",
+              "HOLIDAY",
+              "FUTURE"
+            ]
+          },
+          "classDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "scored": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "presenceRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lateRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absenceRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "profile": {
+            "type": "string",
+            "enum": [
+              "NON_EVALUE",
+              "ABSENTEISTE",
+              "RETARDATAIRE",
+              "EXEMPLAIRE",
+              "REGULIER"
+            ]
+          }
+        }
+      },
+      "SchoolYearDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "StaffAttendanceYearDto": {
+        "type": "object",
+        "properties": {
+          "schoolYear": {
+            "$ref": "#/components/schemas/SchoolYearDto"
+          },
+          "agent": {
+            "$ref": "#/components/schemas/StaffAttendanceIdentityDto"
+          },
+          "profile": {
+            "type": "string",
+            "enum": [
+              "NON_EVALUE",
+              "ABSENTEISTE",
+              "RETARDATAIRE",
+              "EXEMPLAIRE",
+              "REGULIER"
+            ]
+          },
+          "kpis": {
+            "$ref": "#/components/schemas/AttendanceKpisDto"
+          },
+          "months": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttendanceMonthSummaryDto"
+            }
+          }
+        }
+      },
+      "AttendanceAmountDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "amountInCents": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AttendanceRecapAmountDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "amountInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "baseInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "grossInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "absenceDeductionInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "grossAfterAbsenceInCents": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AttendanceRecapDto": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "classDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "toDate": {
+            "type": "boolean"
+          },
+          "closed": {
+            "type": "boolean"
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closedBy": {
+            "type": "string"
+          },
+          "closable": {
+            "type": "boolean"
+          },
+          "unscored": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/AttendanceRecapTotalsDto"
+          },
+          "staff": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StaffAttendanceRecapRowDto"
+            }
+          },
+          "reopenable": {
+            "type": "boolean"
+          },
+          "absenceDeductionEnabled": {
+            "type": "boolean"
+          },
+          "workingDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "payrollStatus": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "DRAFT",
+              "SUBMITTED",
+              "VALIDATED"
+            ]
+          }
+        }
+      },
+      "AttendanceRecapTotalsDto": {
+        "type": "object",
+        "properties": {
+          "presenceRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "workedMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unjustifiedAbsences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttendanceRecapAmountDto"
+            }
+          }
+        }
+      },
+      "StaffAttendanceRecapRowDto": {
+        "type": "object",
+        "properties": {
+          "staffMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "staffNumber": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ENSEIGNANT",
+              "ADMINISTRATIF",
+              "APPUI"
+            ]
+          },
+          "contractKind": {
+            "type": "string",
+            "enum": [
+              "PERMANENT",
+              "VACATAIRE",
+              "CONVENTIONNE"
+            ]
+          },
+          "payMode": {
+            "type": "string",
+            "enum": [
+              "HEURES_PRESTEES",
+              "FORFAIT_MENSUEL"
+            ]
+          },
+          "classDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "presences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "late": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lateMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "justifiedAbsences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unjustifiedAbsences": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unscored": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "workedMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/AttendanceAmountDto"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "baseInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "grossInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "dailyRateInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "absenceDeductionInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "grossAfterAbsenceInCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "hourlyRateInCents": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AttendanceProfilesDto": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "schoolYear": {
+            "$ref": "#/components/schemas/SchoolYearDto"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "classDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "profileCounts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "staff": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StaffAttendanceProfileRowDto"
+            }
+          }
+        }
+      },
+      "StaffAttendanceProfileRowDto": {
+        "type": "object",
+        "properties": {
+          "staffMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "staffNumber": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ENSEIGNANT",
+              "ADMINISTRATIF",
+              "APPUI"
+            ]
+          },
+          "contractKind": {
+            "type": "string",
+            "enum": [
+              "PERMANENT",
+              "VACATAIRE",
+              "CONVENTIONNE"
+            ]
+          },
+          "payMode": {
+            "type": "string",
+            "enum": [
+              "HEURES_PRESTEES",
+              "FORFAIT_MENSUEL"
+            ]
+          },
+          "scored": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "presenceRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lateRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absenceRatePct": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "profile": {
+            "type": "string",
+            "enum": [
+              "NON_EVALUE",
+              "ABSENTEISTE",
+              "RETARDATAIRE",
+              "EXEMPLAIRE",
+              "REGULIER"
+            ]
           }
         }
       },
@@ -28879,12 +32350,12 @@
       "PageableObject": {
         "type": "object",
         "properties": {
+          "unpaged": {
+            "type": "boolean"
+          },
           "pageNumber": {
             "type": "integer",
             "format": "int32"
-          },
-          "unpaged": {
-            "type": "boolean"
           },
           "paged": {
             "type": "boolean"
@@ -29707,6 +33178,265 @@
           }
         }
       },
+      "BoutiqueAmountDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currency": {
+            "type": "string"
+          }
+        }
+      },
+      "BoutiqueStatsDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "granularity": {
+            "type": "string",
+            "enum": [
+              "DAY",
+              "HOUR"
+            ]
+          },
+          "saleCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "previousSaleCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "articleCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousArticleCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "byCurrency": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CurrencySalesDto"
+            }
+          },
+          "topArticles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopArticleDto"
+            }
+          }
+        }
+      },
+      "CurrencySalesDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "revenue": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousRevenue": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "saleCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "previousSaleCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "buckets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SalesBucketDto"
+            }
+          },
+          "families": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FamilySalesDto"
+            }
+          }
+        }
+      },
+      "FamilySalesDto": {
+        "type": "object",
+        "properties": {
+          "family": {
+            "type": "string",
+            "enum": [
+              "UNIFORME",
+              "FOURNITURES",
+              "ACTIVITES",
+              "ACTES"
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "SalesBucketDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "TopArticleDto": {
+        "type": "object",
+        "properties": {
+          "articleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string",
+            "enum": [
+              "UNIFORME",
+              "FOURNITURES",
+              "ACTIVITES",
+              "ACTES"
+            ]
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "amounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BoutiqueAmountDto"
+            }
+          }
+        }
+      },
+      "BeneficiaryClassDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "SaleBeneficiaryDto": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "classId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "classLabel": {
+            "type": "string"
+          }
+        }
+      },
+      "SalePageDto": {
+        "type": "object",
+        "properties": {
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "classes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BeneficiaryClassDto"
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleRowDto"
+            }
+          }
+        }
+      },
+      "SaleRowDto": {
+        "type": "object",
+        "properties": {
+          "saleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "soldAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "receiptNumber": {
+            "type": "string"
+          },
+          "amounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BoutiqueAmountDto"
+            }
+          },
+          "articleCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "beneficiaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleBeneficiaryDto"
+            }
+          },
+          "payerName": {
+            "type": "string"
+          }
+        }
+      },
       "BoutiqueSaleAnomalyDto": {
         "type": "object",
         "properties": {
@@ -29739,6 +33469,105 @@
           "detectedAt": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "BeneficiaryArticleDto": {
+        "type": "object",
+        "properties": {
+          "articleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string",
+            "enum": [
+              "UNIFORME",
+              "FOURNITURES",
+              "ACTIVITES",
+              "ACTES"
+            ]
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sizes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "BeneficiaryDto": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "classId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "classLabel": {
+            "type": "string"
+          },
+          "lastPurchaseAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "amounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BoutiqueAmountDto"
+            }
+          },
+          "articles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BeneficiaryArticleDto"
+            }
+          }
+        }
+      },
+      "BeneficiaryPageDto": {
+        "type": "object",
+        "properties": {
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "classes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BeneficiaryClassDto"
+            }
+          },
+          "walkInLineCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BeneficiaryDto"
+            }
           }
         }
       },
@@ -30097,39 +33926,6 @@
             "items": {
               "$ref": "#/components/schemas/AttendanceEvolutionBucketDto"
             }
-          }
-        }
-      },
-      "AttendanceKpisDto": {
-        "type": "object",
-        "properties": {
-          "presenceRate": {
-            "type": "number",
-            "format": "double"
-          },
-          "justifiedAbsenceRate": {
-            "type": "number",
-            "format": "double"
-          },
-          "unjustifiedAbsenceRate": {
-            "type": "number",
-            "format": "double"
-          },
-          "recordedDays": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "presentDays": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "justifiedAbsenceDays": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "unjustifiedAbsenceDays": {
-            "type": "integer",
-            "format": "int64"
           }
         }
       },
@@ -31284,6 +35080,18 @@
             "format": "date-time"
           }
         }
+      },
+      "ParentPushUnsubscribeRequest": {
+        "type": "object",
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "endpoint"
+        ]
       }
     }
   }
