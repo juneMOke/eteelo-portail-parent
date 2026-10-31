@@ -1,0 +1,219 @@
+:host {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-accent-line);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.heading {
+  flex: 1;
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-semibold);
+  line-height: 1.3;
+}
+
+.count {
+  padding: 6px 10px;
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-accent);
+  font-size: 0.6875rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+}
+
+/* Sous cinq colonnes de 156 px, la carte défile, jamais la page. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--columns, 5), minmax(156px, 1fr));
+  gap: 10px;
+  padding: var(--space-3);
+  overflow-x: auto;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--space-4);
+  box-shadow: var(--shadow-card);
+}
+
+.column.today {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-lift);
+}
+
+/* F1 — tête de colonne, ouvre la journée. */
+.column-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 11px var(--space-3);
+  border-bottom: 1px solid var(--color-accent-line);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: filter var(--duration-hover);
+}
+
+.column-head:hover {
+  filter: brightness(0.95);
+}
+
+.weekday {
+  font-size: var(--text-caps);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.date {
+  color: var(--color-heading);
+  font-family: var(--font-title);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: 1.2;
+}
+
+.near {
+  color: var(--color-accent);
+  font-size: var(--text-caps);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* F2 — colonne d'aujourd'hui. */
+.today .column-head {
+  border-bottom-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
+.today .weekday {
+  color: var(--color-bar-text-muted);
+}
+
+.today .date {
+  color: var(--color-on-tone);
+}
+
+.today .near {
+  color: var(--color-highlight);
+}
+
+.column-body {
+  flex: 1;
+  padding: 10px;
+}
+
+.slots {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* F3 — créneau compact au ton de la matière, sans enseignant. */
+.slot {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2) 10px;
+  border: 1px solid color-mix(in srgb, var(--subject) 22%, var(--color-surface));
+  border-left: 3px solid var(--subject);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--subject-soft) 55%, var(--color-surface));
+  transition:
+    transform 180ms,
+    box-shadow 180ms;
+}
+
+.slot:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
+}
+
+.time {
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-medium);
+  line-height: 1.3;
+}
+
+.subject {
+  color: var(--color-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: 1.3;
+}
+
+.room {
+  color: var(--color-text-secondary);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+}
+
+.break {
+  padding: 5px 9px;
+  border-color: var(--color-border);
+  border-left-color: var(--color-border-strong);
+  background: var(--color-break-bg);
+}
+
+.break .subject {
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+}
+
+.break:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.cancelled .subject {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.cancelled .room {
+  color: var(--color-tone-alert);
+  font-weight: var(--weight-semibold);
+}
+
+/* F4 — créneau avec épreuve, non cliquable ici. */
+.exam {
+  border-color: var(--color-exam-line);
+  border-left-color: var(--color-tone-pending);
+  background: var(--color-surface);
+}
+
+.exam-line {
+  color: var(--color-tone-pending);
+  font-size: 0.6875rem;
+  font-weight: var(--weight-semibold);
+  line-height: 1.4;
+}
+
+.empty {
+  padding: var(--space-3) var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  text-align: center;
+}

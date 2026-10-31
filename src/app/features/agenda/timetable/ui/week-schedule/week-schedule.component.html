@@ -1,0 +1,53 @@
+<header class="head">
+  <ui-icon name="columns" [size]="17" [strokeWidth]="2" />
+  <h2 class="heading">Cours de la semaine</h2>
+  <span class="count">{{ count() }}</span>
+</header>
+
+<div class="grid" [style.--columns]="columns().length">
+  @for (column of columns(); track column.date) {
+    <section class="column" [class.today]="column.today" [attr.aria-label]="column.weekday">
+      <a
+        class="column-head"
+        [routerLink]="[]"
+        [queryParams]="{ date: column.date, view: null }"
+        queryParamsHandling="merge"
+        replaceUrl
+        aria-label="Voir la journée"
+      >
+        <span class="weekday">{{ column.weekday }}</span>
+        <span class="date">{{ column.label }}</span>
+        @if (column.near) {
+          <span class="near">{{ column.near }}</span>
+        }
+      </a>
+      <div class="column-body">
+        @if (column.empty) {
+          <p class="empty">{{ column.empty }}</p>
+        } @else {
+          <ol class="slots">
+            @for (slot of column.slots; track slot.key) {
+              <li
+                class="slot"
+                [class.break]="slot.isBreak"
+                [class.cancelled]="slot.cancelled"
+                [class.exam]="slot.exam"
+                [style.--subject]="slot.color"
+                [style.--subject-soft]="slot.soft"
+              >
+                <span class="time">{{ slot.time }}</span>
+                <span class="subject">{{ slot.label }}</span>
+                @if (slot.room) {
+                  <span class="room">{{ slot.room }}</span>
+                }
+                @if (slot.exam) {
+                  <span class="exam-line">{{ slot.exam }}</span>
+                }
+              </li>
+            }
+          </ol>
+        }
+      </div>
+    </section>
+  }
+</div>

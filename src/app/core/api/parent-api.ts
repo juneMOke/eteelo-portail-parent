@@ -21,6 +21,7 @@ import {
 } from './conduct.contract';
 import { AcademicYear, ChildFees, Payment } from './finance.contract';
 import { GradeCourses, GradePeriod, GradeQuery, GradeWeek, ReportCard } from './grades.contract';
+import { TimetableWeek } from './timetable.contract';
 
 type Schemas = components['schemas'];
 
@@ -100,6 +101,16 @@ export class ParentApi {
   gradesWeek(childId: string, weekOf?: string): Observable<GradeWeek> {
     return this.http.get<GradeWeek>(`${PARENT_CHILDREN_API}/${childId}/grades/week`, {
       params: weekOf ? { weekOf } : {},
+    });
+  }
+
+  /**
+   * Emploi du temps daté d'une semaine (`week` = un jour de la semaine, ramené par le serveur à
+   * son lundi) ; sans semaine, la semaine d'école en cours. Hors de l'année scolaire : 400.
+   */
+  timetable(childId: string, week?: string): Observable<TimetableWeek> {
+    return this.http.get<TimetableWeek>(`${PARENT_CHILDREN_API}/${childId}/timetable`, {
+      params: week ? { week } : {},
     });
   }
 

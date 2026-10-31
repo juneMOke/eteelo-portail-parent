@@ -3,6 +3,7 @@ import type { ParentAnnouncementList } from '../../src/app/core/api/announcement
 import type { EvaluationList, HomeworkList } from '../../src/app/core/api/assignments.contract';
 import type { ChildAttendance } from '../../src/app/core/api/conduct.contract';
 import type { ChildFees, Payment } from '../../src/app/core/api/finance.contract';
+import type { TimetableWeek } from '../../src/app/core/api/timetable.contract';
 import type { Bootstrap } from '../../src/app/core/session/bootstrap.schema';
 import { announcementsFixture, readResultFixture } from '../../src/testing/announcements.fixture';
 import {
@@ -31,6 +32,7 @@ import {
   submittedHomeworkFixture,
 } from '../../src/testing/homework.fixture';
 import { reportCardFixture } from '../../src/testing/report-card.fixture';
+import { timetableFixture } from '../../src/testing/timetable.fixture';
 
 interface ParentApiMock {
   /** Corps du bootstrap, ou un code HTTP d'erreur. */
@@ -56,6 +58,8 @@ interface ParentApiMock {
   discipline?: number;
   /** Frais de l'année, ou un code HTTP d'erreur. */
   fees?: ChildFees | number;
+  /** Emploi du temps de toute semaine demandée, ou un code HTTP d'erreur ; par défaut, les données factices. */
+  timetable?: ((week: string | undefined) => TimetableWeek | null) | number;
   /** Versements de toute année demandée, ou un code HTTP d'erreur ; par défaut, ceux de l'année. */
   payments?: Payment[] | number;
   /** Annonces de l'enfant (Mes messages), ou un code HTTP d'erreur. */
@@ -75,6 +79,7 @@ const HOMEWORK_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/homework(?:\/([^/]+
 const SUBMISSION_ROUTE = /^\/api\/v1\/parent\/children\/[^/]+\/homework\/([^/]+)\/submission$/;
 const GRADES_ROUTE =
   /^\/api\/v1\/parent\/children\/[^/]+\/grades\/(week|periods|courses|report-card)$/;
+const TIMETABLE_ROUTE = /^\/api\/v1\/parent\/children\/([^/]+)\/timetable$/;
 const JUSTIFICATION_ROUTE =
   /^\/api\/v1\/parent\/children\/[^/]+\/attendance\/[^/]+\/justification$/;
 const FINANCE_DOCUMENT =
@@ -84,8 +89,8 @@ const REPORT_CARD_PDF = /^\/api\/v1\/parent\/children\/[^/]+\/grades\/report-car
 
 /**
  * Simule l'API du portail parent : bootstrap, authentification, Mes évaluations, Mes devoirs, le
- * dépôt de copie, Mes notes, Ma conduite, Mes finances, Mes messages et les abonnements aux
- * notifications ; tout le reste répond 404.
+ * dépôt de copie, Mes notes, Mon emploi du temps, Ma conduite, Mes finances, Mes messages et les
+ * abonnements aux notifications ; tout le reste répond 404.
  * Les annonces lues pendant le parcours le restent.
  */
 export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promise<void> {
@@ -139,6 +144,13 @@ export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promi
         'report-card': () => reportCardFixture(query, mock.reportCardPublished),
       };
       return route.fulfill({ json: bodies[grades[1] as keyof typeof bodies]() });
+    }
+    const timetable = method === 'GET' ? TIMETABLE_ROUTE.exec(pathname) : null;
+    if (timetable) {
+      if (typeof mock.timetable === 'number') return route.fulfill({ status: mock.timetable });
+      const week = searchParams.get('week') ?? undefined;
+      const body = mock.timetable ? mock.timetable(week) : timetableFixture(week, timetable[1]);
+      return body ? route.fulfill({ json: body }) : route.fulfill({ status: 400 });
     }
     if (method === 'GET' && pathname.endsWith('/attendance')) {
       if (typeof attendance === 'number') return route.fulfill({ status: attendance });

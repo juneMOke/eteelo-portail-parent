@@ -14,7 +14,7 @@ import { BadgeComponent } from '../../../../shared/ui/badge/badge.component';
 import { IconComponent } from '../../../../shared/ui/icon/icon.component';
 import { capitalized, pointsLabel, shortDayLabel } from '../../data-access/grade-formats';
 import { displayedScore, gradeStateView } from '../../data-access/grade-state';
-import { subjectTone } from '../../data-access/subject-tone';
+import { subjectTone } from '../../../../shared/ui/subject-tone';
 
 /**
  * ② Carte de résultat de Ma semaine : ce qui a été évalué, comment ça s'est passé, puis la fiche.

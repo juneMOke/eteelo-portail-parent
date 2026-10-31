@@ -1,0 +1,74 @@
+@if (wide()) {
+  <div class="views" role="radiogroup" aria-label="Affichage">
+    <button
+      type="button"
+      role="radio"
+      class="view"
+      [attr.aria-checked]="view() === 'day'"
+      (click)="viewChange.emit('day')"
+    >
+      <ui-icon name="calendar" [size]="15" [strokeWidth]="2" />Jour
+    </button>
+    <button
+      type="button"
+      role="radio"
+      class="view"
+      [attr.aria-checked]="view() === 'week'"
+      (click)="viewChange.emit('week')"
+    >
+      <ui-icon name="columns" [size]="15" [strokeWidth]="2" />Semaine
+    </button>
+  </div>
+}
+
+<div class="nav">
+  <button
+    type="button"
+    class="arrow previous"
+    [attr.aria-label]="view() === 'week' ? 'Semaine précédente' : 'Jour précédent'"
+    [attr.aria-disabled]="!hasPrevious()"
+    (click)="go(-1)"
+  >
+    <ui-icon name="chevron-left" [size]="20" [strokeWidth]="2" />
+  </button>
+
+  <div class="label">
+    <p #titleRef class="title" tabindex="-1">{{ title() }}</p>
+    @if (summary()) {
+      <p class="summary">{{ summary() }}</p>
+    }
+    @if (currentLabel(); as label) {
+      <button type="button" class="current" (click)="goCurrent()">{{ label }}</button>
+    }
+  </div>
+
+  <button
+    type="button"
+    class="arrow next"
+    [attr.aria-label]="view() === 'week' ? 'Semaine suivante' : 'Jour suivant'"
+    [attr.aria-disabled]="!hasNext()"
+    (click)="go(1)"
+  >
+    <ui-icon name="chevron-right" [size]="20" [strokeWidth]="2" />
+  </button>
+</div>
+
+@if (view() === 'day' && strip().length) {
+  <div class="strip" role="group" aria-label="Jours de la semaine">
+    @for (day of strip(); track day.date) {
+      <button
+        type="button"
+        class="day"
+        [class.today]="day.today"
+        [attr.aria-pressed]="day.selected"
+        [attr.aria-label]="day.spoken"
+        (click)="pick.emit(day.date)"
+      >
+        <span class="weekday">{{ day.weekday }}</span>
+        <span class="number">{{ day.number }}</span>
+      </button>
+    }
+  </div>
+}
+
+<p class="visually-hidden" aria-live="polite">{{ announcement() }}</p>

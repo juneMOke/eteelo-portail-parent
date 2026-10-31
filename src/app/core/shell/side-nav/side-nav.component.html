@@ -41,6 +41,7 @@
           class="link"
           [class.pending]="pending(entry.path)"
           [routerLink]="link(entry.path)"
+          [queryParams]="linkParams()[entry.path]"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: entry.id === 'home' }"
           ariaCurrentWhenActive="page"

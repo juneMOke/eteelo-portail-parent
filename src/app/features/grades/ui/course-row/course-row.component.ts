@@ -12,7 +12,7 @@ import { GradeCourse } from '../../../../core/api/grades.contract';
 import { civilToDate } from '../../../../shared/date/civil-date';
 import { IconComponent } from '../../../../shared/ui/icon/icon.component';
 import { percentLabel, pointsLabel } from '../../data-access/grade-formats';
-import { subjectTone } from '../../data-access/subject-tone';
+import { subjectTone } from '../../../../shared/ui/subject-tone';
 import { AverageComponent } from '../average/average.component';
 
 let nextId = 0;

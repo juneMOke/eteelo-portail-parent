@@ -12,7 +12,7 @@ import { ReportCardLine } from '../../../../core/api/grades.contract';
 import { IconComponent } from '../../../../shared/ui/icon/icon.component';
 import { percentLabel } from '../../data-access/grade-formats';
 import { averageColor } from '../../data-access/grade-state';
-import { subjectTone } from '../../data-access/subject-tone';
+import { subjectTone } from '../../../../shared/ui/subject-tone';
 import { AverageComponent } from '../average/average.component';
 
 /**

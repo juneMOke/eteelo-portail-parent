@@ -52,6 +52,14 @@ describe('ParentApi', () => {
     http.expectOne('/api/v1/parent/children/c1/grades/week').flush({});
   });
 
+  it('demande l’emploi du temps d’une semaine, ou celui de la semaine en cours', () => {
+    api.timetable('c1', '2026-09-24').subscribe();
+    api.timetable('c1').subscribe();
+
+    http.expectOne('/api/v1/parent/children/c1/timetable?week=2026-09-24').flush({});
+    http.expectOne('/api/v1/parent/children/c1/timetable').flush({});
+  });
+
   it('lit les périodes scolaires de l’enfant', () => {
     api.gradePeriods('c1').subscribe();
 

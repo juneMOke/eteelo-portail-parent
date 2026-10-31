@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
-import { comingSoonRoute } from '../../../core/navigation/coming-soon.route';
+import { navEntry } from '../../../core/navigation/nav';
 
-export default [comingSoonRoute('timetable')] satisfies Routes;
+export default [
+  { path: '', title: navEntry('timetable').title, loadComponent: () => import('./timetable.page') },
+] satisfies Routes;

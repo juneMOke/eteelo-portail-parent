@@ -27,6 +27,7 @@ import {
   submittedHomeworkFixture,
 } from '../../../testing/homework.fixture';
 import { reportCardFixture } from '../../../testing/report-card.fixture';
+import { timetableFixture } from '../../../testing/timetable.fixture';
 import { PARENT_API, PARENT_AUTH_API, PARENT_CHILDREN_API } from './parent-api';
 
 const identity = { ...bootstrapFixture().parent, fullName: 'Léonie Kabila' };
@@ -36,6 +37,7 @@ const SUBMISSION_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/homework/([^/
 const GRADES_ROUTE = new RegExp(
   `^${PARENT_CHILDREN_API}/[^/]+/grades/(week|periods|courses|report-card)$`,
 );
+const TIMETABLE_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/([^/]+)/timetable$`);
 /** Présence servie, mise à jour par les justifications reçues pendant la session de développement. */
 let attendance = attendanceFixture();
 const CONDUCT_ROUTE = new RegExp(`^${PARENT_CHILDREN_API}/[^/]+/(attendance|discipline)$`);
@@ -89,6 +91,12 @@ const mockBackend: HttpInterceptorFn = (req, next) => {
     if (grades[1] === 'week') return ok(gradeWeekFixture(req.params.get('weekOf') ?? undefined));
     if (grades[1] === 'periods') return ok(GRADE_PERIODS);
     return ok(grades[1] === 'courses' ? gradeCoursesFixture(query) : reportCardFixture(query));
+  }
+  const timetable = req.method === 'GET' ? TIMETABLE_ROUTE.exec(req.url) : null;
+  if (timetable) {
+    const body = timetableFixture(req.params.get('week') ?? undefined, timetable[1]);
+    if (body) return ok(body);
+    return throwError(() => new HttpErrorResponse({ status: 400, url: req.url }));
   }
   const conduct = req.method === 'GET' ? CONDUCT_ROUTE.exec(req.url) : null;
   if (conduct) {
