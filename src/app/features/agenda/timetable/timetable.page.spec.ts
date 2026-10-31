@@ -29,7 +29,7 @@ describe('TimetablePage', () => {
   afterEach(() => vi.unstubAllGlobals());
 
   async function render(
-    inputs: { date?: string; view?: string; childId?: string } = {},
+    inputs: { date?: string; week?: string; view?: string; childId?: string } = {},
     timetable: (childId: string, week?: string) => Observable<TimetableWeek> = (id, week) =>
       of(timetableFixture(week, id)!),
   ) {
@@ -43,12 +43,26 @@ describe('TimetablePage', () => {
     const fixture = TestBed.createComponent(TimetablePage);
     fixture.componentRef.setInput('childId', inputs.childId ?? GRACE.childId);
     if (inputs.date) fixture.componentRef.setInput('date', inputs.date);
+    if (inputs.week) fixture.componentRef.setInput('week', inputs.week);
     if (inputs.view) fixture.componentRef.setInput('view', inputs.view);
     await settle();
     await fixture.whenStable();
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     return { fixture, el: fixture.nativeElement as HTMLElement, navigate };
   }
+
+  it('s’ouvre dans la semaine venue de Mes devoirs, sur son premier jour de cours', async () => {
+    const timetable = vi.fn((id: string, week?: string) => of(timetableFixture(week, id)!));
+    const { el, navigate } = await render({ week: '2026-09-28' }, timetable);
+
+    expect(timetable).toHaveBeenCalledWith(GRACE.childId, '2026-09-28');
+    expect(text(el.querySelector('.title'))).toBe('Lundi 28 septembre 2026');
+    expect(text(el.querySelector('.current'))).toBe('Revenir à aujourd’hui');
+
+    el.querySelector<HTMLButtonElement>('.current')?.click();
+
+    expect(navigate.mock.calls.at(-1)?.[1]?.queryParams).toEqual({ date: null, week: null });
+  });
 
   it('s’ouvre sur aujourd’hui, le cours en cours marqué « En ce moment »', async () => {
     const { el } = await render();
@@ -90,7 +104,10 @@ describe('TimetablePage', () => {
     days[3].click();
     expect(navigate).toHaveBeenCalledWith(
       [],
-      expect.objectContaining({ queryParams: { date: '2026-09-24' }, replaceUrl: true }),
+      expect.objectContaining({
+        queryParams: { date: '2026-09-24', week: null },
+        replaceUrl: true,
+      }),
     );
   });
 
@@ -116,7 +133,7 @@ describe('TimetablePage', () => {
 
     expect(navigate).toHaveBeenCalledWith(
       [],
-      expect.objectContaining({ queryParams: { date: '2026-09-28' } }),
+      expect.objectContaining({ queryParams: { date: '2026-09-28', week: null } }),
     );
   });
 

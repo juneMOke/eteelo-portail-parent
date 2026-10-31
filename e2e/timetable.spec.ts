@@ -57,6 +57,23 @@ test.describe('Mon emploi du temps', () => {
     await expect(page.locator('app-timetable-banner .title')).toHaveText('Mardi 22 septembre 2026');
   });
 
+  test('garde la semaine affichée en venant de Mes devoirs, au bureau', async ({ page }, info) => {
+    test.skip(info.project.name !== 'desktop', 'le menu latéral n’existe qu’au bureau');
+    await mockParentApi(page);
+    await page.goto(`/c/${GRACE.childId}/homework?week=2026-09-28`);
+
+    await page.locator('app-side-nav').getByRole('link', { name: 'Mon emploi du temps' }).click();
+
+    await expect(page).toHaveURL(`${TIMETABLE}?week=2026-09-28`);
+    await expect(page.locator('app-timetable-banner .title')).toHaveText('Lundi 28 septembre 2026');
+
+    await page.getByRole('button', { name: 'Jour suivant' }).click();
+    await expect(page).toHaveURL(`${TIMETABLE}?date=2026-09-29`);
+
+    await page.locator('app-side-nav').getByRole('link', { name: 'Mes évaluations' }).click();
+    await expect(page).toHaveURL(`/c/${GRACE.childId}/assessments?week=2026-09-28`);
+  });
+
   test('dit un jour sans cours et mène au prochain jour d’école', async ({ page }) => {
     await mockParentApi(page);
     await page.goto(`${TIMETABLE}?date=2026-10-02`);

@@ -89,8 +89,8 @@ const REPORT_CARD_PDF = /^\/api\/v1\/parent\/children\/[^/]+\/grades\/report-car
 
 /**
  * Simule l'API du portail parent : bootstrap, authentification, Mes évaluations, Mes devoirs, le
- * dépôt de copie, Mes notes, Mon emploi du temps, Ma conduite, Mes finances, Mes messages et les abonnements aux
- * notifications ; tout le reste répond 404.
+ * dépôt de copie, Mes notes, Mon emploi du temps, Ma conduite, Mes finances, Mes messages et les
+ * abonnements aux notifications ; tout le reste répond 404.
  * Les annonces lues pendant le parcours le restent.
  */
 export async function mockParentApi(page: Page, mock: ParentApiMock = {}): Promise<void> {

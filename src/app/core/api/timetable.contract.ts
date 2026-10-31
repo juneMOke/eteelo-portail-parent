@@ -1,10 +1,7 @@
 /**
  * Contrat de Mon emploi du temps (lot back T1), figé le 18/10/2026 dans l'analyse back de la
- * spec 04 · détail. Remplace la grille type P2 (`ParentTimetableResponse`), que le front n'a
- * jamais lue.
- *
- * À remplacer par les types générés (`npm run api:types`) dès que la route est dans l'OpenAPI
- * de staging.
+ * spec 04 · détail, livré en v0.15.0 du back. Écrit à la main comme les autres contrats : dans
+ * les types générés, tous les champs sont optionnels et `kind` ne discrimine pas `items[]`.
  */
 import { CivilDate, Instant } from './assignments.contract';
 

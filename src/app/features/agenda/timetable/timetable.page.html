@@ -1,4 +1,4 @@
-@if (week(); as week) {
+@if (timetable(); as week) {
   @if (resource.stale()) {
     <ui-stale-notice (retry)="resource.reload()" />
   }
